@@ -1,7 +1,7 @@
 # 问题
 调试`autoreload`源码时, 想要让源码中的logger.debug打印出来.
 
-&nbsp;  
+&nbsp;   
 
 # 怎么做?
 1.&emsp;打开项目的 `settings.py` 文件.   
@@ -32,6 +32,7 @@ LOGGING = {
 | **handlers** | 使用'handlers' + 'console' 组合, 表示初始化 `logging.StreamHandler` <br />使用'handlers' + 'file' 组合, 表示初始化 `logging.handlers.RotatingFileHandler` |
 | **loggers** | 为具体的`logger`设定日志等级, 默认是`INFO` |
 
+&nbsp;  
 
 # 参考
 [Django configureing-logging](https://docs.djangoproject.com/en/3.0/topics/logging/#configuring-logging)   
