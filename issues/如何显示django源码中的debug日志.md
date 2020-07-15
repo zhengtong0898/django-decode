@@ -16,7 +16,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django.utils.autoreload': {
+        'django.utils.autoreload': {                # 仅显示autoreload文件中的logger日志信息
             'handlers': {'console': {}},
             'level': 'DEBUG',
             'propagate': False,
