@@ -36,5 +36,5 @@ LOGGING = {
 
 # 参考
 [Django configureing-logging](https://docs.djangoproject.com/en/3.0/topics/logging/#configuring-logging)   
-[logging 官网 dictConfig](https://docs.python.org/3/library/logging.config.html#dictionary-schema-details)  
+[logging dictConfig](https://docs.python.org/3/library/logging.config.html#dictionary-schema-details)  
 [logging tutorial](https://docs.python.org/3/howto/logging.html#logging-basic-tutorial)
