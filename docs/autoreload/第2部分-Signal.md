@@ -134,7 +134,11 @@ def _make_id(target):
 class Signal:
 
     def connect(self, receiver, sender=None, weak=True, dispatch_uid=None):
-        lookup_key = (_make_id(receiver), _make_id(sender))                      # lookup_key == id 
+        if dispatch_uid:
+            lookup_key = (dispatch_uid, _make_id(sender))                    # lookup_key == id 
+        else:
+            lookup_key = (_make_id(receiver), _make_id(sender))              # lookup_key == id 
+
         with self.lock:
             if not any(r_key == lookup_key for r_key, _ in self.receivers):
                 self.receivers.append((lookup_key, receiver))
