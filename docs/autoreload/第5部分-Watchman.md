@@ -326,3 +326,20 @@ class BaseReloader:
 &nbsp;
 # 再次拉起子进程, 往复循环
 具体的分析在 [第3部分-两个进程](第3部分-两个进程.md) .
+
+&nbsp;  
+# 题外话
+本来想借这个机会去写一个`热更新`的程序, 让程序不是重启而是直接`reload`, 这样让代码更新更丝滑.    
+在尝试过程中使用`importlib.import_module(name)` 和 `importlib.reload(module)`, 这两个函数不能直接覆盖现有模块的对象.  
+必须使用`importlib.reload(module)的返回值`中的`class`来创建对象, 这种方式必然是要对class做hook的.   
+
+网上找了两个库来参考: [reloadr](https://github.com/hoh/reloadr) 和 [hotreload](https://github.com/say4n/hotreload), 外加翻阅了`vue.js`的官方介绍它自己的`hotreload`.   
+最终得出的结论就是, `hotreload`比较有局限性, 并不是什么都可以`hotreload`:  
+ - 可以`hotreload`的情况
+   1. `class`新增`method`
+   2. `class`新增`attribute`
+   3. `class`更新`method`内的代码
+ - 不可以`hotreload`的情况
+   1. `class`删除某个被重度使用的`method`
+   2. `class`删除某个`attribute`
+ 
