@@ -343,3 +343,4 @@ class BaseReloader:
    1. `class`删除某个被重度使用的`method`
    2. `class`删除某个`attribute`
  
+即便是`vue.js`也是局部`hotreload`, 涉及到`<script>`部分也是要`Destroy`掉原有对象, 重新实例化相同类型的对象; 并且在`Product`模式下不建议使用.   
