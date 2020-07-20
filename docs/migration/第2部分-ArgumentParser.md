@@ -16,3 +16,57 @@
 | --check | 否 | 无用 |
 
 除了`args`是必填之外, 我觉得有用的是`--dry-run`、`--merge`, 其他真的可有可无.
+
+&nbsp;
+# 参数的源码定义
+源码片段: django/core/management/commands/makemigrations.py#23行
+```python
+class Command(BaseCommand):
+    help = "Creates new migration(s) for apps."
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'args', metavar='app_label', nargs='*',
+            help='Specify the app label(s) to create migrations for.',
+        )
+        parser.add_argument(
+            '--dry-run', action='store_true',
+            help="Just show what migrations would be made; don't actually write them.",
+        )
+        parser.add_argument(
+            '--merge', action='store_true',
+            help="Enable fixing of migration conflicts.",
+        )
+        parser.add_argument(
+            '--empty', action='store_true',
+            help="Create an empty migration.",
+        )
+        parser.add_argument(
+            '--noinput', '--no-input', action='store_false', dest='interactive',
+            help='Tells Django to NOT prompt the user for input of any kind.',
+        )
+        parser.add_argument(
+            '-n', '--name',
+            help="Use this name for migration file(s).",
+        )
+        parser.add_argument(
+            '--no-header', action='store_false', dest='include_header',
+            help='Do not add header comments to new migration file(s).',
+        )
+        parser.add_argument(
+            '--check', action='store_true', dest='check_changes',
+            help='Exit with a non-zero status if model changes are missing migrations.',
+        )
+```
+
+`parser.add_argument`的参数备注说明:
+   
+|参数|必填|描述|
+|---|:---:|---|
+|第一个参数|是| 参数简写 |
+|第二个参数|否| 参数全写 |
+|metavar|否| 在help帮助文档中显示的名字 |
+|nargs='*'|否| 表示要求至少填写一个参数 |
+|action|否| 大致的意思是对值进行加工, 让它附有特定含义, 具体例子[参考这里](https://docs.python.org/3/library/argparse.html#action) |
+|dest|否| 参数名别名 |
+|help|否| 当提供的参数值不符合要求时, 按`help`的值来报错 |
