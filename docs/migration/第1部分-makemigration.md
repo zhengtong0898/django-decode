@@ -10,6 +10,7 @@
 |migrate|执行迁移|
 |sqlmigrate|TODO: 待补充|
 |showmigrations|TODO:待补充|
+|squashmigrations|TODO:待补充|
 
 &nbsp;  
 # 生成指令文件
