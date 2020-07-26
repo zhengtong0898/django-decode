@@ -32,6 +32,7 @@
 |[Migration](Migration.md)|指令容器, 用于描述当前对象与其他对象的依赖关系和操作指令集合(`dependencies`/`operations`) |
 |[MigrationLoader](MigrationLoader.md)|Model源码文件解析 / 版本历史版本一致性 / 检查冲突|
 |[MigrationGraph](MigrationGraph.md)|Model源码文件解析 / 版本历史版本一致性 / 检查冲突|
+|[MigrationRecorder](MigrationRecorder.md)|从数据库中获取某个app历史提交(`applied`)记录<br />`applied`指的是那些执行了`migrate`的操作, `Django`每执行完一个同步之后都会记录该文件名到数据库, 用于历史一致性做比较.|
 |InteractiveMigrationQuestioner|以交互形式让用户选择处理方案|
 |NonInteractiveMigrationQuestioner|预定义参数形式省略交互选择|
 |MigrationWriter|读取`Model`源码文件, 写入到指令文件|
