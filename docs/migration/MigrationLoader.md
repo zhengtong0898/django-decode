@@ -169,15 +169,29 @@ class MigrationLoader:
                 # This replacing migration cannot be used because it is partially applied.
                 # Remove it from the graph and remap dependencies to it (#25945).
                 self.graph.remove_replacement_node(key, migration.replaces)
+
+        #################################################################################
+        # self.graph 是一个 `directed graph` 有向图结构对象.
+        # 这里的 validate_consistency 的职责是, 找出那些没找到关联的对象,
+        # 这些对象在做self.add_dependency的时候发现找不到任何关联, 
+        # 然后把这些对象 `wrapper` 成一个 `DummyNode`, 表示是一个 `无向节点`,
+        # validate_consistency的职责是, 确保当前 `有向图` 结构中不含有 `DummyNode`, 
+        # 若含有 `DummyNode`, 就抛出 `NodeNotFoundError` 异常. 
+        #
         # Ensure the graph is consistent.
+        #################################################################################
         try:
             self.graph.validate_consistency()
         except NodeNotFoundError as exc:
+            #############################################################################
+            # TODO: 待处理
+            #
             # Check if the missing node could have been replaced by any squash
             # migration but wasn't because the squash migration was partially
             # applied before. In that case raise a more understandable exception
             # (#23556).
             # Get reverse replacements.
+            #############################################################################
             reverse_replacements = {}
             for key, migration in self.replacements.items():
                 for replaced in migration.replaces:
@@ -198,5 +212,12 @@ class MigrationLoader:
                         exc.node
                     ) from exc
             raise exc
+    
+        #################################################################################
+        # 采用 Guido van Rossum 提供的 `Detecting Cycles in a Directed Graph` 算法,
+        # 检查确保当前 `有向图` 结构中的所有节点, 不存在环形(相互依赖)的情况.
+        #
+        # 算法链接: https://neopythonic.blogspot.com/2009/01/detecting-cycles-in-directed-graph.html
+        #################################################################################
         self.graph.ensure_not_cyclic()
 ```
