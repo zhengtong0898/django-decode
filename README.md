@@ -1,5 +1,5 @@
 # django-decode
-django源码分析, 版本`3.0.8`, 系统`win10 64位`, IDE`pycharm community 2019`, 语言`python3.8`
+`Django-3.0.8`源码分析, 系统`win10 64位`, IDE`pycharm community 2019`, 语言`python3.8`
 
 |模块|源码|
 |:---:|:---:|
