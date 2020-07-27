@@ -21,8 +21,8 @@
 &nbsp;  
 # 流程
 一个简单、常规的流程操作如下:   
-1. [定义`model`](fragments/0001_polls_initial_models.py)
-2. [生成指令文件](fragments/0001_polls_initial.py): `python manage.py makemigration polls`
+1. [定义`model`](fragments/polls/models.py)
+2. [生成指令文件](fragments/polls/migrations/0001_initial.py): `python manage.py makemigration polls`
 3. 同步到数据库: `python manage.py migrate polls`
 
 

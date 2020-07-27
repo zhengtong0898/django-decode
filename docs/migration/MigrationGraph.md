@@ -124,6 +124,10 @@ class MigrationGraph:
 ```python
 class MigrationGraph:
     
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+
     #####################################################################################
     # 参数类型注解:
     # key: typing.Tuple(str, str)  # key值举例: ('polls', '0001_initial') 
@@ -151,6 +155,7 @@ class MigrationGraph:
         self.nodes[key] = migration
 ```
 ### 添加一个节点
+下面的代码有一个假设的前提条件, `polls`这个`app`必须要存在, `polls/migrations`这个目录必须要存在, `polls/migrations/0001_initial.py`这个文件必须要存在. 这几个文件如何生成[请参考这里](https://docs.djangoproject.com/en/3.0/intro/tutorial02/#creating-models).
 ```python
 import importlib
 from django.db.migrations.graph import MigrationGraph
@@ -165,4 +170,96 @@ migration = migration_module.Migration(module_name, app_label)  # 等同于: pol
 key = (app_label, module_name)
 digraph = MigrationGraph()   
 digraph.add_node(key=key, migration=migration)                  # 添加一个migration到digraph 
+```
+
+&nbsp;
+# 添加依赖
+历史指令样例文件: [0001_initial.py](fragments/polls/migrations/0001_initial.py)   
+历史指令样例文件: [0002_menu.py](fragments/polls/migrations/0002_menu.py)   
+历史指令样例文件: [0003_group.py](fragments/polls/migrations/0003_group.py)
+```python
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+
+    #####################################################################################
+    # 参数类型注解:
+    # key：          typing.Dict(typing.Tuple(str, str)
+    # origin:        Migration
+    # error_message: str
+    #
+    # `DummyNode` 的解释看上面.
+    #
+    # 将 `DummyNode` 加入到 `self.node_map` 中的目的是用于标识 `该node` 是脏节点(假节点).
+    # 这意味着后续代码需要自行通过isinstance来筛选出干净的节点或者脏的节点. 
+    #
+    # 置空 self.nodes[key] = None 是为了确保结构的干净. 
+    #####################################################################################
+    def add_dummy_node(self, key, origin, error_message):
+        node = DummyNode(key, origin, error_message)
+        self.node_map[key] = node
+        self.nodes[key] = None
+
+    #################################################################################
+    # 如果 self.graph 中存在 DummyNode , 那么就抛出异常(报错).
+    #################################################################################
+    def validate_consistency(self):
+        """Ensure there are no dummy nodes remaining in the graph."""
+        [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+
+    #####################################################################################
+    # 参数类型注解:
+    # migration:         Migration
+    # child:             typing.Dict(typing.Tuple(str, str)  # 被依赖的Node的key
+    # parent:            typing.Dict(typing.Tuple(str, str)  # 依赖的Node的key
+    # skip_validation:   bool       # True: 函数内完成验证, False: 函数外由开发自行触发验证.
+    #####################################################################################
+    def add_dependency(self, migration, child, parent, skip_validation=False):
+        #################################################################################
+        # polls.migrations.0001_initial.Migration 作为顶点节点, 不能在这里设定关联关系.
+        # 顶点节点指的是, 它的 dependencies = [] 是空的值, 这样会导致错将 0001_initial 
+        # 纳入到 DummyNode 范畴.   
+        # 
+        # 因为 这里的代码 要求建立关系的节点必须要定义 dependencies, 
+        # 而定义 dependencies 的目的有两个:
+        # 1. 用于标识版本号
+        # 2. 用于标注必须先有依赖对象的那些表, 才能有我当前的操作, 否则会出现错误.
+        # 
+        # child:  以 self.node_map 的 key 的形式 描述 当前(参数)migration 对象 
+        # parent: 以 self.node_map 的 key 的形式 描述 当前(参数)migration 对象的 dependencies 成员.
+        #
+        # if child not in self.nodes: 
+        # 如果当前的migration的key不存在与 self.nodes中, 则表示这个 key 是由问题的, 将其纳入到 DummyNode 范畴.
+        #
+        # if parent not in self.nodes:
+        # 如果当前的migrations.dependencies成员的key不存在与self.nodes中, 则表示这个 key 是由问题的, 将其纳入到 DummyNode 范畴.
+        #################################################################################
+        if child not in self.nodes:
+            error_message = (
+                "Migration %s dependencies reference nonexistent"
+                " child node %r" % (migration, child)
+            )
+            self.add_dummy_node(child, migration, error_message)
+        if parent not in self.nodes:
+            error_message = (
+                "Migration %s dependencies reference nonexistent"
+                " parent node %r" % (migration, parent)
+            )
+            self.add_dummy_node(parent, migration, error_message)
+        
+        #################################################################################
+        # self.node_map[child] 是当前 migration(参数) 的那个 Node 节点对象, 为当前 Node节点 添加依赖: self.node_map[parent]
+        #
+        # self.node_map[parent] 是依赖对象的Node节点对象, 为这个 Node 节点对象 添加被依赖对象: self.node_map[child]
+        #################################################################################
+        self.node_map[child].add_parent(self.node_map[parent])
+        self.node_map[parent].add_child(self.node_map[child])
+
+        #################################################################################
+        # 验证一致性
+        #################################################################################
+        if not skip_validation:
+            self.validate_consistency()
 ```
