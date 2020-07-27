@@ -69,12 +69,13 @@ class DummyNode(Node):
 
 &nbsp;  
 # MigrationGraph
+由于`MigrationGraph`这个类涉及到`图`结构, 加上这个类提供了很多方法, 所以整体感觉这个类很复杂, 给人一种吃不透的感觉, 所以这里要提供大量的场景去触发每个方法(掰开), 透过最终每个方法去了解它内部结构的运作机制(揉碎).   
 ```python
 class MigrationGraph:
 
     def __init__(self):
-        self.node_map = {}
-        self.nodes = {}
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
 
     def add_node(self, key, migration):                                        """ 省略代码细节, 仅关注代码结构 """
 
@@ -118,8 +119,38 @@ class MigrationGraph:
 
 ```
 
-# 添加一组Migration和校验一致性
-### 数据准备
+&nbsp;  
+# 添加节点
+```python
+class MigrationGraph:
+    
+    #####################################################################################
+    # 参数类型注解:
+    # key: typing.Tuple(str, str)  # key值举例: ('polls', '0001_initial') 
+    # migration: Migration         # 对象位置举例: polls.migrations.0001_initial.Migration
+    #####################################################################################
+    def add_node(self, key, migration):
+        #####################################################################################
+        # 如果 key 存在于 self.node_map 中, 就报错.
+        # 这句话的目的很明确, 就是让你在 `添加节点` 之前, 先自己判断和保证: 要添加的节点不存在.
+        #####################################################################################
+        assert key not in self.node_map
+    
+        #####################################################################################
+        # 创建一个Node对象, Node内部有两个链式结构, 分别是: self.parents 和 self.children
+        # 用于存储 依赖(parent) 和 被依赖(children) 的对象, 这些依赖关系的建立在后续的
+        # `add_dependency`会讲到. 
+        #####################################################################################
+        node = Node(key)
+    
+        #####################################################################################
+        # self.node_map 用于存放 key 和 Node 的映射, 节点的依赖关系都在这里操作.
+        # self.nodes 用于存放 key 和 Migration 的映射, 获取节点的对象基础信息都在这里操作.
+        #####################################################################################
+        self.node_map[key] = node
+        self.nodes[key] = migration
+```
+### 添加一个节点
 ```python
 import importlib
 from django.db.migrations.graph import MigrationGraph
