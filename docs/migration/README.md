@@ -1,5 +1,9 @@
 # 概述
-`Migration`是`Django`为`ORM`扩展出来的一套`Model To Schema`的同步方案, `Model`是python中的`Class`而`Schema`是数据库中的`table`的统称.     
+`Migration`是`Django`为`ORM`扩展出来的一套`Model To Schema`的同步方案, `Model`是python中的`Class`而`Schema`是数据库中的`table`的统称.  
+
+> 备注 
+>  
+> `Migration`这个主题非常庞大, 无法简单的线性穿越所有子级主题, 所以这里是按模块来进行拆解分析. 正确的阅读这个大主题的方式是: 根据 [使用场景](examples.md) 提供的案例来理解 `migration`， 想了解哪块就直接去看具体对象的分析即可。    
  
  &nbsp;  
 # 命令
