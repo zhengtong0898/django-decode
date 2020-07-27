@@ -51,11 +51,14 @@ class MigrationLoader:
 |---|:---:|---|
 |self.connection| 成员变量 | 默认值: None(表示`Load from file`); 非None通常是一个数据库连接(表示`Load from database`)  |
 |self.disk_migrations| 成员变量 | 加载`app`的所有历史已生成的`models`模块文件 |
-|self.applied_migrations| 成员变量 | 待补充 |
-|self.ignore_no_migrations| 成员变量 | 待补充 |
+|self.applied_migrations| 成员变量 | 已通过`migrate`同步到数据的指令文件对象, 这些都会被记录在数据库中, 用于历史一致性检查. |
+|self.unmigrated_apps| 成员变量 | 尝试通过模块路劲加载`app`, 如果加载无效则存放在这个变量内. |
+|self.migrated_apps| 成员变量 | 把所有`app.migrations`下的文件都视为历史指令文件(认为已同步到数据库了, 但是实际上可能还没有同步), <br />但是在`load_dist`阶段它存在的意义就是全部先加载进来, 后面处理依赖关系有其他环节负责. |
+|self.graph| 成员变量 | `directed graph`(有向图)结构对象, 用于存储历史指令文件集. |
+|self.ignore_no_migrations| 成员变量 | 忽略那些有问题的`migrations`, 出现问题时不需要报错, 直接跳过. |
 |**def** migrations_module| 方法 | 从`apps.app_configs`中找到具体`app`, 返回字符串类型的值`app_name.migrations`(例如: `polls.migrations`) |
-|**def** load_disk| 方法 | 从系统文件中加载 历史指令文件集, 含: <br />`Django`自带的admin, auth, session, message, contenttypes, staticfiles) |
-|**def** build_graph| 方法 ||
+|**def** load_disk| 方法 | 根据`settings.INSTALL_APPS`配置, 从系统文件中加载 历史指令文件集, 含: <br />`Django`自带的admin, auth, session, message, contenttypes, staticfiles) |
+|**def** build_graph| 方法 | 初始化 `self.graph`(图结构), 图结构可用来 构建对象依赖关系, 解决递归依赖关系检查, 一致性检查等能力等. |
 |**def** get_migration| 方法 ||
 |**def** get_migration_by_prefix| 方法 ||
 |**def** check_key| 方法 ||
@@ -66,7 +69,7 @@ class MigrationLoader:
 |**def** project_state| 方法 ||
 
 &nbsp;
-# 初始化
+# 初始化`有向图`结构: self.build_graph 
 从`MigrationLoader.__init__`方法中可以看得出来, `self.build_graph`是用于初始化的方法(也是理解`MigrationLoader`的入口).   
 ```python
 class MigrationLoader:
@@ -220,4 +223,177 @@ class MigrationLoader:
         # 算法链接: https://neopythonic.blogspot.com/2009/01/detecting-cycles-in-directed-graph.html
         #################################################################################
         self.graph.ensure_not_cyclic()
+```
+
+
+&nbsp;  
+# 从系统文件中加载历史指令文件集
+那些已经执行过`makemigration`的`app`, 都会在`app.migrations`目录下生成一些历史指令文件(文件名大致是这样的: `0001_initial.py`), 
+这些指令文件中存放着一个`Migration`的类对象, 关于更详细的`Migration`解读[请参考这里](Migration.md)
+```python
+#################################################################################
+# `Django` 将 `migrations` 作为 `app` 默认的子目录, 用于存放历史指令文件. 
+#################################################################################
+MIGRATIONS_MODULE_NAME = 'migrations'
+
+
+class MigrationLoader:
+
+    @classmethod
+    def migrations_module(cls, app_label):
+        #################################################################################
+        # `Django`还提供了 `settings.MIGRATION_MODULES` 配置, 让用户自己配置历史指令文件
+        # 的目录在什么地方, 但是这个配置必须是能够被当作模块加载的模块格式.
+        # 例如: polls.migrations
+        # 
+        # 返回值类型: (str, bool)
+        # 返回值: ('polls.migrations', False) 或 ('polls.xxx', True)
+        # 
+        # 返回值的第二个成员是 `Bool` 对象, 
+        # 当它是 `False` 时表示采用的时`Django`默认的模块路径.
+        # 当它时`True`时则表示采用的是`settings.MIGRATION_MODULES`提供的模块路径
+        #################################################################################
+        if app_label in settings.MIGRATION_MODULES:
+            return settings.MIGRATION_MODULES[app_label], True
+        else:
+            app_package_name = apps.get_app_config(app_label).name
+            return '%s.%s' % (app_package_name, MIGRATIONS_MODULE_NAME), False
+
+    def load_disk(self):
+        #################################################################################
+        # 每次执行load_dist都要变量重置, 数据重新加载.
+        # 这意味着这个函数必须保证加载到的数据都是最新, 最全的.
+        # 
+        # 重新加载的要点体现在下面这几行代码中:
+        # 1.   清空: `self.disk_migrations`, `self.unmigrated_apps`, `elf.migrated_apps`
+        # 2. 再写入: `self.disk_migrations[app_config.label, migration_name]` = Migration
+        #            `self.unmigrated_apps.add`
+        #            `self.migrated_apps.add`
+        # 3. reload: reload(module)    
+        #################################################################################
+        self.disk_migrations = {}
+        self.unmigrated_apps = set()
+        self.migrated_apps = set()
+
+        #################################################################################
+        # apps: 是`Django`在启动阶段预加载的一个对象, 它根据 `settings.INSTALL_APPS` 来:
+        #       1. 读取每个 `app` 模块目录下的 `models.py` 文件并将该文件内的
+        #          对象全部存到 apps.app_configs[app].models 中.
+        #       2. 将 `app` 的路径存到 apps.app_configs[app].path 中.
+        #       3. 将 `app` 的名称存到 apps.app_configs[app].label 中.
+        #################################################################################
+        for app_config in apps.get_app_configs():
+            #################################################################################
+            # 获取`app`的 历史指令文件目录 的模块路径
+            # module_name: 'polls.migrations'
+            # explicit: True
+            # 变量含义的详细解释, 请看上面的 `migrations_module` 方法的解析
+            #
+            # 如果 模块路径 不存在, 则表示该 `app`的`migrate`行为将是无效的, 
+            # 把它纳入到 `self.unmigrated_apps` 中, 让后续的代码可以通过判断来避开对它的操作.
+            #################################################################################
+            module_name, explicit = self.migrations_module(app_config.label)
+            if module_name is None:
+                self.unmigrated_apps.add(app_config.label)
+                continue
+    
+            #################################################################################
+            # was_loaded 变量定义再这里的目的是, 用于记录 `module_name` 是不是在加载之前就已经
+            # 存在于 `sys.modules` 中了. 
+            # 
+            # 这个变量将用来判断: 
+            # 如果之前就已经有了这个 `module_name`, 那么就应该重新加载: reload(module).
+            # 如果之前没有这个`module_name`, 那么就表示它是最新的, 不需要重新加载.
+            #################################################################################
+            was_loaded = module_name in sys.modules
+            try:
+                module = import_module(module_name)
+            except ImportError as e:
+                #################################################################################
+                # (explicit and self.ignore_no_migrations) == True
+                # explicit == True 表示: 用户自定义 `settings.MIGRATION_MODULES`
+                # self.ignore_no_migrations == True 表示: 出现错误不要报错.
+                # 这里面其实是2个条件都必须满足才会忽略报错.
+                # 
+                # (not explicit and "No module named" in str(e) and MIGRATIONS_MODULE_NAME in str(e))
+                # not explicit == (explicit == False) 表示: 采用`Django`默认的`app.migrations`目录模块路径
+                # "No module named" in str(e) 表示: 错误信息里面含有 "No module named"
+                # MIGRATIONS_MODULE_NAME in str(e) 表示: 错误信息里面含有 "app.migrations"
+                # 这里面其实是3个条件都必须满足才会忽略报错.
+                #
+                # 满足任意一组条件, 都会忽略报错, 并且将 `问题app` 添加到 `self.unmigrated_apps` 中,
+                # 后续代码在遍历所有 `app.migrations` 时, 都需要通过判断来避开`self.unmigrated_apps`
+                # 中的`app`, 避免产生不可预期的错误.
+                #
+                # I hate doing this, but I don't want to squash other import errors.
+                # Might be better to try a directory check directly.
+                #################################################################################
+                if ((explicit and self.ignore_no_migrations) or (
+                        not explicit and "No module named" in str(e) and MIGRATIONS_MODULE_NAME in str(e))):
+                    self.unmigrated_apps.add(app_config.label)
+                    continue
+                raise
+            else:
+                # Empty directories are namespaces.
+                # getattr() needed on PY36 and older (replace w/attribute access).
+                if getattr(module, '__file__', None) is None:
+                    self.unmigrated_apps.add(app_config.label)
+                    continue
+                # Module is not a package (e.g. migrations.py).
+                if not hasattr(module, '__path__'):
+                    self.unmigrated_apps.add(app_config.label)
+                    continue
+                # Force a reload if it's already loaded (tests need this)
+                if was_loaded:
+                    reload(module)
+
+            #################################################################################
+            # 将无报错的`app`名字, 添加到 self.migrated_apps 中, 表示这个 `app` 是合规的 `app`.
+            #################################################################################
+            self.migrated_apps.add(app_config.label)
+        
+            #################################################################################
+            # `migration_names` 是使用 `iter_modules` 模块下的子模块(通常是.py后缀的文件当作子模块) 
+            # 子模块: `0001_initial.py` to `0001_initial`
+            #
+            # TODO: '_~'是什么?
+            # 既然过滤代码能出现在这里, 即表示这种文件名有可能存在, 
+            # 已知在 linux 下编辑一个文件, 会产生带有 .swp后缀的临时隐藏文件, 所以排除是编辑中的文件的情况.
+            #################################################################################
+            migration_names = {
+                name for _, name, is_pkg in pkgutil.iter_modules(module.__path__)
+                if not is_pkg and name[0] not in '_~'
+            }
+
+            #################################################################################
+            # module_name: 'polls.migrations'
+            # migration_name: '0001_initial'
+            # migration_path: 'polls.migrations.0001_initial'
+            # 这是在面向`import_module`编程, 拼接出`import_module`能合法加载的字符串模块路径.
+            #
+            # 尝试去加载子模块, 并且检查子模块中是否存在`Migration`这个对象.
+            # 如果不存在就报错.
+            # 如果存在就是将其实例化, 然后添加`self.dis_migrations`中暂存起来, 为后续代码的操作提供前提条件.  
+            #################################################################################
+            # Load migrations
+            for migration_name in migration_names:
+                migration_path = '%s.%s' % (module_name, migration_name)
+                try:
+                    migration_module = import_module(migration_path)
+                except ImportError as e:
+                    if 'bad magic number' in str(e):
+                        raise ImportError(
+                            "Couldn't import %r as it appears to be a stale "
+                            ".pyc file." % migration_path
+                        ) from e
+                    else:
+                        raise
+                if not hasattr(migration_module, "Migration"):
+                    raise BadMigrationError(
+                        "Migration %s in app %s has no Migration class" % (migration_name, app_config.label)
+                    )
+                self.disk_migrations[app_config.label, migration_name] = migration_module.Migration(
+                    migration_name,
+                    app_config.label,
+                )
 ```
