@@ -144,8 +144,8 @@ class MigrationLoader:
             self.add_external_dependencies(key, migration)
 
         #################################################################################
-        # self.replacements从磁盘的历史指令文件中搜罗出所有的含有replaces成员便改良的Migration对象,
-        # 而self.applied_migrations从数据库中搜索出所有历史提交记录.
+        # self.replacements从磁盘的历史指令文件中搜罗出所有的含有replaces成员变量的Migration对象,
+        # 而self.applied_migrations是从数据库中搜索出所有历史提交记录.
         #
         # applied_statuses = [(target in self.applied_migrations) for target in migration.replaces]
         # 如果self.replacements的某个(遍历)Migration存在于self.applied_migrations中则表示它们已经同步过了.
@@ -157,6 +157,15 @@ class MigrationLoader:
         #
         # all(applied_statuses): all([]) 和 all([True, ...]) 都是 True, 这种状态的数据表示它是干净的，经过比较
         # 是一致的, 有效的图结构数据节点; 所以要把replaces里面的对象从self.graph的节点中移除掉, 确保不存在冗余的情况.
+        #
+        # 当 (not any(applied_statuses)) == True 时, 它实际的值是这样的: (not any([False, False, False]))
+        # 这意味着 这些migration.replaces 都还没有同步到数据库, 所以这些数据还不能存放到有效节点中, 所以要移除掉.
+        #
+        # all(applied_statuses) or (not any(applied_statuses)) 组合在一起做条件, 下面三种任意一个都会进入True条件块:
+        # []                            数据库中没历史同步数据: 即: 无数据状态.
+        # [True, True, True, ...]       数据库中有历史同步数据: 这些migtraion.replaces都已经同步到数据库了.
+        # [False, False, False, ...]    数据库中有历史同步数据: 这些migration.replaces都还没有同步到数据库中.
+        # 如果数据库的状态是一致的, 那么就可以执行替换迁移.
         #
         # Carry out replacements where possible.
         #################################################################################
@@ -174,8 +183,12 @@ class MigrationLoader:
             if all(applied_statuses) or (not any(applied_statuses)):
                 self.graph.remove_replaced_nodes(key, migration.replaces)
             else:
+                #########################################################################
+                # 如果数据库的状态不是一致的, 那么就取消替换.
+                #
                 # This replacing migration cannot be used because it is partially applied.
                 # Remove it from the graph and remap dependencies to it (#25945).
+                #########################################################################
                 self.graph.remove_replacement_node(key, migration.replaces)
 
         #################################################################################

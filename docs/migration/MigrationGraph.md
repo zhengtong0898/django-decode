@@ -412,3 +412,95 @@ class MigrationGraph:
                         replacement_node.add_parent(parent)
                         parent.add_child(replacement_node)
 ```
+
+&nbsp;  
+# 移除替换节点
+```python
+
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+    
+    #####################################################################################
+    # 参数类型注解:
+    # replacement:          typing.Tuple(str, str)
+    # replaced:             typing.List(typing.Tuple(str, str), ...) 
+    #
+    # 原文介绍:
+    # The inverse operation to `remove_replaced_nodes`. Almost. Remove the
+    # replacement node `replacement` and remap its child nodes to `replaced`
+    # - the list of nodes it would have replaced. Don't remap its parent
+    # nodes as they are expected to be correct already.
+    #
+    # 中文介绍:
+    # 与 self.remove_replaced_nodes 相反, 这个函数是移除 替换(replacement) 节点
+    #####################################################################################
+    def remove_replacement_node(self, replacement, replaced):
+        #################################################################################
+        # 从 self.nodes 中移除 replacement 的那个 migration
+        # 从 self.node_map 中移除 replacement 的那个 node
+        #################################################################################
+        self.nodes.pop(replacement, None)
+        try:
+            replacement_node = self.node_map.pop(replacement)
+        except KeyError as err:
+            raise NodeNotFoundError(
+                "Unable to remove replacement node %r. It was either never added"
+                " to the migration graph, or has been removed already." % (replacement,),
+                replacement
+            ) from err
+
+        #################################################################################
+        # replaced_nodes
+        # 从 self.node_map 中获取那些有效的replaced_node(replaced的成员(无效的忽略掉)), 存入当前变量中.
+        # 
+        # replaced_nodes_parents
+        # 将所有的 replaced_node 的 parents 并入到当前变量中.
+        #
+        # replaced_nodes_parents |= replaced_node.parents
+        # 这个 |= 是一个高级写法, 它只支持 set 和 dict 基础类型的操作, 等同于:
+        # [replaced_nodes_parents.add(i) for i in replaced_node.parents]
+        # 具体介绍参考这里: https://stackoverflow.com/questions/3929278/what-does-ior-do-in-python
+        #################################################################################
+        replaced_nodes = set()
+        replaced_nodes_parents = set()
+        for key in replaced:
+            replaced_node = self.node_map.get(key)
+            if replaced_node:
+                replaced_nodes.add(replaced_node)
+                replaced_nodes_parents |= replaced_node.parents
+
+        #################################################################################
+        # replaced_nodes -= replaced_nodes_parents
+        # 这条命令的含义是, 保护那些存在相互依赖关系的对象; 
+        #
+        # 上面只是 从 self.nodes 和 self.node_map 中移除 replacement, 而这里就要开始从 
+        # replacement_node 的 children 中移除对 replacement 的依赖: child.parents.remove(replacement_node)
+        # 在接着就是为这些 child 的 parents 衔接上 replaced_node.
+        # replaced_node.add_child(child)
+        # child.add_parent(replaced_node)
+        # 这两行代码是彼此都打上依赖和被依赖关系.
+        #
+        # 关键词: remap
+        #################################################################################
+        replaced_nodes -= replaced_nodes_parents
+        for child in replacement_node.children:
+            child.parents.remove(replacement_node)
+            for replaced_node in replaced_nodes:
+                replaced_node.add_child(child)
+                child.add_parent(replaced_node)
+
+        #################################################################################
+        # 为 replacement_node 的 parents 清除被依赖关系.
+        #
+        # 下面的注释说:
+        # 不需要为 parents remap依赖关系, 因为他们假设 replaced_nodes 已经有正确的祖先(parents)了.
+        # TODO: 感觉这里还不是很理解, 待处理.
+        #################################################################################
+        for parent in replacement_node.parents:
+            parent.children.remove(replacement_node)
+            # NOTE: There is no need to remap parent dependencies as we can
+            # assume the replaced nodes already have the correct ancestry.
+```
