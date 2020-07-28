@@ -263,3 +263,51 @@ class MigrationGraph:
         if not skip_validation:
             self.validate_consistency()
 ```
+
+
+&nbsp;  
+# RootNode(顶点)
+```python
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+
+    #################################################################################
+    # 参数类型注解:
+    # app: str                  # 例如: 'admin' 或 'auth' 或 'polls' 等
+    #
+    # 参数作用:
+    # 由于 self.nodes 是 key, value 结构, 而 key 本身的结构是:  typing.Tuple(str, str),
+    # 因此 一个 self.nodes 对象, 可以存放多个 app 的数据而不会发生覆盖或冲突的情况.
+    # 如果参数 app 是None, 那么函数将会返回所有 app 的 RootNode.
+    # 如果参数 app 是一个具体的 app名称(例如: polls), 那么函数就会返回 polls 的 RootNode.
+    #################################################################################
+    def root_nodes(self, app=None):
+        roots = set()
+        
+        #############################################################################
+        # 类型注解:
+        # node:                           typing.Tuple(str, str)
+        # self.nodes[node]:               Migration
+        # self.node_map[node]             Node
+        # self.node_map[node].parents     typing.List(typing.Tuple(str, str), ...)
+        # 备注: 这里就不应该取名为 node, 而是 node_key 更适合.
+        # 
+        # 顶点的那个node的parents肯定是空的, 而python得 all([]) 返回得是 True, 所以当 node 是一个顶点时: 
+        # all(key[0] != node[0] for key in self.node_map[node].parents) == all([]) == True
+        # 
+        # key:                           Node
+        # node:                          Node
+        # key[0] == node[0] == node.key[0] == 'admin' 或 'auth' 或 'polls'
+        # 既然 顶点的parents是空就能满足场景条件, 这里的条件为什么还要写 key[0] != node[0] ?
+        # 我的理解是顶点有两种情况: 
+        # 一种就是常规顶点, 即: parents为空
+        # 一种是外部依赖, 即: 顶点也有parents, 但是这个parents 是其他app.
+        #############################################################################
+        for node in self.nodes:
+            if all(key[0] != node[0] for key in self.node_map[node].parents) and (not app or app == node[0]):
+                roots.add(node)
+        return sorted(roots)
+```
