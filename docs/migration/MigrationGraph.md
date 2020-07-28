@@ -311,3 +311,28 @@ class MigrationGraph:
                 roots.add(node)
         return sorted(roots)
 ```
+
+
+&nbsp;  
+# LeafNode(末梢叶节点)
+```python
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+
+    #############################################################################
+    # 末梢叶节点的children肯定是空的, python得 all([]) 返回得是 True, 所以当 node 是一个末梢叶节点时:
+    #  all(key[0] != node[0] for key in self.node_map[node].children) == all([]) == True
+    # 
+    # 除了这里描述有差别, 其余的都与上面个的RootNode(顶点)一致.
+    #############################################################################
+    def leaf_nodes(self, app=None):
+        leaves = set()
+        for node in self.nodes:
+            if all(key[0] != node[0] for key in self.node_map[node].children) and (not app or app == node[0]):
+                leaves.add(node)
+        return sorted(leaves)
+```
+
