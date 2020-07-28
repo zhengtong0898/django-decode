@@ -61,9 +61,9 @@ class MigrationLoader:
 |**def** build_graph| 方法 | 初始化 `self.graph`(图结构), 图结构可用来 构建对象依赖关系, 解决递归依赖关系检查, 一致性检查等能力等. |
 |**def** get_migration| 方法 ||
 |**def** get_migration_by_prefix| 方法 ||
-|**def** check_key| 方法 ||
-|**def** add_internal_dependencies| 方法 ||
-|**def** add_external_dependencies| 方法 ||
+|**def** check_key| 方法 | 检查 key 中, 是否含有特殊定义('__first__' 或 '__latest__') |
+|**def** add_internal_dependencies| 方法 | 为那些与依赖对象是相同的app的对象绑定依赖关系 |
+|**def** add_external_dependencies| 方法 | 为那些不是相同 app 内的依赖, 绑定关系. |
 |**def** check_consistent_history| 方法 ||
 |**def** detect_conflicts| 方法 |  |
 |**def** project_state| 方法 ||
