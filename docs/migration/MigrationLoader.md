@@ -74,7 +74,7 @@ class MigrationLoader:
 
 这里列出可供参考的外部分析.
 1. 添加节点: [self.graph.add_node(key, migration)](MigrationGraph.md#添加节点)
-2. 添加依赖: [self.add_internal_dependencies(key, migration)]()
+2. 添加依赖: [self.add_internal_dependencies(key, migration)](MigrationLoader.md#添加内部依赖)
 
 ```python
 class MigrationLoader:
@@ -236,9 +236,9 @@ class MigrationLoader:
 那些已经执行过`makemigration`的`app`, 都会在`app.migrations`目录下生成一些历史指令文件(文件名大致是这样的: `0001_initial.py`), 
 这些指令文件中存放着一个`Migration`的类对象, 关于更详细的`Migration`解读[请参考这里](Migration.md)
 ```python
-#################################################################################
+#########################################################################################
 # `Django` 将 `migrations` 作为 `app` 默认的子目录, 用于存放历史指令文件. 
-#################################################################################
+#########################################################################################
 MIGRATIONS_MODULE_NAME = 'migrations'
 
 
@@ -288,7 +288,7 @@ class MigrationLoader:
         #       3. 将 `app` 的名称存到 apps.app_configs[app].label 中.
         #################################################################################
         for app_config in apps.get_app_configs():
-            #################################################################################
+            #############################################################################
             # 获取`app`的 历史指令文件目录 的模块路径
             # module_name: 'polls.migrations'
             # explicit: True
@@ -296,25 +296,25 @@ class MigrationLoader:
             #
             # 如果 模块路径 不存在, 则表示该 `app`的`migrate`行为将是无效的, 
             # 把它纳入到 `self.unmigrated_apps` 中, 让后续的代码可以通过判断来避开对它的操作.
-            #################################################################################
+            #############################################################################
             module_name, explicit = self.migrations_module(app_config.label)
             if module_name is None:
                 self.unmigrated_apps.add(app_config.label)
                 continue
     
-            #################################################################################
+            #############################################################################
             # was_loaded 变量定义再这里的目的是, 用于记录 `module_name` 是不是在加载之前就已经
             # 存在于 `sys.modules` 中了. 
             # 
             # 这个变量将用来判断: 
             # 如果之前就已经有了这个 `module_name`, 那么就应该重新加载: reload(module).
             # 如果之前没有这个`module_name`, 那么就表示它是最新的, 不需要重新加载.
-            #################################################################################
+            #############################################################################
             was_loaded = module_name in sys.modules
             try:
                 module = import_module(module_name)
             except ImportError as e:
-                #################################################################################
+                #########################################################################
                 # (explicit and self.ignore_no_migrations) == True
                 # explicit == True 表示: 用户自定义 `settings.MIGRATION_MODULES`
                 # self.ignore_no_migrations == True 表示: 出现错误不要报错.
@@ -332,7 +332,7 @@ class MigrationLoader:
                 #
                 # I hate doing this, but I don't want to squash other import errors.
                 # Might be better to try a directory check directly.
-                #################################################################################
+                #########################################################################
                 if ((explicit and self.ignore_no_migrations) or (
                         not explicit and "No module named" in str(e) and MIGRATIONS_MODULE_NAME in str(e))):
                     self.unmigrated_apps.add(app_config.label)
@@ -352,25 +352,25 @@ class MigrationLoader:
                 if was_loaded:
                     reload(module)
 
-            #################################################################################
+            #############################################################################
             # 将无报错的`app`名字, 添加到 self.migrated_apps 中, 表示这个 `app` 是合规的 `app`.
-            #################################################################################
+            #############################################################################
             self.migrated_apps.add(app_config.label)
         
-            #################################################################################
+            #############################################################################
             # `migration_names` 是使用 `iter_modules` 模块下的子模块(通常是.py后缀的文件当作子模块) 
             # 子模块: `0001_initial.py` to `0001_initial`
             #
             # TODO: '_~'是什么?
             # 既然过滤代码能出现在这里, 即表示这种文件名有可能存在, 
             # 已知在 linux 下编辑一个文件, 会产生带有 .swp后缀的临时隐藏文件, 所以排除是编辑中的文件的情况.
-            #################################################################################
+            #############################################################################
             migration_names = {
                 name for _, name, is_pkg in pkgutil.iter_modules(module.__path__)
                 if not is_pkg and name[0] not in '_~'
             }
 
-            #################################################################################
+            #############################################################################
             # module_name: 'polls.migrations'
             # migration_name: '0001_initial'
             # migration_path: 'polls.migrations.0001_initial'
@@ -379,7 +379,7 @@ class MigrationLoader:
             # 尝试去加载子模块, 并且检查子模块中是否存在`Migration`这个对象.
             # 如果不存在就报错.
             # 如果存在就是将其实例化, 然后添加`self.dis_migrations`中暂存起来, 为后续代码的操作提供前提条件.  
-            #################################################################################
+            #############################################################################
             # Load migrations
             for migration_name in migration_names:
                 migration_path = '%s.%s' % (module_name, migration_name)
@@ -411,7 +411,7 @@ class MigrationLoader:
 
 class MigrationLoader:
 
-    #################################################################################
+    #####################################################################################
     # 参数类型注解:
     # key：      typing.Dict(typing.Tuple(str, str)    # 例如: ('polls', '0002_menu')
     # migration: Migration
@@ -422,10 +422,109 @@ class MigrationLoader:
     # parent: 指的是当前操作对象依赖的对象的key
     # parent[0] == key[0] 这两个key的第一个元素, 必须一致, 否则就不是一个有效的依赖.
     # parent[1] != '__first__' 依赖的key的第二个元素, 不能是'__first__'.
-    #################################################################################
+    #####################################################################################
     def add_internal_dependencies(self, key, migration):
         for parent in migration.dependencies:
             # Ignore __first__ references to the same app.
             if parent[0] == key[0] and parent[1] != '__first__':
                 self.graph.add_dependency(migration, key, parent, skip_validation=True)
+```
+
+
+&nbsp;   
+# 添加外部依赖
+```python
+
+class MigrationLoader:
+    #####################################################################################
+    # 职责:
+    # 用于处理 migration.dependencies 中的特殊定义('__first__' 和 '__latest__' 声明),
+    # 当 dependencies 中含有'__first__'时, 返回 self.graph 中 `顶点` 的那个节点.
+    # 当 dependencies 中含有'__latest__'时, 返回 self.graph 中 `终点` 的那个节点.
+    #
+    # 参数类型注解:
+    # key:         typing.Tuple(str, str)      # 例如: ('polls', '0002_menu')
+    # current_app: str                         # 例如: 'polls'
+    #
+    # (key[1] != "__first__" and key[1] != "__latest__"): 
+    # key[1]中 不含有 '__first__', 也不含有 '__latest__': 表示key是有效的, 返回这个key.
+    #
+    # (key[1] != "__first__" and key[1] != "__latest__") or key in self.graph
+    # key[1]中 含有 '__first__' 或 '__latest__', 并且 key 已经被缓存到self.graph中, 表示key是有效的.
+    #
+    # 当key不符合 `if (key[1] != "__first__" and key[1] != "__latest__") or key in self.graph:` 条件时, 开始执行它的职责工作.
+    #####################################################################################
+    def check_key(self, key, current_app):
+        if (key[1] != "__first__" and key[1] != "__latest__") or key in self.graph:
+            return key
+        # Special-case __first__, which means "the first migration" for
+        # migrated apps, and is ignored for unmigrated apps. It allows
+        # makemigrations to declare dependencies on apps before they even have
+        # migrations.
+        if key[0] == current_app:
+            # Ignore __first__ references to the same app (#22325)
+            return
+        if key[0] in self.unmigrated_apps:
+            # This app isn't migrated, but something depends on it.
+            # The models will get auto-added into the state, though
+            # so we're fine.
+            return
+        if key[0] in self.migrated_apps:
+            try:
+                if key[1] == "__first__":
+                    return self.graph.root_nodes(key[0])[0]
+                else:  # "__latest__"
+                    return self.graph.leaf_nodes(key[0])[0]
+            except IndexError:
+                if self.ignore_no_migrations:
+                    return None
+                else:
+                    raise ValueError("Dependency on app with no migrations: %s" % key[0])
+        raise ValueError("Dependency on unknown app: %s" % key[0])
+
+
+    #####################################################################################
+    # 职责:
+    # 为那些不是相同 app 内的依赖, 绑定关系.
+    # 例如: 在 django.contrib.admin.migrations.0001_initial.Migration.dependencies 中,
+    #       声明了依赖对象是 ('contenttypes', '__first__').
+    #####################################################################################
+    def add_external_dependencies(self, key, migration):
+        for parent in migration.dependencies:
+            #############################################################################
+            # 两个 key 都相同的话, 表示都是在同一个app内, 所以不需要再做关联了.
+            # 
+            # Skip internal dependencies
+            #############################################################################
+            if key[0] == parent[0]:
+                continue
+
+            #############################################################################
+            # 代码能进入到这里, 说明 key 和 parent 的依赖关系不是在同一个 app 内.
+            #
+            # parent 是依赖对象的key.  
+            # 
+            # check_key:
+            # 如果 parent 含有'__first__'的话, 返回 self.graph[app] 中 `顶点` 节点的key, 表示有效可以添加外部依赖.
+            # 如果 parent 含有'__latest__'的话, 返回 self.graph[app] 中 `终点` 节点的key, 表示有效可以天机外部依赖.
+            #############################################################################
+            parent = self.check_key(parent, key[0])
+            if parent is not None:
+                self.graph.add_dependency(migration, key, parent, skip_validation=True)
+
+        #################################################################################
+        # migration.run_before: 用于强调migration的顺序.
+        # 从顺序角度来看, migration.run_before 和 migration.dependencies 差别不大, 
+        # 都是先执行这两个之后, 再执行 migration.operations 的内容.
+        # 所以这里也为 run_before 添加外部依赖.
+        #
+        # TODO： run_before 缺少了 `if key[0] == parent[0]` 比较,
+        #        由于 self.graph.add_dependency 中并没有做任何校验, 而是采取覆盖形式赋值,
+        #        所以 run_before 既能处理内部依赖, 也能处理外部依赖.
+        #        因此 这段代码 放在这里没有必要性!
+        #################################################################################
+        for child in migration.run_before:
+            child = self.check_key(child, key[0])
+            if child is not None:
+                self.graph.add_dependency(migration, child, key, skip_validation=True)
 ```
