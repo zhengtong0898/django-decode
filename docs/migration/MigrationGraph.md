@@ -336,3 +336,79 @@ class MigrationGraph:
         return sorted(leaves)
 ```
 
+&nbsp;  
+# 移除节点
+```python
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+    
+    #####################################################################################
+    # 参数类型注解:
+    # replacement:          typing.Tuple(str, str)
+    # replaced:             typing.List(typing.Tuple(str, str), ...) 
+    #
+    # 原文介绍:
+    # Remove each of the `replaced` nodes (when they exist). Any
+    # dependencies that were referencing them are changed to reference the
+    # `replacement` node instead.
+    #
+    # 中文介绍:
+    # replaced 是一个列表, 存放着一组 key, 通过这些 key 可以从 self.node_map 中
+    # 找到对应的Node, 也可以从 self.nodes 中找到对应的 migration.
+    # 当前函数通过遍历 replaced 列表, 挨个使用这些key来从 self.node_map 
+    # 和 self.nodes 中移除掉对应的 NODE 和 migration.
+    # 除此之外, 还会为每个已移除的对象移除它自身的关联(parents)和被关联(children).
+    # 除此之外, 还会解决清除过程中使节点产生断层问题:
+    # 将 replacement 的 node 替换上去, 让那些原本依赖已移除掉的对象去依赖 replacement 的node对象.
+    #####################################################################################
+    def remove_replaced_nodes(self, replacement, replaced):
+        # Cast list of replaced keys to set to speed up lookup later.
+        replaced = set(replaced)
+        try:
+            replacement_node = self.node_map[replacement]
+        except KeyError as err:
+            raise NodeNotFoundError(
+                "Unable to find replacement node %r. It was either never added"
+                " to the migration graph, or has been removed." % (replacement,),
+                replacement
+            ) from err
+        for replaced_key in replaced:
+            #############################################################################
+            # replaced_key 是从 replaced 中遍历出来的一个 key, 现在要:
+            # 从 self.nodes 中移除 replaced_key 的这个 migration 对象,
+            # 从 self.node_map 中移除 replaced_key 的这个 node 对象,
+            #
+            # 如果 replaced_node 是一个 node 对象, 则标识移除成功, self.node_map 里面是有这个 node 对象的, 
+            # 所以可以继续清除这个 replaced_node 的关联和被关联, 甚至是替换掉依赖关系.
+            #
+            # replaced_node.children 是被依赖的对象, 意指还有下级节点; 从下级节点的parents中移除掉当前的 replaced_node.
+            # replaced_node.parents 是依赖的对象, 意指还有上级节点; 要从上级节点的children中移除当前的 replaced_node.
+            #
+            #############################################################################
+            self.nodes.pop(replaced_key, None)
+            replaced_node = self.node_map.pop(replaced_key, None)
+            if replaced_node:
+                for child in replaced_node.children:
+                    child.parents.remove(replaced_node)
+                    #####################################################################
+                    # if child.key not in replaced 的意思是: 
+                    # child的parents被抹掉了, 它可能变成了一个无向节点(出现了断层现象),
+                    # 所以这里要把 replacement_node 补充进来(衔接断层).
+                    #
+                    # We don't want to create dependencies between the replaced
+                    # node and the replacement node as this would lead to
+                    # self-referencing on the replacement node at a later iteration.
+                    #####################################################################
+                    if child.key not in replaced:
+                        replacement_node.add_child(child)
+                        child.add_parent(replacement_node)
+                for parent in replaced_node.parents:
+                    parent.children.remove(replaced_node)
+                    # Again, to avoid self-referencing.
+                    if parent.key not in replaced:
+                        replacement_node.add_parent(parent)
+                        parent.add_child(replacement_node)
+```
