@@ -71,6 +71,11 @@ class MigrationLoader:
 &nbsp;
 # 初始化`有向图`结构: self.build_graph 
 从`MigrationLoader.__init__`方法中可以看得出来, `self.build_graph`是用于初始化的方法(也是理解`MigrationLoader`的入口).   
+
+这里列出可供参考的外部分析.
+1. 添加节点: [self.graph.add_node(key, migration)](MigrationGraph.md#添加节点)
+2. 添加依赖: [self.add_internal_dependencies(key, migration)]()
+
 ```python
 class MigrationLoader:
 
@@ -396,4 +401,31 @@ class MigrationLoader:
                     migration_name,
                     app_config.label,
                 )
+```
+
+&nbsp;   
+# 添加内部依赖
+这里列出可供参考的外部分析.
+- 添加节点: [self.graph.add_dependency(migration, key, parent, skip_validation=True)](MigrationGraph.md#添加依赖)
+```python
+
+class MigrationLoader:
+
+    #################################################################################
+    # 参数类型注解:
+    # key：      typing.Dict(typing.Tuple(str, str)    # 例如: ('polls', '0002_menu')
+    # migration: Migration
+    #
+    # migration.dependencies 必须有内容, 否则有效的添加依赖.
+    #
+    # key: 指的是当前操作对象的key
+    # parent: 指的是当前操作对象依赖的对象的key
+    # parent[0] == key[0] 这两个key的第一个元素, 必须一致, 否则就不是一个有效的依赖.
+    # parent[1] != '__first__' 依赖的key的第二个元素, 不能是'__first__'.
+    #################################################################################
+    def add_internal_dependencies(self, key, migration):
+        for parent in migration.dependencies:
+            # Ignore __first__ references to the same app.
+            if parent[0] == key[0] and parent[1] != '__first__':
+                self.graph.add_dependency(migration, key, parent, skip_validation=True)
 ```
