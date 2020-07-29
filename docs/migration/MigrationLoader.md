@@ -541,3 +541,36 @@ class MigrationLoader:
             if child is not None:
                 self.graph.add_dependency(migration, child, key, skip_validation=True)
 ```
+
+&nbsp;  
+# 检查冲突
+```python
+class MigrationLoader:
+        
+    #####################################################################################
+    # 函数职责:
+    # 检查所有 app 的末梢叶节点, 检查标准是: app 的末梢叶节点必须只有一个, 多余一个就会返回冲突的对象.
+    #
+    # self.graph.leaf_nodes():   返回值类型: set(node)
+    # 不提供参数的情况下, 这个函数会返回所有 app 的末梢叶节点.
+    #
+    # seen_apps:                  变量类型: typing.Dict(typing.Tuple(str, str), set)
+    # 用于隔离每个app的末梢叶节点.
+    #
+    # conflicting_apps:
+    # 每个app应该只有一个末梢叶节点, 如果有发现多个则会存入到这里, 用于表示有冲突情况.
+    #####################################################################################
+    def detect_conflicts(self):
+        """
+        Look through the loaded graph and detect any conflicts - apps
+        with more than one leaf migration. Return a dict of the app labels
+        that conflict with the migration names that conflict.
+        """
+        seen_apps = {}
+        conflicting_apps = set()
+        for app_label, migration_name in self.graph.leaf_nodes():
+            if app_label in seen_apps:
+                conflicting_apps.add(app_label)
+            seen_apps.setdefault(app_label, set()).add(migration_name)
+        return {app_label: seen_apps[app_label] for app_label in conflicting_apps}
+```
