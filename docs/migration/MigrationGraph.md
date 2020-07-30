@@ -504,3 +504,78 @@ class MigrationGraph:
             # NOTE: There is no need to remap parent dependencies as we can
             # assume the replaced nodes already have the correct ancestry.
 ```
+
+&nbsp;  
+# forwards/backwards: 向前/向后 查找依赖
+forwards 在这里的场景下指的是 parents   
+backwards 在这里的场景下指的是 children
+```python
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+
+    #####################################################################################
+    # 参数类型注解:
+    # target:               Node
+    # 
+    # 返回值               typing.List(typing.Tuple(str, str), ...)
+    #
+    # 职责:
+    # 根据提供的参数(node), 以node作为起点(start), 往前追溯所有的依赖(parents)直到顶点, 
+    # 整个追溯过程中都会按照顺序添加到 返回值列表中 .
+    #####################################################################################
+    def forwards_plan(self, target):
+        """
+        Given a node, return a list of which previous nodes (dependencies) must
+        be applied, ending with the node itself. This is the list you would
+        follow if applying the migrations to a database.
+        """
+        if target not in self.nodes:
+            raise NodeNotFoundError("Node %r not a valid node" % (target,), target)
+        return self.iterative_dfs(self.node_map[target])
+    
+    #####################################################################################
+    # 与 forwards_plan 函数解释一样:
+    # 区别是, 调用 self.iterative_dfs 是, forwards参数提供的值是 False, 这将表示:
+    # iterative_dfs 将会以 self.node_map[target] 作为起点, 向chidlren的方向去查找, 直到末梢叶节点.
+    #####################################################################################
+    def backwards_plan(self, target):
+        """
+        Given a node, return a list of which dependent nodes (dependencies)
+        must be unapplied, ending with the node itself. This is the list you
+        would follow if removing the migrations from a database.
+        """
+        if target not in self.nodes:
+            raise NodeNotFoundError("Node %r not a valid node" % (target,), target)
+        return self.iterative_dfs(self.node_map[target], forwards=False)
+
+    #####################################################################################
+    # 参数类型注解:
+    # start:                Node
+    # forwards:             bool
+    #
+    # 返回值                typing.List(typing.Tuple(str, str), ...)
+    #
+    # 职责:
+    # 根据提供的参数(node类型), 以node作为起点(start), 
+    # 根据 forwards 的值作为 方向: 值为 True 时, 朝parents方向; 值为 False 时, 朝 children 方向; 
+    # 进行深度优先查找所有依赖直到顶点.
+    #####################################################################################
+    def iterative_dfs(self, start, forwards=True):
+        visited = []                        # typing.List(str, ...)
+        visited_set = set()                 # set(Node, ...)
+        stack = [(start, False)]
+        while stack:
+            node, processed = stack.pop()
+            if node in visited_set:             # 这里是内旋消费
+                pass
+            elif processed:                     # 这里是内旋消费
+                visited_set.add(node)
+                visited.append(node.key)
+            else:                               # 这里是内旋生产
+                stack.append((node, True))
+                stack += [(n, False) for n in sorted(node.parents if forwards else node.children)]
+        return visited
+```
