@@ -562,19 +562,25 @@ class MigrationGraph:
     # 根据提供的参数(node类型), 以node作为起点(start), 
     # 根据 forwards 的值作为 方向: 值为 True 时, 朝parents方向; 值为 False 时, 朝 children 方向; 
     # 进行深度优先查找所有依赖直到顶点.
+    # 
+    # 结构特点:
+    # 1. 去重: 相同的parents, 只存一次
+    # 2. 排序: 按文件名来排序
+    # 
+    # 所以即便结构是多分枝结构, 也能扁平化(不论有多少分支, 其他环节都会确保最终是只有一个末梢叶子结构).
     #####################################################################################
     def iterative_dfs(self, start, forwards=True):
         visited = []                        # typing.List(str, ...)
         visited_set = set()                 # set(Node, ...)
         stack = [(start, False)]
         while stack:
-            node, processed = stack.pop()
-            if node in visited_set:             # 这里是内旋消费
+            node, processed = stack.pop()       # 这里是内旋消费, pop从又向左取值(反向取值)
+            if node in visited_set:             # 这里是内旋消费, 去重
                 pass
-            elif processed:                     # 这里是内旋消费
+            elif processed:                     # 这里是内旋消费, 纳入结果集和去重集.
                 visited_set.add(node)
                 visited.append(node.key)
-            else:                               # 这里是内旋生产
+            else:                               # 这里是内旋生产, 将所有parents或children塞入 stack.
                 stack.append((node, True))
                 stack += [(n, False) for n in sorted(node.parents if forwards else node.children)]
         return visited
