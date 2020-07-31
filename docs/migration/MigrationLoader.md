@@ -574,3 +574,22 @@ class MigrationLoader:
             seen_apps.setdefault(app_label, set()).add(migration_name)
         return {app_label: seen_apps[app_label] for app_label in conflicting_apps}
 ```
+
+
+&nbsp;  
+# 加载迁移结构状态
+```python
+class MigrationLoader:
+
+    #####################################################################################
+    # self.unmigrated_apps:        typing.List(str, ...)          
+    #####################################################################################
+    def project_state(self, nodes=None, at_end=True):
+        """
+        Return a ProjectState object representing the most recent state
+        that the loaded migrations represent.
+
+        See graph.make_state() for the meaning of "nodes" and "at_end".
+        """
+        return self.graph.make_state(nodes=nodes, at_end=at_end, real_apps=list(self.unmigrated_apps))
+```

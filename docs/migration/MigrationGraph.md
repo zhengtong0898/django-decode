@@ -585,3 +585,55 @@ class MigrationGraph:
                 stack += [(n, False) for n in sorted(node.parents if forwards else node.children)]
         return visited
 ```
+
+
+&nbsp;  
+# 构建项目状态
+```python
+class MigrationGraph:
+
+    def __init__(self):
+        self.node_map = {}          # typing.Dict(typing.Tuple(str, str), Node)
+        self.nodes = {}             # typing.Dict(typing.Tuple(str, str), Migration)
+
+    #####################################################################################
+    # PorjectState 是一个装载了 installed_apps 的所有 app 的 models 的对象,
+    # 每个models里面都详细的包含了 fields 标识出每个字段         
+    #####################################################################################
+    def make_state(self, nodes=None, at_end=True, real_apps=None):
+        """
+        Given a migration node or nodes, return a complete ProjectState for it.
+        If at_end is False, return the state before the migration has run.
+        If nodes is not provided, return the overall most current project state.
+        """
+        if nodes is None:
+            nodes = list(self.leaf_nodes())
+        if not nodes:
+            return ProjectState()
+        if not isinstance(nodes[0], tuple):
+            nodes = [nodes]
+
+        #################################################################################
+        # 生成一组 node.key, 这些key是按照末梢叶节点往前追溯到顶点的 node.key 集合, 该集合: 去重, 反向排序.
+        # 这一组 node.key 的作用是: 让 project_state 为每个 node.key 生成一个 model.
+        # plan: typing.List(typing.Tuple(str, str), ...)
+        #################################################################################
+        plan = self._generate_plan(nodes, at_end)
+        
+        #################################################################################
+        # real_apps 强调的是那些: 没有migrations目录(也没有models.py)的 app,
+        # TODO: 这里没理解透彻, real_apps 到底在这里充当了什么重要的事情, 是否可以不需要.
+        #################################################################################
+        project_state = ProjectState(real_apps=real_apps)
+    
+        #################################################################################
+        # node:                         typing.Tuple(str, str)      其实就是一个 node_key
+        # self.nodes[node]:             migration
+        # migration.mutate_state:       将当前migration的models写入到 project_state 中.
+        #
+        # project_state 被反复复制的原因是, 这里期望一个 project_state 能装在所有 app 的 models .
+        #################################################################################
+        for node in plan:
+            project_state = self.nodes[node].mutate_state(project_state, preserve=False)
+        return project_state
+```
