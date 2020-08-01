@@ -631,7 +631,7 @@ class MigrationGraph:
         # self.nodes[node]:             migration
         # migration.mutate_state:       将当前migration的models写入到 project_state 中.
         #
-        # project_state 被反复复制的原因是, 这里期望一个 project_state 能装在所有 app 的 models .
+        # project_state 被反复赋值的原因是, 这里期望一个 project_state 能装在所有 app 的 models .
         #################################################################################
         for node in plan:
             project_state = self.nodes[node].mutate_state(project_state, preserve=False)

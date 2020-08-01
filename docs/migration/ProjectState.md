@@ -1,5 +1,8 @@
+`PorjectState` 是一个 `models` 管理对象, 它支持从 `installed_apps`(from_apps方法) 中加载`models`, 也提供了 `add_model`, `remove_model`, `reload_model`, `clone`, `clear`和 `find` 与`model`相关的操作.
+就像备注中所说的那样: do it here rather than at the app level so that cross-app FKs/etc resolve properly.
 ```python
 class ProjectState:
+
     """
     Represent the entire project's overall state. This is the item that is
     passed around - do it here rather than at the app level so that cross-app

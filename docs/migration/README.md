@@ -175,7 +175,17 @@ class Command(BaseCommand):
             questioner = NonInteractiveMigrationQuestioner(specified_apps=app_labels, dry_run=self.dry_run)
 
         #################################################################################
-        # TODO: 待补充
+        # loader.project_state():       从所有 app.migrations 目录下加载的 有向图结构中建立一条有效的app链来加载所有有效的models.
+        # apps:                         settings.installed_apps 中声明的 app
+        # ProjectState.from_apps(apps)  从 installed_apps 的app 中加载 models.py 文件中的 models.
+        # 
+        # 所以拿 所有app已存在于 migrations 目录下的文件, 将其加载为model
+        # 来和 所有app的models.py 文件, 将其加载为model
+        # 两者比较出不同的部分:
+        # 是新增了吗? 新增了什么(字段/索引/表/试图)?
+        # 是修改了吗? 修改了什么?
+        # 是删除了吗? 删除了什么?
+        # 大致就是这么个思路.
         #################################################################################
         autodetector = MigrationAutodetector(
             loader.project_state(),
