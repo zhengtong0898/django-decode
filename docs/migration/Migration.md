@@ -1,7 +1,10 @@
 # Migration
 `Migration`是一个 `模板` 类对象, 所谓的 `模板` 并不是 `c++` 的 `template` 的意思, 而是`app.migrations`目录下的`历史指令文件`都必须按照这个模板来定义指令.   
+   
 从代码层面来看就是定义 `app.migrations.submodule.Migration` 时必须继承 `django.db.migrations.migration.Migration`.   
-`Migration`从功能层面上来看只有三个功能: `mutate_state`(将当前的`operations`转换成一个常规的`mode`对象), `apply`(将更新同步到数据库), `unapply`(从数据库中回滚操作).
+   
+`Migration`从功能层面上来看只有三个功能: `mutate_state`(将当前的`operations`转换成一个常规的`mode`对象), `apply`(将更新同步到数据库), `unapply`(从数据库中回滚操作).   
+
 
 - operations    
 定义在`opertations`中的成员对象, 必须是: `django.db.migrations.operations`目录下定义的操作对象, 全量操作对象清单[请参考这里](https://docs.djangoproject.com/en/3.0/ref/migration-operations/).
@@ -16,8 +19,12 @@
 - replaces  
 定义在`replaces`中的成员对象, 被视为是被废弃的对象. `Django`会将这些对象中的内容合并(`squash`)到当前`Migration`中, 并生成一个新的文件.  
 备注: 如果`replaces`的`Migration`已经被同步到数据库, 那么当前这个合并的`Migration`就不会被执行同步动作.
-      
 
+- initial   
+声明当前`Migration`是第一个`Migration`, 从 `有向图` 角度来看, 它被视为是`顶点`.  
+      
+- atomic  
+将`迁移操作`封装到一个事务中去执行, 只能在那些支持事务操作的数据库中执行.
 
 ```python
 from django.db.transaction import atomic
@@ -26,54 +33,32 @@ from .exceptions import IrreversibleError
 
 
 class Migration:
-    """
-    The base class for all migrations.
+    """ The base class for all migrations. """
 
-    Migration files will import this from django.db.migrations.Migration
-    and subclass it as a class called Migration. It will have one or more
-    of the following attributes:
-
-     - operations: A list of Operation instances, probably from django.db.migrations.operations
-     - dependencies: A list of tuples of (app_path, migration_name)
-     - run_before: A list of tuples of (app_path, migration_name)
-     - replaces: A list of migration_names
-
-    Note that all migrations come out of migrations and into the Loader or
-    Graph as instances, having been initialized with their app label and name.
-    """
-
-    # Operations to apply during this migration, in order.
     operations = []
 
-    # Other migrations that should be run before this migration.
-    # Should be a list of (app, migration_name).
     dependencies = []
 
-    # Other migrations that should be run after this one (i.e. have
-    # this migration added to their dependencies). Useful to make third-party
-    # apps' migrations run after your AUTH_USER replacement, for example.
     run_before = []
 
-    # Migration names in this app that this migration replaces. If this is
-    # non-empty, this migration will only be applied if all these migrations
-    # are not applied.
     replaces = []
 
-    # Is this an initial migration? Initial migrations are skipped on
-    # --fake-initial if the table or fields already exist. If None, check if
-    # the migration has any dependencies to determine if there are dependencies
-    # to tell if db introspection needs to be done. If True, always perform
-    # introspection. If False, never perform introspection.
     initial = None
 
-    # Whether to wrap the whole migration in a transaction. Only has an effect
-    # on database backends which support transactional DDL.
     atomic = True
 
+    #####################################################################################
+    # 参数类型注解:
+    # name:         str               # 例如: 0001_initial(是app.migrations目录下的文件名)
+    # app_label:    str               # 例如: polls 
+    #####################################################################################
     def __init__(self, name, app_label):
         self.name = name
         self.app_label = app_label
-        # Copy dependencies & other attrs as we might mutate them at runtime
+        
+        #################################################################################
+        # 将当前Migration的类变量, 转变成对象变量.
+        #################################################################################
         self.operations = list(self.__class__.operations)
         self.dependencies = list(self.__class__.dependencies)
         self.run_before = list(self.__class__.run_before)
@@ -95,6 +80,17 @@ class Migration:
     def __hash__(self):
         return hash("%s.%s" % (self.app_label, self.name))
 
+    #################################################################################
+    # 参数类型注解:
+    # project_state:      ProjectState
+    #
+    # 函数职责:
+    # 遍历 self.operations 里面的 ModelOperation, 对project_state的models进行操作,
+    # 如果 self.operations 里面第一个ModelOperation是CreateModel, 那么就添加一个model到project_state中.
+    # 如果 self.operations 里面第二个ModelOperation是DeleteModel, 那么就从project_state中移除指定的model.
+    # 如果 self.operations 里面第三个ModelOperation是RenameModel, 那么就从project_state中移除指定的model, 然后在reload指定的model.
+    # ...
+    #################################################################################
     def mutate_state(self, project_state, preserve=True):
         """
         Take a ProjectState and return a new one with the migration's
