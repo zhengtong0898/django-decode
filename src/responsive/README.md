@@ -7,14 +7,15 @@
 
 &nbsp;  
 # 发布订阅和响应式的区别?
-[Responsive.py](Responsive.py) 采用的是标准的 `发布订阅` 模式来处理消息的流转, 从备注的结构来看很容易就能辨别出它与`autoreload`的结构很像.    
-`connect`对应的是`subscribe`, `send`对应的是`CallAfter`/`CallLater`, 有区别的地方是[Responsive.py](Responsive.py)没有`tick`(监控)环节.    
-原因是[Responsive.py](Responsive.py)的数据监控是被动的, 它可以是由外部完成也可以定义为内部完成, 没有明确定义所以代码就没有明显特征.   
-而`autoreload`的数据监控是主动的, 所以`tick`(监控)行为是由内部来定义, 因此从代码结构上来看特征非常明显, 分工合理.   
+[Responsive.py](Responsive.py) 采用的是标准的 `发布订阅` 模式来处理消息的流转, 从备注的结构来看很容易就能辨别出它与`autoreload`的结构很像; `connect`对应的是`subscribe`, `send`对应的是`CallAfter`/`CallLater`.    
 
-发布订阅强调的是, 由分散在各个片区的场景代码来传递消息, 完成通知.   
-响应式强调的是由中心的`Watchman`主动发现变化, 完成通知.   
+严格意义上来说发布订阅模式就是响应式模式, 原因是[Responsive.py](Responsive.py)例子中的 `dispatch.Signal` 环节被封装在`pubsub`这个第三方库中, 而对外暴露的能看得到的操作对象是 `publish`, `subscribe`.
+
+所以, 结论是没有区别.   
 
 &nbsp;  
-# 响应式的优势在哪里?
-当注册到`DSignal`的组件很多时, 监控的数据发生变化时, 所有对象都会通知去处理响应, 这种场景是很壮观的.
+# 发布订阅的使用场景.
+1. 适合所有响应式前端软件(手机app, 桌面软件, ipad app等).
+2. 适合后端消息异步通知.
+3. 适合 即时通讯 软件.
+4. 适合 实时BI 软件.
