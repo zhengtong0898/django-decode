@@ -329,7 +329,7 @@ class BaseReloader:
 
 &nbsp;  
 # 题外话
-本来想借这个机会去写一个`热更新`的程序, 让程序不是重启而是直接`reload`, 这样让代码更新更丝滑.    
+本来想借这个机会去写一个`自动重启`的程序, 让程序不是重启而是直接`reload`, 这样让代码更新更丝滑.    
 在尝试过程中使用`importlib.import_module(name)` 和 `importlib.reload(module)`, 这两个函数不能直接覆盖现有模块的对象.  
 必须使用`importlib.reload(module)的返回值`中的`class`来创建对象, 这种方式必然是要对class做hook的.   
 
