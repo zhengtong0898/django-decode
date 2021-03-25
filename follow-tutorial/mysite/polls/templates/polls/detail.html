@@ -1,0 +1,20 @@
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}
+
+<!-- 重点: forloop 是一个数据状态对象(关键词: for tag), 用于记录遍历的统计信息.
+          forloop.parentloop: 父循环对象.
+          forloop.counter:    遍历次数, 从1开始.
+          forloop.revcounter: 集合总数, 从总数开始递减.
+          forloop.first:      是否第一次.
+          forloop.last:       是否最后一次.
+-->
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label>({{choice.votes}})<br>
+{% endfor %}
+<input type="submit" value="Vote">
+</form>

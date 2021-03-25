@@ -1,0 +1,52 @@
+# ModelAdmin 属性一览
+
+- class BaseModelAdmin  
+    [autocomplete_fields = ()](AdminFilter/README.md#autocompelete_fields)    
+    [raw_id_fields = ()](AdminFilter/README.md#raw_id_fields)    
+    [fields = None](AdminFields/README.md#L9)            
+    [exclude = None](AdminFields/README.md#L1)                    
+    [fieldsets = None](AdminFields/README.md#17)                
+    form = forms.ModelForm        
+    [filter_vertical = ()](AdminFilter/README.md#6)                     
+    [filter_horizontal = ()](AdminFilter/README.md#13)                   
+    [radio_fields = {}](AdminFilter/README.md#radio_fields)     
+    [prepopulated_fields = {}](AdminFilter/README.md#repopulated_fields)    
+    [formfield_overrides = {}](AdminFilter/README.md#formfield_overrides)    
+    [readonly_fields = ()](AdminFilter/README.md#readonly_fields)   
+    [ordering = None](AdminFilter/README.md#ordering)   
+    [sortable_by = None](AdminFilter/README.md#sortable_by)   
+    [view_on_site = True](AdminFilter/README.md#view_on_site)   
+    [show_full_result_count = True](AdminFilter/README.md#show_full_result_count)    
+    checks_class = BaseModelAdminChecks    
+
+- class ModelAdmin  
+    [list_display = ('__str__',)](../follow-tutorial/README.md#tutorial-07)    
+    [list_display_links = ()](../admin-tutorial/AdminFilter/README.md#list_display_links)     
+    [list_filter = ()](../follow-tutorial/README.md#tutorial-07)    
+    [list_select_related = False](../admin-tutorial/AdminFilter/README.md#list_select_related)    
+    [list_per_page = 100](../admin-tutorial/AdminFilter/README.md#list_per_page)       
+    [list_max_show_all = 200](../admin-tutorial/AdminFilter/README.md#list_per_page)        
+    [list_editable = ()](AdminFilter/README.md#)  
+    [search_fields = ()](../follow-tutorial/README.md#tutorial-07)  
+    [date_hierarchy = None](AdminDateHierarchy/README.md)  
+    [save_as = False](AdminFilter/README.md#save_as)  
+    [save_as_continue = True](AdminFilter/README.md#save_as_continue)  
+    [save_on_top = False](AdminFilter/README.md#save_on_top)  
+    paginator = Paginator  
+    [preserve_filters = True](AdminFilter/README.md#preserve_filters)  
+    [inlines = []](../follow-tutorial/README.md#tutorial-07)  
+
+    add_form_template = None  
+    change_form_template = None  
+    change_list_template = None  
+    delete_confirmation_template = None  
+    delete_selected_confirmation_template = None  
+    object_history_template = None  
+    popup_response_template = None  
+
+    [actions = []](AdminActions/README.md#批量更新字段状态方法)  
+    action_form = helpers.ActionForm  
+    [actions_on_top = True](AdminActions/README.md#批量操作下拉菜单位置控制上或下)  
+    [actions_on_bottom = False](AdminActions/README.md#批量操作下拉菜单位置控制上或下)  
+    [actions_selection_counter = True](AdminActions/README.md#隐藏批量操作右侧的已选中计数器)  
+    checks_class = ModelAdminChecks  
