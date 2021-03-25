@@ -174,3 +174,25 @@ python AdminActions/manage.py runserver
   |def using(self, alias) | |-|
   |@property <br> def ordered(self) | |-|
   |@property <br> def db(self) | |-|
+
+
+&nbsp;  
+&nbsp;   
+### Debug困扰清单
+- \_\_str\_\_ 和 \_\_repr\_\_    
+  很多时候在调试代码时, `Step Into` 命名没有执行任何代码, 
+  但是`Console` 仍然是有在打印相关的内容.   
+  
+  例如: `django.db.models.query.QuerySet`对象, 
+  当调试到 `QuerySet` 赋值给某变量后;   
+  
+  由于编辑器要把该变量显示到 Debugger 控制台上, 
+  编辑器会触发它的   
+  `__len__` 和 `__repr__` 和 `__str__` 方法来拿到具体的对象信息.     
+  
+  也正由于`QuerySet`内部实现了 `__len__`, 其内部引用了 `self._fetch_all`,   
+  导致了它会对数据库执行查询操作, 因此会打印出一些查询相关的日志输出.   
+  
+  所以那些没有`step by step`进入到源码的执行, 就不会乱打印东西, 也不会重复执行sql.   
+  
+ 
