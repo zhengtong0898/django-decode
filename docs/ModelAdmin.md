@@ -1,5 +1,5 @@
 ### list_display
-[admin.ModelAdmin.list_display](follow-tutorial/mysite/polls/admin.py#L36) 
+[admin.ModelAdmin.list_display](../follow-tutorial/mysite/polls/admin.py#L36) 
 该属性用于控制字段显示, 即`change`列表的每行显示几个字段.   
 <p align="center">
   <img src="follow-tutorial/mysite/imgs/list_display.jpg" alt="list_display"/>

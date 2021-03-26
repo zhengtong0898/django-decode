@@ -11,7 +11,8 @@ class SimpleTest(TestCase):
         p = product(name="aaa", price=10.00, description="aaa", production_date="1999-12-31", expiration_date=170)
         p.save()
 
-        # time.sleep(1000)
-        ss = product.objects.get(pk=1)
-        print("ss: ", ss)
-        self.assertTrue(True)
+        p = product(name="bbb", price=10.00, description="bbb", production_date="1999-12-31", expiration_date=170)
+        p.save()
+
+        with self.assertRaises(Exception):
+            ss = product.objects.get(expiration_date=170)

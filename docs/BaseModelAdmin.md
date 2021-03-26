@@ -1,7 +1,7 @@
 ### autocompelete_fields
-[admin.BaseModelAdmin.autocompelete_fields](admin-tutorial/AdminDateHierarchy/simple_relate/admin.py#L27)
+[admin.BaseModelAdmin.autocompelete_fields](../admin-tutorial/AdminDateHierarchy/simple_relate/admin.py#L27)
 将`select`替换成`select2`, 支持搜索功能, 作用于`ForeignKey`字段.   
-`autocompelete_fields` 属性依赖 [`search_fields`](admin-tutorial/AdminDateHierarchy/simple_relate/admin.py#L7) 字段一起使用.
+`autocompelete_fields` 属性依赖 [`search_fields`](../admin-tutorial/AdminDateHierarchy/simple_relate/admin.py#L7) 字段一起使用.
 <p align="center">
   <img src="admin-tutorial/AdminDateHierarchy/simple_relate/imgs/autocompelete_fields.jpg" alt="autocompelete_fields"/>
 </p>

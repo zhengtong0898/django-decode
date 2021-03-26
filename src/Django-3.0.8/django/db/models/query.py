@@ -401,21 +401,46 @@ class QuerySet:
         Perform the query and return a single object matching the given
         keyword arguments.
         """
+        # TODO: self.query.combinator 含义, 待补充.
+        # self.query 是一个 `raw sql` 语法生成器对象,
+        #            即: 它把一条`raw sql`语句拆分成了很多子对象, 例如:
+        #            self.query.select 对象, 专门用来存放要提取的字段名(默认是全部).
+        #            self.query.where 对象, 专门用来存放匹配条件的字段名和查询值.
+        #            self.query.order_by 对象, 专门用来存放排序字段名.
+        #
+        # self.filter 是一个条件过滤方法, 用于操作 self.query.where 对象(增加或删除一个匹配的字段名和查询值).
+        #
+        # clone 是克隆一个 QuerySet 出来, 然后在次基础上添加一个 where 条件.
+        #       之所以要克隆, 是因为当前 self 这个 QuerySet 是一个 manger 对象.
         clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
         if self.query.can_filter() and not self.query.distinct_fields:
+            # TODO: 这里为什么还要再次 clone? 待补充
             clone = clone.order_by()
+
+        # 为 clone.query 语法生成器对象标记提取数据的条目数, 即限制它的 where 查询数据的量级, 默认是 21条数据.
         limit = None
         if not clone.query.select_for_update or connections[clone.db].features.supports_select_for_update_with_limit:
             limit = MAX_GET_RESULTS
             clone.query.set_limits(high=limit)
+
+        # 开始执行 sql 语句: 触发 clone.__len__ , 其内部执行了 clone._fetch_all,
+        #                  并将结果暂存在 clone._result_cache 中.
         num = len(clone)
+
+        # 如果提取的数据是一条, 那么将 clone._result_cache[0] 返回给上级调用者.
         if num == 1:
             return clone._result_cache[0]
+
+        # 如果没有提取到任何数据, 那么就抛出 matching query does not exist 错误.
         if not num:
             raise self.model.DoesNotExist(
                 "%s matching query does not exist." %
                 self.model._meta.object_name
             )
+
+        # 由于前面两条条件分别对应了 0 和 1 条的条件,
+        # 所以如果代码来到这里, 则表示提取的数据的条目数肯定大于1,
+        # 所以这里就会抛出异常.
         raise self.model.MultipleObjectsReturned(
             'get() returned more than one %s -- it returned %s!' % (
                 self.model._meta.object_name,

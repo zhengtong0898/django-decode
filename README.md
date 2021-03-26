@@ -52,21 +52,21 @@ python AdminActions/manage.py runserver
 
   | 属性 | 描述 | 位置 |
   |---|:---:| :---: |
-  |autocompelete_fields = ()| [让外键下拉菜单支持搜索功能](./BaseModelAdmin.md#autocompelete_fields) | 新增、编辑页面 |
-  |raw_id_fields = ()| [将下拉菜单替换成文本输入框](./BaseModelAdmin.md#raw_id_fields) | 新增、编辑页面 |
-  |fields = None| [表单字段排版](./BaseModelAdmin.md#fields) | 新增、编辑页面 |
-  |exclude = None| [表单中排除字段](./BaseModelAdmin.md#exclude) | 新增、编辑页面 |
-  |fieldsets = None| [表单字段排版(支持分组)](./BaseModelAdmin.md#fieldsets) | 新增、编辑页面 |
+  |autocompelete_fields = ()| [让外键下拉菜单支持搜索功能](./docs/BaseModelAdmin.md#autocompelete_fields) | 新增、编辑页面 |
+  |raw_id_fields = ()| [将下拉菜单替换成文本输入框](./docs/BaseModelAdmin.md#raw_id_fields) | 新增、编辑页面 |
+  |fields = None| [表单字段排版](./docs/BaseModelAdmin.md#fields) | 新增、编辑页面 |
+  |exclude = None| [表单中排除字段](./docs/BaseModelAdmin.md#exclude) | 新增、编辑页面 |
+  |fieldsets = None| [表单字段排版(支持分组)](./docs/BaseModelAdmin.md#fieldsets) | 新增、编辑页面 |
   |form = forms.ModelForm |   | - |
-  |filter_vertical = ()| [多对多字段的表单纵向控件装饰](./BaseModelAdmin.md#filter_vertical) | 新增、编辑页面 |
-  |filter_horizontal = ()| [多对多字段的表单横向控件装饰](./BaseModelAdmin.md#filter_horizontal) | 新增、编辑页面 |
-  |radio_fields = {}|  [将下拉菜单替换成radio控件](./BaseModelAdmin.md#radio_fields) | 新增、编辑页面 |
-  |prepopulated_fields = {}| [自动填值功能(需配合slugField字段)](./BaseModelAdmin.md#prepopulated_fields)  | 新增、编辑页面 |
-  |formfield_overrides = {}| [表单字段控件替换](./BaseModelAdmin.md#formfield_overrides) | 新增、编辑页面 |
-  |readonly_fields = ()|  [只读字段](./BaseModelAdmin.md#readonly_fields) |新增、编辑、`change`列表页面 |
-  |ordering = None| [按给定的字段排序显示数据](./BaseModelAdmin.md#ordering)  | `change`列表页面 |
-  |sortable_by = None| [仅允许指定字段头拥有排序功能](./BaseModelAdmin.md#sortable_by)  | `change`列表页面 |
-  |view_on_site = True| [快捷跳转到于该数据象关的页面hook](./BaseModelAdmin.md#view_on_site) | 编辑页面 |
+  |filter_vertical = ()| [多对多字段的表单纵向控件装饰](./docs/BaseModelAdmin.md#filter_vertical) | 新增、编辑页面 |
+  |filter_horizontal = ()| [多对多字段的表单横向控件装饰](./docs/BaseModelAdmin.md#filter_horizontal) | 新增、编辑页面 |
+  |radio_fields = {}|  [将下拉菜单替换成radio控件](./docs/BaseModelAdmin.md#radio_fields) | 新增、编辑页面 |
+  |prepopulated_fields = {}| [自动填值功能(需配合slugField字段)](./docs/BaseModelAdmin.md#prepopulated_fields)  | 新增、编辑页面 |
+  |formfield_overrides = {}| [表单字段控件替换](./docs/BaseModelAdmin.md#formfield_overrides) | 新增、编辑页面 |
+  |readonly_fields = ()|  [只读字段](./docs/BaseModelAdmin.md#readonly_fields) |新增、编辑、`change`列表页面 |
+  |ordering = None| [按给定的字段排序显示数据](./docs/BaseModelAdmin.md#ordering)  | `change`列表页面 |
+  |sortable_by = None| [仅允许指定字段头拥有排序功能](./docs/BaseModelAdmin.md#sortable_by)  | `change`列表页面 |
+  |view_on_site = True| [快捷跳转到于该数据象关的页面hook](./docs/BaseModelAdmin.md#view_on_site) | 编辑页面 |
   |show_full_result_count = True| [搜索右侧计数器的总合数字](./BaseModelAdmin.md#show_full_result_count) | `change`列表页面 |
   |checks_class = BaseModelAdminChecks |  | - |
 
@@ -74,21 +74,21 @@ python AdminActions/manage.py runserver
 
   | 属性 | 描述 | 位置 |
   |---|:---:| :---: |
-  |list_display = ('\_\_str\_\_',) | [控制字段显示](./ModelAdmin.md#list_display) | `change`列表页面 | 
-  |list_display_links = () | [将编辑数据的链接显示在指定字段](./ModelAdmin.md#list_display_links) | `change`列表页面 |
-  |list_filter = () | [按分类筛选](./ModelAdmin.md#list_filter) | `change`列表页面 |
-  |list_select_related = False | [是否查询关联表](./ModelAdmin.md#list_select_related) | `change`列表页面 | 
-  |list_per_page = 100 | [每页显示几行数据](./ModelAdmin.md#list_per_page) | `change`列表页面 |
-  |list_max_show_all = 200 | [`show_all`链接显示几行数据](./ModelAdmin.md#list_per_page) | `change`列表页面 |
-  |list_editable = () | [同时编辑多行数据](./ModelAdmin.md#list_editable) | `change`列表页面 |
-  |search_fields = () | [指定模糊查询字段](./ModelAdmin.md#search_fields) | `change`列表页面 |
-  |date_hierarchy = None | [时间分层器](./ModelAdmin.md#date_hierarchy) | `change`列表页面 |
-  |save_as = False | [用编辑的表单数据创建新数据](./ModelAdmin.md#save_as)| 编辑页面 |
-  |save_as_continue = True | [是否跳转回列表页面](./ModelAdmin.md#save_as_continue)| 编辑页面 |
-  |save_on_top = False | [表单上方显示按钮保存栏](./ModelAdmin.md#save_on_top)| 编辑页面 |
+  |list_display = ('\_\_str\_\_',) | [控制字段显示](./docs/ModelAdmin.md#list_display) | `change`列表页面 | 
+  |list_display_links = () | [将编辑数据的链接显示在指定字段](./docs/ModelAdmin.md#list_display_links) | `change`列表页面 |
+  |list_filter = () | [按分类筛选](./docs/ModelAdmin.md#list_filter) | `change`列表页面 |
+  |list_select_related = False | [是否查询关联表](./docs/ModelAdmin.md#list_select_related) | `change`列表页面 | 
+  |list_per_page = 100 | [每页显示几行数据](./docs/ModelAdmin.md#list_per_page) | `change`列表页面 |
+  |list_max_show_all = 200 | [`show_all`链接显示几行数据](./docs/ModelAdmin.md#list_per_page) | `change`列表页面 |
+  |list_editable = () | [同时编辑多行数据](./docs/ModelAdmin.md#list_editable) | `change`列表页面 |
+  |search_fields = () | [指定模糊查询字段](./docs/ModelAdmin.md#search_fields) | `change`列表页面 |
+  |date_hierarchy = None | [时间分层器](./docs/ModelAdmin.md#date_hierarchy) | `change`列表页面 |
+  |save_as = False | [用编辑的表单数据创建新数据](./docs/ModelAdmin.md#save_as)| 编辑页面 |
+  |save_as_continue = True | [是否跳转回列表页面](./docs/ModelAdmin.md#save_as_continue)| 编辑页面 |
+  |save_on_top = False | [表单上方显示按钮保存栏](./docs/ModelAdmin.md#save_on_top)| 编辑页面 |
   |paginator = Paginator | | - |
-  |preserve_filters = True | [保留搜索内容](./ModelAdmin.md#preserve_filters)| `change`列表页面 |
-  |inlines = [] | [关联表数据展示](./ModelAdmin.md#inlines) | 编辑页面 |
+  |preserve_filters = True | [保留搜索内容](./docs/ModelAdmin.md#preserve_filters)| `change`列表页面 |
+  |inlines = [] | [关联表数据展示](./docs/ModelAdmin.md#inlines) | 编辑页面 |
   | | | -|
   |add_form_template = None| | -|
   |change_form_template = None| | -|
@@ -98,11 +98,11 @@ python AdminActions/manage.py runserver
   |object_history_template = None| | -|
   |popup_response_template = None| | -|
   | | -|
-  |actions = []| [批量更新字段](./ModelAdmin.md#actions) | `change`列表页面 |
+  |actions = []| [批量更新字段](./docs/ModelAdmin.md#actions) | `change`列表页面 |
   |action_form = helpers.ActionForm| | - |
-  |actions_on_top = True| [批量操作栏目位置](./ModelAdmin.md#actions_on_top) | `change`列表页面 |
-  |actions_on_bottom = False| [批量操作栏目位置](./ModelAdmin.md#actions_on_top) | `change`列表页面 |
-  |actions_selection_counter = True| [批量操作右侧已选中计数器](./ModelAdmin.md#actions) | `change`列表页面 |
+  |actions_on_top = True| [批量操作栏目位置](./docs/ModelAdmin.md#actions_on_top) | `change`列表页面 |
+  |actions_on_bottom = False| [批量操作栏目位置](./docs/ModelAdmin.md#actions_on_top) | `change`列表页面 |
+  |actions_selection_counter = True| [批量操作右侧已选中计数器](./docs/ModelAdmin.md#actions) | `change`列表页面 |
   |checks_class = ModelAdminChecks| | - |
 
 
@@ -113,74 +113,74 @@ python AdminActions/manage.py runserver
   `Django ORM`中, 所有的查询都要通过`QuerySet`对象来完成, 
   包括常见的 `objects` 其实也是一个 `QuerySet` 对象.
   
-  | 属性 | 类型 | 描述 |
-  |---|:---:| :---: |
-  | self.model = model |  | |
-  | self._db = using | | |
-  | self._hints = hints or {} | | |
-  | self._query = query or sql.Query(self.model) | | |
-  | self._result_cache = None | | |
+  | 属性 | 描述 |
+  |---| :---: |
+  | self.model = model |  |
+  | self._db = using | |
+  | self._hints = hints or {} | |
+  | self._query = query or sql.Query(self.model) | [`raw sql`语法生成器对象](./src/Django-3.0.8/django/db/models/sql/query.py#L136) |
+  | self._result_cache = None | |
   | self._sticky_filter = False | |
-  | self._for_write = False | | |
-  | self._prefetch_related_lookups = () | | |
-  | self._prefetch_done = False | | |
-  | self._known_related_objects = {}  # {rel_field: {pk: rel_obj}} | | |
-  | self._iterable_class = ModelIterable | | |
-  | self._fields = None | | |
-  | self._defer_next_filter = False | | |
-  | self._deferred_filter = None | | |
-  | | |-|
-  | @property<br> def query(self)  | |-|
-  |def iterator(self, chunk_size=2000)| |-|
-  |def aggregate(self, *args, **kwargs)| |-|
-  |def count(self)| |-|
-  |def get(self, *args, **kwargs)| |-|
-  |def create(self, **kwargs)| |-|
-  |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| |-|
-  |def bulk_update(self, objs, fields, batch_size=None)| |-|
-  |def get_or_create(self, defaults=None, **kwargs)| |-|
-  |def update_or_create(self, defaults=None, **kwargs)| |-|
-  |def earliest(self, *fields)| |-|
-  |def latest(self, *fields)| |-|
-  |def first(self)| |-|
-  |def last(self)| |-|
-  |def in_bulk(self, id_list=None, *, field_name='pk')| |-|
-  |def delete(self)| |-|
-  |def update(self, **kwargs)| |-|
-  |def exists(self)| |-|
-  |def explain(self, *, format=None, **options)| |-|
-  |def raw(self, raw_query, params=None, translations=None, using=None) | |-|
-  |def values(self, *fields, **expressions) | |-|
-  |def values_list(self, *fields, flat=False, named=False) | |-|
-  |def dates(self, field_name, kind, order='ASC') | |-|
-  |def datetimes(self, field_name, kind, order='ASC', tzinfo=None, is_dst=None) | |-|
-  |def none(self) | |-|
-  |def filter(self, *args, **kwargs) | |-|
-  |def exclude(self, *args, **kwargs) | |-|
-  |def complex_filter(self, filter_obj) | |-|
-  |def union(self, *other_qs, all=False) | |-|
-  |def intersection(self, *other_qs) | |-|
-  |def difference(self, *other_qs) | |-|
-  |def select_for_update(self, nowait=False, skip_locked=False, of=()) | |-|
-  |def select_related(self, *fields) | |-|
-  |def prefetch_related(self, *lookups) | |-|
-  |def annotate(self, *args, **kwargs) | |-|
-  |def order_by(self, *field_names) | |-|
-  |def distinct(self, *field_names) | |-|
-  |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | |-|
-  |def reverse(self) | |-|
-  |def defer(self, *fields) | |-|
-  |def only(self, *fields) | |-|
-  |def using(self, alias) | |-|
-  |@property <br> def ordered(self) | |-|
-  |@property <br> def db(self) | |-|
+  | self._for_write = False | |
+  | self._prefetch_related_lookups = () | |
+  | self._prefetch_done = False | |
+  | self._known_related_objects = {}  # {rel_field: {pk: rel_obj}} | |
+  | self._iterable_class = ModelIterable | |
+  | self._fields = None | |
+  | self._defer_next_filter = False | |
+  | self._deferred_filter = None | |
+  | | - |
+  | @property<br> def query(self)  | |
+  |def iterator(self, chunk_size=2000)| |
+  |def aggregate(self, *args, **kwargs)| |
+  |def count(self)| |
+  |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
+  |def create(self, **kwargs)| |
+  |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| |
+  |def bulk_update(self, objs, fields, batch_size=None)| |
+  |def get_or_create(self, defaults=None, **kwargs)| |
+  |def update_or_create(self, defaults=None, **kwargs)| |
+  |def earliest(self, *fields)| |
+  |def latest(self, *fields)| |
+  |def first(self)| |
+  |def last(self)| |
+  |def in_bulk(self, id_list=None, *, field_name='pk')| |
+  |def delete(self)| |
+  |def update(self, **kwargs)| |
+  |def exists(self)| |
+  |def explain(self, *, format=None, **options)| |
+  |def raw(self, raw_query, params=None, translations=None, using=None) | |
+  |def values(self, *fields, **expressions) | |
+  |def values_list(self, *fields, flat=False, named=False) | |
+  |def dates(self, field_name, kind, order='ASC') | |
+  |def datetimes(self, field_name, kind, order='ASC', tzinfo=None, is_dst=None) | |
+  |def none(self) | |
+  |def filter(self, *args, **kwargs) | |
+  |def exclude(self, *args, **kwargs) | |
+  |def complex_filter(self, filter_obj) | |
+  |def union(self, *other_qs, all=False) | |
+  |def intersection(self, *other_qs) | |
+  |def difference(self, *other_qs) | |
+  |def select_for_update(self, nowait=False, skip_locked=False, of=()) | |
+  |def select_related(self, *fields) | |
+  |def prefetch_related(self, *lookups) | |
+  |def annotate(self, *args, **kwargs) | |
+  |def order_by(self, *field_names) | |
+  |def distinct(self, *field_names) | |
+  |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | |
+  |def reverse(self) | |
+  |def defer(self, *fields) | |
+  |def only(self, *fields) | |
+  |def using(self, alias) | |
+  |@property <br> def ordered(self) | |
+  |@property <br> def db(self) | |
 
 
 &nbsp;  
 &nbsp;   
 ### Debug困扰清单
 - \_\_str\_\_ 和 \_\_repr\_\_    
-  很多时候在调试代码时, `Step Into` 命名没有执行任何代码, 
+  很多时候在调试代码时, `Step Into` 明明没有执行任何代码, 
   但是`Console` 仍然是有在打印相关的内容.   
   
   例如: `django.db.models.query.QuerySet`对象, 
