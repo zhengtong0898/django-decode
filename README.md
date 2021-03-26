@@ -118,7 +118,7 @@ python AdminActions/manage.py runserver
   | self.model = model |  |
   | self._db = using | |
   | self._hints = hints or {} | |
-  | self._query = query or sql.Query(self.model) | [`raw sql`语法生成器对象](./src/Django-3.0.8/django/db/models/sql/query.py#L136) |
+  | self._query = query or sql.Query(self.model) | [`raw sql`语法生成器对象](./src/Django-3.0.8/django/db/models/sql/query.py#L146) |
   | self._result_cache = None | |
   | self._sticky_filter = False | |
   | self._for_write = False | |
