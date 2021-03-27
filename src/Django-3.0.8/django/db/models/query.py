@@ -453,8 +453,11 @@ class QuerySet:
         Create a new object with the given kwargs, saving it to the database
         and returning the created object.
         """
+        # 参数: kwargs, 是表字段名和值的字典, 用于插入数据使用.
+        # self.model(**kwargs): 使用kwargs的键值作为参数, 初始化 self.model 对象.
         obj = self.model(**kwargs)
         self._for_write = True
+        # 调用 Model 对象的 save() 方法, 插入数据.
         obj.save(force_insert=True, using=self.db)
         return obj
 

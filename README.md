@@ -5,13 +5,21 @@
 import logging
 logger = logging.getLogger('django.compiler')
 
-# 找到 class SQLCompiler.execute_sql 方法
-# 在 cursor.execute(sql params) 前面增加两行代码.
-def execute_sql(self, result_type=MULTI, chunked_fetch=False, chunk_size=GET_ITERATOR_CHUNK_SIZE):
-    sql_info = sql % params                 # 在这里添加这行代码
-    logger.info("sql: %s" % sql_info)       # 在这里添加这里代码
-    cursor.execute(sql, params)             
 
+class SQLCompiler:
+ 
+    def execute_sql(self, result_type=MULTI, chunked_fetch=False, chunk_size=GET_ITERATOR_CHUNK_SIZE):
+        sql_info = sql % tuple(params)          # 在这里添加这行代码
+        logger.info("sql: %s" % sql_info)       # 在这里添加这里代码
+        cursor.execute(sql, params)             
+
+
+class SQLInsertCompiler(SQLCompiler):
+    
+    def execute_sql(self, returning_fields=None):
+        sql_info = sql % tuple(params)          # 在这里添加这行代码
+        logger.info("sql: %s" % sql_info)       # 在这里添加这里代码
+        cursor.execute(sql, params)        
 ```
 
 &nbsp;  
@@ -135,7 +143,7 @@ python AdminActions/manage.py runserver
   |def aggregate(self, *args, **kwargs)| |
   |def count(self)| |
   |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
-  |def create(self, **kwargs)| |
+  |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
   |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| |
   |def bulk_update(self, objs, fields, batch_size=None)| |
   |def get_or_create(self, defaults=None, **kwargs)| |
