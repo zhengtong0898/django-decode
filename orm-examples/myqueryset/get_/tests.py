@@ -69,16 +69,18 @@ class SimpleTest(TestCase):
         """
 
         # 准备数据
-        # SELECT `get__product`.`id`,
-        #        `get__product`.`name`,
-        #        `get__product`.`price`,
-        #        `get__product`.`description`,
-        #        `get__product`.`production_date`,
-        #        `get__product`.`expiration_date`,
-        #        `get__product`.`date_joined`
-        # FROM `get__product`
-        # WHERE `get__product`.`name` = ccc
-        # LIMIT 21
+        # INSERT INTO `get__product` (`name`,
+        #                             `price`,
+        #                             `description`,
+        #                             `production_date`,
+        #                             `expiration_date`,
+        #                             `date_joined`)
+        # VALUES (ccc,
+        #         10.00,
+        #         ccc,
+        #         1999-12-31,
+        #         170,
+        #         2021-03-27 01:35:41.116658)
         product.objects.create(name="ccc",
                                price=10.00,
                                description="ccc",
