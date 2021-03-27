@@ -391,10 +391,10 @@ class QuerySet:
         If the QuerySet is already fully cached, return the length of the
         cached results set to avoid multiple SELECT COUNT(*) calls.
         """
-        if self._result_cache is not None:
+        if self._result_cache is not None:                  # 当缓存值存在时, 返回缓存值总数.
             return len(self._result_cache)
 
-        return self.query.get_count(using=self.db)
+        return self.query.get_count(using=self.db)          # 当缓存值不存在时, 返回整表统计.
 
     def get(self, *args, **kwargs):
         """

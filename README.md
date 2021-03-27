@@ -1,26 +1,35 @@
 ### 如何将orm操作的sql语句打印出来?
-> 编辑 Lib/site-packages/django/db/models/sql/compiler.py 文件
-```python
-# 在文件头部导入logging
-import logging
-logger = logging.getLogger('django.compiler')
+- 方案一: 编辑`Django`源码
+  > 编辑 Lib/site-packages/django/db/models/sql/compiler.py 文件
+  ```python
+  # 在文件头部导入logging
+  import logging
+  logger = logging.getLogger('django.compiler')
+  
+  
+  class SQLCompiler:
+   
+      def execute_sql(self, result_type=MULTI, chunked_fetch=False, chunk_size=GET_ITERATOR_CHUNK_SIZE):
+          sql_info = sql % tuple(params)          # 在这里添加这行代码
+          logger.info("sql: %s" % sql_info)       # 在这里添加这行代码
+          cursor.execute(sql, params)             
+  
+  
+  class SQLInsertCompiler(SQLCompiler):
+      
+      def execute_sql(self, returning_fields=None):
+          sql_info = sql % tuple(params)          # 在这里添加这行代码
+          logger.info("sql: %s" % sql_info)       # 在这里添加这行代码
+          cursor.execute(sql, params)        
+  ```
+- 方案二: 编辑三方库(`pymysql`)源码
+  > 编辑 Lib/site-packages/pymysql/connections.py 文件
+  ```python
+  class Connection:
 
-
-class SQLCompiler:
- 
-    def execute_sql(self, result_type=MULTI, chunked_fetch=False, chunk_size=GET_ITERATOR_CHUNK_SIZE):
-        sql_info = sql % tuple(params)          # 在这里添加这行代码
-        logger.info("sql: %s" % sql_info)       # 在这里添加这里代码
-        cursor.execute(sql, params)             
-
-
-class SQLInsertCompiler(SQLCompiler):
-    
-    def execute_sql(self, returning_fields=None):
-        sql_info = sql % tuple(params)          # 在这里添加这行代码
-        logger.info("sql: %s" % sql_info)       # 在这里添加这里代码
-        cursor.execute(sql, params)        
-```
+      def _execute_command(self, command, sql):
+          print("pymysql: command: %s; sql: %s;" % (command, sql))        # 在第一行加入这行代码
+  ```
 
 &nbsp;  
 ### 源码分析
@@ -141,7 +150,7 @@ python AdminActions/manage.py runserver
   | @property<br> def query(self)  | |
   |def iterator(self, chunk_size=2000)| |
   |def aggregate(self, *args, **kwargs)| |
-  |def count(self)| |
+  |def count(self)| [统计总数](./docs/QuerySet.md#count) |
   |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
   |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
   |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| |
