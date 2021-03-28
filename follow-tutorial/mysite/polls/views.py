@@ -12,7 +12,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        # TODO: 这里'-pub_date'的'-'是什么意思?
+        # '-pub_date' 是 desc order 的意思.
         return Question.objects.order_by('-pub_date')[:5]
 
 
