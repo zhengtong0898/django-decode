@@ -154,7 +154,7 @@ python AdminActions/manage.py runserver
   |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
   |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
   |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| [批量插入数据](./docs/QuerySet.md#bulk_create) |
-  |def bulk_update(self, objs, fields, batch_size=None)| |
+  |def bulk_update(self, objs, fields, batch_size=None)| [批量更新数据](./docs/QuerySet.md#bulk_update) |
   |def get_or_create(self, defaults=None, **kwargs)| |
   |def update_or_create(self, defaults=None, **kwargs)| |
   |def earliest(self, *fields)| |

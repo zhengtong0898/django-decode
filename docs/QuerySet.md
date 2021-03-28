@@ -49,7 +49,7 @@ insert into TABLE (FIELDS) value (VALUES);
 &nbsp;  
 &nbsp;  
 ### bulk_create
-`db.models.query.QuerySet.create`  
+`db.models.query.QuerySet.bulk_create`  
 该方法用于批量插入一组数据.
 
 对应的sql语句:
@@ -64,3 +64,26 @@ values (VALUES),
 - [使用案例-2](../orm-examples/myqueryset/bulk_create_/views.py#L7)  
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L469)
+
+
+&nbsp;  
+&nbsp;  
+### bulk_update
+该方法用于批量更新一组数据.   
+
+对应的sql语句
+```shell
+UPDATE `get__product` 
+SET `name` =        CASE WHEN (`get__product`.`id` = 1007) THEN 'aaa-0-updated' 
+                         WHEN (`get__product`.`id` = 1008) THEN 'aaa-1-updated' 
+                         ELSE NULL END, 
+    `description` = CASE WHEN (`get__product`.`id` = 1007) THEN 'aaa-0-updated' 
+                         WHEN (`get__product`.`id` = 1008) THEN 'aaa-1-updated' 
+                         ELSE NULL END 
+WHERE `get__product`.`id` IN (1007, 1008)
+```
+
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L181)
+
+- 源码分析 TODO
+

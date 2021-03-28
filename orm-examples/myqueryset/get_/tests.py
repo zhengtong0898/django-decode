@@ -173,5 +173,58 @@ class SimpleTest(TestCase):
         #        ('aaa-8', '10.00', 'aaa-8', '1999-10-20', 170, '2021-03-27 16:44:11.255359'),
         #        ('aaa-9', '10.00', 'aaa-9', '1999-10-20', 170, '2021-03-27 16:44:11.255359')
         product.objects.bulk_create(objs=items, batch_size=10)
+
+        # 从数据库中进行整表统计.
         ss = product.objects.count()
         self.assertEqual(ss, 1000)
+
+    def test_e_bulk_update(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-20",
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        solution = 1
+        # 准备更新-方案1: 从已有数据中修改, 提交修改.
+        # 由于 mysql 和 mariadb < 10.5 的版本在批量插入时并不返回对象的 lastrow_id,
+        # items集合中的数据的 pk 字段为 None, 这会导致 bulk_update 抛出异常.
+        # 所以这个方案只支持 mariadb >= 10.5 的版本.
+        #
+        # 采用 create 而不是 bulk_create , 这样创建的数据就会包含 pk 字段, bulk_update 就不会抛异常.
+        if solution == 1:
+            items[0].name = items[0].name + "-updated"
+            items[0].description = items[0].description + "-updated"
+
+            items[1].name = items[1].name + "-updated"
+            items[1].description = items[1].description + "-updated"
+            to_update = [items[0], items[1]]
+
+        # 准备更新-方案2: 从数据库中查询数据, 修改数据, 提交修改.
+        # 支持所有版本.
+        elif solution == 2:
+            ss = product.objects.all()
+            ss[0].name = ss[0].name + "-updated"
+            ss[0].description = ss[0].description + "-updated"
+
+            ss[1].name = ss[1].name + "-updated"
+            ss[1].description = ss[1].description + "-updated"
+            to_update = [ss[0], ss[1]]
+
+        product.objects.bulk_update(to_update, ['name', 'description'])
+
+        p1 = product.objects.get(pk=to_update[0].pk)
+        p2 = product.objects.get(pk=to_update[1].pk)
+
+        self.assertTrue(p1.name.endswith("-updated"))
+        self.assertTrue(p1.description.endswith("-updated"))
+
+        self.assertTrue(p2.name.endswith("-updated"))
+        self.assertTrue(p2.description.endswith("-updated"))
