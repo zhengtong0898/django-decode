@@ -284,11 +284,101 @@ class SimpleTest(TestCase):
         #         120,
         #         '2021-03-28 12:20:28.121343')
         # RETURNING `get__product`.`id`";
-        qs, is_created = product.objects.get_or_create(name='aaa-15', defaults={'price': 12.00,
-                                                                                'description': 'aaa-15',
-                                                                                'production_date': '2001-10-10',
-                                                                                'expiration_date': 120})
+        obj, is_created = product.objects.get_or_create(name='aaa-15', defaults={'price': 12.00,
+                                                                                 'description': 'aaa-15',
+                                                                                 'production_date': '2001-10-10',
+                                                                                 'expiration_date': 120})
         self.assertEqual(is_created, True)
-        self.assertEqual(qs.name, 'aaa-15')
-        self.assertEqual(qs.price, 12.00)
-        self.assertEqual(qs.description, 'aaa-15')
+        self.assertEqual(obj.name, 'aaa-15')
+        self.assertEqual(obj.price, 12.00)
+        self.assertEqual(obj.description, 'aaa-15')
+
+    def test_g_update_or_create(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-20",
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 用name='aaa-5'去查,
+        # 如果缓存或数据库中没有这个数据, 则使用defaults字典去创建一条新数据.
+        # 如果缓存或数据库中存在这个数据, 则按defaults中的键值来更新数据.
+        # 返回值: object, created;
+        #
+        #
+        # 数据存在(查询, 更新)
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # WHERE `get__product`.`name` = 'aaa-5'
+        # LIMIT 21
+        # FOR UPDATE
+        #
+        # UPDATE `get__product`
+        # SET `name` = 'aaa-5',
+        #     `price` = '10.00',
+        #     `description` = 'aaa-x5',
+        #     `production_date` = '1999-10-20',
+        #     `expiration_date` = 170,
+        #     `date_joined` = '2021-03-28 14:11:18.417537'
+        # WHERE `get__product`.`id` = 1033
+        obj, is_created = product.objects.update_or_create(name='aaa-5', defaults={'description': 'aaa-x5'})
+
+        # 断言-1
+        self.assertEqual(is_created, False)
+        self.assertEqual(obj.name, 'aaa-5')
+        self.assertEqual(obj.description, 'aaa-x5')
+
+        # 用name='aaa-15'去查,
+        # 如果缓存或数据库中没有这个数据, 则使用defaults字典去创建一条新数据.
+        # 如果缓存或数据库中存在这个数据, 则按defaults中的键值来更新数据.
+        # 返回值: object, created;
+        #
+        #
+        # 数据不存在(查询, 插入)
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # WHERE `get__product`.`name` = 'aaa-15'
+        # LIMIT 21
+        # FOR UPDATE
+        #
+        # INSERT INTO `get__product` (`name`,
+        #                             `price`,
+        #                             `description`,
+        #                             `production_date`,
+        #                             `expiration_date`,
+        #                             `date_joined`)
+        # VALUES ('aaa-15',
+        #         '12.00',
+        #         'aaa-15',
+        #         '2001-10-10',
+        #         120,
+        #         '2021-03-28 14:15:17.710272')
+        obj, is_created = product.objects.update_or_create(name='aaa-15', defaults={'price': 12.00,
+                                                                                    'description': 'aaa-15',
+                                                                                    'production_date': '2001-10-10',
+                                                                                    'expiration_date': 120})
+
+        # 断言-2
+        self.assertEqual(is_created, True)
+        self.assertEqual(obj.name, 'aaa-15')
+        self.assertEqual(obj.price, 12.00)
+        self.assertEqual(obj.description, 'aaa-15')

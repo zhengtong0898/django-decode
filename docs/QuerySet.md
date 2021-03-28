@@ -93,7 +93,7 @@ WHERE `get__product`.`id` IN (1007, 1008)
 &nbsp;  
 ### get_or_create
 `db.models.query.QuerySet.get_or_create`  
-该方法用于获取一条数据, 如果数据不存在则使用`defaults`参数的值来创建一条数据(后返回该数据).   
+该方法用于获取一条数据, 如果数据不存在则使用`defaults` + `kwargs`参数的值来创建一条数据(后返回该数据).   
 要使用这个方法, 就是已经做好了数据可能会不存在的预期, 因此就需要提供创建数据的默认值.   
 
 对应的sql语句
@@ -129,3 +129,67 @@ RETURNING `get__product`.`id`";
 - [使用案例](../orm-examples/myqueryset/get_/tests.py#L244)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L617)
+
+
+&nbsp;  
+&nbsp;  
+### update_or_create
+`db.models.query.QuerySet.update_or_create`  
+该方法用于更新一条数据, 如果数据不存在则使用`defaults` + `kwargs`参数的值来创建一条数据(后返回该数据).   
+要使用这个方法, 就是已经做好了数据可能会不存在的预期, 因此就需要提供创建数据的默认值.
+
+对应的sql语句
+```shell
+# 数据存在(查询, 更新)
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`description`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+WHERE `get__product`.`name` = 'aaa-5'
+LIMIT 21
+FOR UPDATE
+
+UPDATE `get__product`
+SET `name` = 'aaa-5',
+    `price` = '10.00',
+    `description` = 'aaa-x5',
+    `production_date` = '1999-10-20',
+    `expiration_date` = 170,
+    `date_joined` = '2021-03-28 14:11:18.417537'
+WHERE `get__product`.`id` = 1033
+
+
+
+# 数据不存在(查询, 插入)
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`description`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+WHERE `get__product`.`name` = 'aaa-15'
+LIMIT 21
+FOR UPDATE
+
+INSERT INTO `get__product` (`name`,
+                            `price`,
+                            `description`,
+                            `production_date`,
+                            `expiration_date`,
+                            `date_joined`)
+VALUES ('aaa-15',
+        '12.00',
+        'aaa-15',
+        '2001-10-10',
+        120,
+        '2021-03-28 14:15:17.710272')
+```  
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L296)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L640)

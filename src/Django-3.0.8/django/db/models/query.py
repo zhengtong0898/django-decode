@@ -645,17 +645,30 @@ class QuerySet:
         specifying whether an object was created.
         """
         defaults = defaults or {}
+        # 标记当前QuerySet为写状态
         self._for_write = True
+
+        # 开启一个事务
         with transaction.atomic(using=self.db):
             try:
+                # self.select_for_update 用来标记查询更新状态. TODO: 这样做会让数据库有什么高效的表现吗?
+                # .get(**kwargs) 根据 kwargs 参数来获取一条数据,
+                # 当获取大于一条数据时, 抛异常并退出程序.
                 obj = self.select_for_update().get(**kwargs)
             except self.model.DoesNotExist:
+                # 当获取到0条数据时, 抛出self.model.DoesNotExist异常, 进入到这里.
+                # 验证 defaults 和 kwargs 参数是否与 model 定义的字段一致, 然后合并这两个参数.
                 params = self._extract_model_params(defaults, **kwargs)
                 # Lock the row so that a concurrent update is blocked until
                 # after update_or_create() has performed its save.
+                # 创建数据
                 obj, created = self._create_object_from_params(kwargs, params, lock=True)
+
+                # 如果创建成功, 返回值之后, 函数就结束了.
                 if created:
                     return obj, created
+
+            # get 到一条数据, 这里开始用 defaults 更新数据并调用.save接口保存数据到数据库.
             for k, v in defaults.items():
                 setattr(obj, k, v() if callable(v) else v)
             obj.save(using=self.db)
@@ -1056,8 +1069,12 @@ class QuerySet:
         """
         if nowait and skip_locked:
             raise ValueError('The nowait option cannot be used with skip_locked.')
+        # 赋值一个queryset对象.
         obj = self._chain()
+        # 标记为写状态
         obj._for_write = True
+        # obj.query 的类型是: model.sql.query.Query; 它是一个SQLCompiler.
+        # 给 obj.query 标记为查询更新状态
         obj.query.select_for_update = True
         obj.query.select_for_update_nowait = nowait
         obj.query.select_for_update_skip_locked = skip_locked

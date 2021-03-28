@@ -155,8 +155,8 @@ python AdminActions/manage.py runserver
   |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
   |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| [批量插入数据](./docs/QuerySet.md#bulk_create) |
   |def bulk_update(self, objs, fields, batch_size=None)| [批量更新数据](./docs/QuerySet.md#bulk_update) |
-  |def get_or_create(self, defaults=None, **kwargs)| [获取一条数据或创建一条数据](./docs/QuerySet.md#get_or_create) |
-  |def update_or_create(self, defaults=None, **kwargs)| |
+  |def get_or_create(self, defaults=None, **kwargs)| [获取不到数据则创建数据](./docs/QuerySet.md#get_or_create) |
+  |def update_or_create(self, defaults=None, **kwargs)| [更新不到数据则创建数据](./docs/QuerySet.md#update_or_create) |
   |def earliest(self, *fields)| |
   |def latest(self, *fields)| |
   |def first(self)| |
