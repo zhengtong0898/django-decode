@@ -193,3 +193,50 @@ VALUES ('aaa-15',
 - [使用案例](../orm-examples/myqueryset/get_/tests.py#L296)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L640)
+
+
+&nbsp;  
+&nbsp;  
+### earliest
+`db.models.query.QuerySet.earliest`  
+按指定字段, 正向排序, 提取第一条数据(即: 最早的一条数据).   
+
+对应的sql语句
+```shell
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`description`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+ORDER BY `get__product`.`production_date` ASC               # 按给定字段正向排序
+LIMIT 1                                                     # 只提取第一条数据
+```
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L386)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L754)
+
+&nbsp;  
+&nbsp;  
+### latest
+`db.models.query.QuerySet.latest`  
+按指定字段, 反向排序, 提取第一条数据(即: 最晚的一条数据).   
+
+对应的sql语句
+```shell
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`description`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+ORDER BY `get__product`.`production_date` DESC        # 按给定字段反向排序
+LIMIT 1                                               # 只提取第一条数据
+```
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L416)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L758)

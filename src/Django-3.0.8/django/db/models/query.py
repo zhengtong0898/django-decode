@@ -722,9 +722,11 @@ class QuerySet:
         Return the earliest object according to fields (if given) or by the
         model's Meta.get_latest_by.
         """
+        # 指定字段
         if fields:
             order_by = fields
         else:
+            # TODO: get_latest_by 在什么地方定义, 在什么场景下定义? 待补充.
             order_by = getattr(self.model._meta, 'get_latest_by')
             if order_by and not isinstance(order_by, (tuple, list)):
                 order_by = (order_by,)
@@ -734,18 +736,27 @@ class QuerySet:
                 "arguments or 'get_latest_by' in the model's Meta."
             )
 
+        # TODO: self.query.is_sliced 是什么意思? 待补充.
         assert not self.query.is_sliced, \
             "Cannot change a query once a slice has been taken."
+
+        # 由于下面那段 obj.query 的代码要改变 query 生成 sql 的表现,
+        # 为了不改变当前 self 的表现, 这里 clone 一个 QuerySet 对象.
         obj = self._chain()
+
+        # 告诉 query 只查一条数据, 按 order_by 集合的字段来排序.
+        # query 会根据这些设定来组装一个特定的sql语句.
         obj.query.set_limits(high=1)
         obj.query.clear_ordering(force_empty=True)
         obj.query.add_ordering(*order_by)
         return obj.get()
 
     def earliest(self, *fields):
+        # 按指定字段, 正向排序, 提取第一条数据(即: 最早的一条数据).
         return self._earliest(*fields)
 
     def latest(self, *fields):
+        # 按指定字段, 反向排序, 提取第一条数据(即: 最晚的一条数据).
         return self.reverse()._earliest(*fields)
 
     def first(self):
@@ -1206,7 +1217,12 @@ class QuerySet:
         """Reverse the ordering of the QuerySet."""
         if self.query.is_sliced:
             raise TypeError('Cannot reverse a query once a slice has been taken.')
+
+        # 由于下面那段 obj.query 的代码要改变 query 生成 sql 的表现,
+        # 为了不改变当前 self 的表现, 这里 clone 一个 QuerySet 对象.
         clone = self._chain()
+
+        # 告诉 query 按照反向来排序.
         clone.query.standard_ordering = not clone.query.standard_ordering
         return clone
 

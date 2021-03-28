@@ -382,3 +382,63 @@ class SimpleTest(TestCase):
         self.assertEqual(obj.name, 'aaa-15')
         self.assertEqual(obj.price, 12.00)
         self.assertEqual(obj.description, 'aaa-15')
+
+    def test_h_earliest(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 排序通常比较有效的是按照时间, 按照价格, 按照数字.
+        # # 按指定字段, 正向排序, 提取第一条数据(即: 最早的一条数据).
+        #
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # ORDER BY `get__product`.`production_date` ASC         # 按给定字段正向排序
+        # LIMIT 1                                               # 只提取第一条数据
+        ss = product.objects.earliest('production_date')
+        self.assertEqual(ss.name, "aaa-0")
+
+    def test_i_latest(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 排序通常比较有效的是按照时间, 按照价格, 按照数字.
+        # # 按指定字段, 反向排序, 提取第一条数据(即: 最晚的一条数据).
+        #
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # ORDER BY `get__product`.`production_date` DESC        # 按给定字段反向排序
+        # LIMIT 1                                               # 只提取第一条数据
+        ss = product.objects.latest('production_date')
+        self.assertEqual(ss.name, "aaa-9")

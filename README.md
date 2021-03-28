@@ -9,7 +9,8 @@
   
   class SQLCompiler:
    
-      def execute_sql(self, result_type=MULTI, chunked_fetch=False, chunk_size=GET_ITERATOR_CHUNK_SIZE):
+      def execute_sql(self, result_type=MULTI, chunked_fetch=False, 
+                      chunk_size=GET_ITERATOR_CHUNK_SIZE):
           sql_info = sql % tuple(params)          # 在这里添加这行代码
           logger.info("sql: %s" % sql_info)       # 在这里添加这行代码
           cursor.execute(sql, params)             
@@ -157,8 +158,8 @@ python AdminActions/manage.py runserver
   |def bulk_update(self, objs, fields, batch_size=None)| [批量更新数据](./docs/QuerySet.md#bulk_update) |
   |def get_or_create(self, defaults=None, **kwargs)| [获取不到数据则创建数据](./docs/QuerySet.md#get_or_create) |
   |def update_or_create(self, defaults=None, **kwargs)| [更新不到数据则创建数据](./docs/QuerySet.md#update_or_create) |
-  |def earliest(self, *fields)| |
-  |def latest(self, *fields)| |
+  |def earliest(self, *fields)| [按指定字段正向排序并提取最早(远)一条](./docs/QuerySet.md#earliest) |
+  |def latest(self, *fields)| [按指定字段反向排序并提取最近一条](./docs/QuerySet.md#latest) |
   |def first(self)| |
   |def last(self)| |
   |def in_bulk(self, id_list=None, *, field_name='pk')| |
