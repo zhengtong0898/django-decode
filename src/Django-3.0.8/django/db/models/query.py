@@ -622,11 +622,19 @@ class QuerySet:
         """
         # The get() needs to be targeted at the write database in order
         # to avoid potential transaction consistency problems.
+
+        # 标记当前QuerySet为写状态
         self._for_write = True
+
         try:
+            # 先尝试从缓存(_result_cache)或数据库中读取符合kwargs参数的数据.
+            # 当获取大于一条数据时, 抛异常并退出程序.
             return self.get(**kwargs), False
         except self.model.DoesNotExist:
+            # 当获取到0条数据时, 抛出self.model.DoesNotExist异常, 进入到这里.
+            # 验证 defaults 和 kwargs 参数是否与 model 定义的字段一致, 然后合并这两个参数.
             params = self._extract_model_params(defaults, **kwargs)
+            # 创建数据
             return self._create_object_from_params(kwargs, params)
 
     def update_or_create(self, defaults=None, **kwargs):
