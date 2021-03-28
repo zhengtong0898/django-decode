@@ -136,7 +136,7 @@ python AdminActions/manage.py runserver
   | self._db = using | |
   | self._hints = hints or {} | |
   | self._query = query or sql.Query(self.model) | [`raw sql`语法生成器对象](./src/Django-3.0.8/django/db/models/sql/query.py#L146) |
-  | self._result_cache = None | |
+  | self._result_cache = None | 查询结果缓存集合 |
   | self._sticky_filter = False | |
   | self._for_write = False | |
   | self._prefetch_related_lookups = () | |
@@ -153,7 +153,7 @@ python AdminActions/manage.py runserver
   |def count(self)| [统计总数](./docs/QuerySet.md#count) |
   |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
   |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
-  |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| |
+  |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| [批量插入数据](./docs/QuerySet.md#bulk_create) |
   |def bulk_update(self, objs, fields, batch_size=None)| |
   |def get_or_create(self, defaults=None, **kwargs)| |
   |def update_or_create(self, defaults=None, **kwargs)| |

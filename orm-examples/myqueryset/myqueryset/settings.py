@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'get_.apps.GetConfig',
+    'bulk_create_.apps.BulkCreateConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,7 +83,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1',
-        'PORT': '3306'
+        'PORT': '3307'
     }
 }
 

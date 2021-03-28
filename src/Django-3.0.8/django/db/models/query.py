@@ -498,16 +498,39 @@ class QuerySet:
             return objs
         self._for_write = True
         connection = connections[self.db]
+        # _meta(类型: Options)用于保存 self.model 附加配置的一个容器对象; 包含了:
+        # _meta.db_table                # 表名
+        # _meta.verbose_name_plural     # 字段名(重定义)
+        # _meta.model_name              # 模块名
+        # _meta.concrete_fields         # 模块有效字段集合(含 id 这种AUTO_INCREMENT字段)
         opts = self.model._meta
         fields = opts.concrete_fields
         objs = list(objs)
+        # 尝试为数据填充 pk 值.
         self._populate_pk_values(objs)
+
+        # 批量写入之前, 先启动一个事务.
+        # SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED.
         with transaction.atomic(using=self.db, savepoint=False):
+            # 将数据分类, 有pk字段和没有pk字段.
+            # objs_with_pk 保存有 pk 字段的数据.
+            # objs_without_pk 保存没有 pk 字段的数据.
             objs_with_pk, objs_without_pk = partition(lambda o: o.pk is None, objs)
+
+            # 处理那些包含了 pk 字段的数据.
             if objs_with_pk:
+                # 批量插入数据, 并返回成功插入了多少条数据(mysql-8.0不支持. mariadb-10.5.0支持);
+                # returned_columns: [] or [(int, ), (int, ), ...]
                 returned_columns = self._batched_insert(
                     objs_with_pk, fields, batch_size, ignore_conflicts=ignore_conflicts,
                 )
+
+                # 插入一条数据时, 不论是什么版本,
+                # 返回的数据对象, 都会包含已插入的id值: lastrow_id, 即: <model: model object (lastrow_id)>.
+                #
+                # 由于 mysql-8/mysql-5 和 mariadb < 10.5.0 的数据库都不支持批量插入返回对应的lastrow_id,
+                # 所以这段代码仅对 mariadb >= 10.5.0 的版本才会进入 for 循环,
+                # 挨个为 <model: model object (None)> 对象设定为 <model: model object (lastrow_id)>
                 for obj_with_pk, results in zip(objs_with_pk, returned_columns):
                     for result, field in zip(results, opts.db_returning_fields):
                         if field != opts.pk:
@@ -515,19 +538,36 @@ class QuerySet:
                 for obj_with_pk in objs_with_pk:
                     obj_with_pk._state.adding = False
                     obj_with_pk._state.db = self.db
+
+            # 处理那些没有包含 pk 字段的数据.
             if objs_without_pk:
+                # 忽略 AutoField 的字段, 保留那些不是 Autofield 的字段.
                 fields = [f for f in fields if not isinstance(f, AutoField)]
+                # 批量插入数据, 并返回成功插入了多少条数据(mysql-8.0不支持. mariadb-10.5.0支持);
+                # returned_columns: [] or [(int, ), (int, ), ...]
                 returned_columns = self._batched_insert(
                     objs_without_pk, fields, batch_size, ignore_conflicts=ignore_conflicts,
                 )
+                # 当 mariadb >= 10.5.0 时, 验证数据成功插入的条目数是否与指定插入数一致.
+                # 当 ignore_conflicts 是 False 时, 表示冲突的数据会抛出异常(即: 当前程序结束并退出),
+                #                                 如果没有抛出异常表示没有冲突, 没有冲突的情况下返回的数据必须与指定插入数一致.
+                # 当 ignore_conflicts 是 True 时, 不做一致性比较.
                 if connection.features.can_return_rows_from_bulk_insert and not ignore_conflicts:
                     assert len(returned_columns) == len(objs_without_pk)
+
+                # 插入一条数据时, 不论是什么版本,
+                # 返回的数据对象, 都会包含已插入的id值: lastrow_id, 即: <model: model object (lastrow_id)>.
+                #
+                # 由于 mysql-8/mysql-5 和 mariadb < 10.5.0 的数据库都不支持批量插入返回对应的lastrow_id,
+                # 所以这段代码仅对 mariadb >= 10.5.0 的版本才会进入 for 循环,
+                # 挨个为 <model: model object (None)> 对象设定为 <model: model object (lastrow_id)>
                 for obj_without_pk, results in zip(objs_without_pk, returned_columns):
                     for result, field in zip(results, opts.db_returning_fields):
                         setattr(obj_without_pk, field.attname, result)
                     obj_without_pk._state.adding = False
                     obj_without_pk._state.db = self.db
 
+        # 返回数据
         return objs
 
     def bulk_update(self, objs, fields, batch_size=None):
@@ -1243,8 +1283,22 @@ class QuerySet:
         batch_size = (batch_size or max(ops.bulk_batch_size(fields, objs), 1))
         inserted_rows = []
         bulk_return = connections[self.db].features.can_return_rows_from_bulk_insert
+
+        # 假设 len(objs) == 5000; batch_size == 1000
+        # 那么 range(0, 10000, 1000) 则表示遍历10次: [0, 1000, 2000, 3000, 4000, 5000]
+        #    0:    0 + 1000;
+        # 1000: 1000 + 1000;
+        # 2000: 2000 + 1000;
+        # 3000: 3000 + 1000;
+        # 4000: 4000 + 1000;
+        # 这个算法跟 bucket_sort 类似, 也是把数据分到不同的桶,
+        # 不同的是当前的算法是平均分布, bucket_sort并不是平均分布.
         for item in [objs[i:i + batch_size] for i in range(0, len(objs), batch_size)]:
             if bulk_return and not ignore_conflicts:
+                # returning_fields 的作用仅仅是bool,
+                # 为False或None时返回空列表,
+                # 为True时用于返回lastrow_id(插入时自动生成的id).
+                # inserted_columns: [(int, ), ...]
                 inserted_columns = self._insert(
                     item, fields=fields, using=self.db,
                     returning_fields=self.model._meta.db_returning_fields,
@@ -1256,6 +1310,8 @@ class QuerySet:
                     inserted_rows.append(inserted_columns)
             else:
                 self._insert(item, fields=fields, using=self.db, ignore_conflicts=ignore_conflicts)
+
+        # [] or [(int, ), ...]
         return inserted_rows
 
     def _chain(self, **kwargs):
