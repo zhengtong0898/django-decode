@@ -4,7 +4,7 @@ from django.template.defaultfilters import truncatechars
 
 # Create your models here.
 class product(models.Model):
-    name = models.CharField(verbose_name="商品名称", max_length=50)
+    name = models.CharField(verbose_name="商品名称", max_length=50, unique=True)
     price = models.DecimalField(verbose_name="商品价格", max_digits=5, decimal_places=2)
     description = models.TextField(verbose_name="商品描述")
     production_date = models.DateField(verbose_name="生产日期")

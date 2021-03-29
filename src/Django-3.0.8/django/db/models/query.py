@@ -800,25 +800,48 @@ class QuerySet:
         """
         assert not self.query.is_sliced, \
             "Cannot use 'limit' or 'offset' with in_bulk"
+
+        # 如果 field_name 不是 'pk', 那么 field_name 必须是 unique 类型字段.
         if field_name != 'pk' and not self.model._meta.get_field(field_name).unique:
             raise ValueError("in_bulk()'s field_name must be a unique field but %r isn't." % field_name)
+
         if id_list is not None:
+            # 当 is_list 是 [] 或 False 时, 返回空字典{}.
             if not id_list:
                 return {}
+
+            # 假设 field_name = 'pk', 那么 filter_key = 'pk__in';
             filter_key = '{}__in'.format(field_name)
+            # 批量查询数量, 默认是 999, 这个是数据库单次查询数据的最大值
             batch_size = connections[self.db].features.max_query_params
             id_list = tuple(id_list)
             # If the database has a limit on the number of query parameters
             # (e.g. SQLite), retrieve objects in batches if necessary.
+            # 如果 id_list 大于 batch_size, 那么就分批读取, 每批按 batch_size 最大值来读取.
             if batch_size and batch_size < len(id_list):
                 qs = ()
                 for offset in range(0, len(id_list), batch_size):
                     batch = id_list[offset:offset + batch_size]
+                    # filter 和 order_by 并不执行sql,
+                    # 只是为 QuerySet.query 添加过滤条件语句和排序指令.
                     qs += tuple(self.filter(**{filter_key: batch}).order_by())
+
+            # 如果 id_list 小于 batch_size, 那么就按 id_list 来读取.
             else:
+                # filter 和 order_by 并不执行sql,
+                # 只是为 QuerySet.query 添加过滤条件语句和排序指令.
                 qs = self.filter(**{filter_key: id_list}).order_by()
+
+        # 当 is_list is None 时, 表示整表读取.
         else:
+            # clone 当前 `QuerySet`,
+            # 即便后续代码修改了 clone 的 clone.query.xx 属性,
+            # 也不影响当前 `QuerySet` 的属性值.
             qs = self._chain()
+
+        print("----in_bulk----: 3")
+        # for obj in qs 将会触发 `QuerySet` 的 __iter__ 方法,
+        # 间接的触发了 self._fetch_all() 方法, 从而发起了数据库查询请求.
         return {getattr(obj, field_name): obj for obj in qs}
 
     def delete(self):

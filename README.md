@@ -162,7 +162,7 @@ python AdminActions/manage.py runserver
   |def latest(self, *fields)| [按指定字段反向排序并提取最晚(近)一条](./docs/QuerySet.md#latest) |
   |def first(self)| [获取第一条数据](./docs/QuerySet.md#first) |
   |def last(self)| [获取最后一条数据](./docs/QuerySet.md#last) |
-  |def in_bulk(self, id_list=None, *, field_name='pk')| |
+  |def in_bulk(self, id_list=None, *, field_name='pk')| [批量获取一组数据](./docs/QuerySet.md#in_bulk) |
   |def delete(self)| |
   |def update(self, **kwargs)| |
   |def exists(self)| |

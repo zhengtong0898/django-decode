@@ -1,10 +1,11 @@
 from .models import product
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 
 
 # Create your tests here.
-class SimpleTest(TestCase):
+class SimpleTest(TransactionTestCase):
 
+    reset_sequences = True
     """
     注意事项:
 
@@ -531,3 +532,48 @@ class SimpleTest(TestCase):
         # 断言-2
         ps = qs.last()
         self.assertEqual(ps.name, 'aaa-5')
+
+    def test_l_in_bulk(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 批量按值查找
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # WHERE `get__product`.`id` IN (1, 2, 3)            # pk in (1, 2, 3)
+        ss = product.objects.in_bulk(id_list=[1,2,3])
+        # 断言-1
+        self.assertEqual(ss[1].name, "aaa-0")
+        self.assertEqual(ss[2].name, "aaa-1")
+        self.assertEqual(ss[3].name, "aaa-2")
+
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # WHERE `get__product`.`name` IN ('aaa-3', 'aaa-5', 'aaa-7')
+        ss = product.objects.in_bulk(id_list=["aaa-3", "aaa-5", "aaa-7"], field_name="name")
+        # 断言-2
+        self.assertEqual(ss["aaa-3"].name, "aaa-3")
+        self.assertEqual(ss["aaa-5"].name, "aaa-5")
+        self.assertEqual(ss["aaa-7"].name, "aaa-7")
