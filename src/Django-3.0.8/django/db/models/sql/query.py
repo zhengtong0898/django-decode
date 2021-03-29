@@ -1808,6 +1808,10 @@ class Query(BaseExpression):
 
     @property
     def is_sliced(self):
+        # self.low_mark 默认是 0.
+        # self.high_mark 默认是 None.
+        #
+        # 任意一个变量不是默认值, 调用过 set_limit() .
         return self.low_mark != 0 or self.high_mark is not None
 
     def has_limit_one(self):

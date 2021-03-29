@@ -742,7 +742,9 @@ class QuerySet:
                 "arguments or 'get_latest_by' in the model's Meta."
             )
 
-        # TODO: self.query.is_sliced 是什么意思? 待补充.
+        # 由于当前函数要求排序后提取自然的第一条数据,
+        # 而当 self.query.is_sliced 为 True 时, 表示当前`QuerySet`调用过 query.set_limit(),
+        # 这意味着数据提取将不是自然排序的第一条数据, 因此这里会抛异常.
         assert not self.query.is_sliced, \
             "Cannot change a query once a slice has been taken."
 

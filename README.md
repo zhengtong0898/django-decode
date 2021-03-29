@@ -133,13 +133,13 @@ python AdminActions/manage.py runserver
   
   | 属性 | 描述 |
   |---| :---: |
-  | self.model = model |  |
+  | self.model = model | 数据库模型对象 |
   | self._db = using | |
   | self._hints = hints or {} | |
   | self._query = query or sql.Query(self.model) | [`raw sql`语法生成器对象](./src/Django-3.0.8/django/db/models/sql/query.py#L146) |
   | self._result_cache = None | 查询结果缓存集合 |
   | self._sticky_filter = False | |
-  | self._for_write = False | |
+  | self._for_write = False | 是否标记为写状态 |
   | self._prefetch_related_lookups = () | |
   | self._prefetch_done = False | |
   | self._known_related_objects = {}  # {rel_field: {pk: rel_obj}} | |
@@ -167,11 +167,11 @@ python AdminActions/manage.py runserver
   |def update(self, **kwargs)| |
   |def exists(self)| |
   |def explain(self, *, format=None, **options)| |
-  |def raw(self, raw_query, params=None, translations=None, using=None) | |
+  |def raw(self, raw_query, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; translations=None, using=None) | |
   |def values(self, *fields, **expressions) | |
   |def values_list(self, *fields, flat=False, named=False) | |
   |def dates(self, field_name, kind, order='ASC') | |
-  |def datetimes(self, field_name, kind, order='ASC', tzinfo=None, is_dst=None) | |
+  |def datetimes(self, field_name, kind, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; order='ASC', tzinfo=None, is_dst=None) | |
   |def none(self) | |
   |def filter(self, *args, **kwargs) | |
   |def exclude(self, *args, **kwargs) | |
@@ -179,7 +179,7 @@ python AdminActions/manage.py runserver
   |def union(self, *other_qs, all=False) | |
   |def intersection(self, *other_qs) | |
   |def difference(self, *other_qs) | |
-  |def select_for_update(self, nowait=False, skip_locked=False, of=()) | |
+  |def select_for_update(self, nowait=False, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; skip_locked=False, of=()) | |
   |def select_related(self, *fields) | |
   |def prefetch_related(self, *lookups) | |
   |def annotate(self, *args, **kwargs) | |
