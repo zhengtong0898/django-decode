@@ -240,3 +240,62 @@ LIMIT 1                                               # 只提取第一条数据
 - [使用案例](../orm-examples/myqueryset/get_/tests.py#L416)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L758)
+
+
+&nbsp;  
+&nbsp;  
+### first   
+`db.models.query.QuerySet.first`     
+基于已排序的`QuerySet`容器中提取第一条数据(这种方式不查询数据库).  
+`QuerySet`未排序时, 调用本方法, 将会再次查询数据库(附加上按 pk 字段正向排序, 以及只取一条数据).  
+如果不提供`QuerySet`, 而是直接调用本方法, 将会按 pk 字段正向排序, 然后提取第一条数据.   
+
+对应的sql语句
+```shell
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`description`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+ORDER BY `get__product`.`id` ASC                      # 按 pk 字段正向排序
+LIMIT 1                                               # 提取第一条数据
+```
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L446)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L768)
+
+
+&nbsp;  
+&nbsp;  
+### last
+`db.models.query.QuerySet.last`   
+与 [first](./QuerySet.md#first) 概念一致, 唯一的区别在于`last`排序是按 pk 字段反向排序.  
+
+对应的sql语句
+```shell
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`description`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+ORDER BY `get__product`.`id` DESC                 # 按 pk 字段反向排序
+LIMIT 1                                           # 提取第一条数据
+```
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L497)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L787)
+
+&nbsp;  
+> earlist 和 first 有什么区别?    
+>
+> earlist 要求提供排序字段, 当查询的数据集未空时, 报错.   
+> 
+> first 不要求提供排序字段, 当查询的数据集为空时, 不报错, 返回 None.   
+> first 支持再任何已排序的 `QuerySet` 的基础上, 提取第一条数据.   
+> first 补充支持, 如果没有提供queryset那么就按照pk来正向排序, 然后提取第一个元素. 

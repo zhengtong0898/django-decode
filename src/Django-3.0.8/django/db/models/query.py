@@ -297,6 +297,9 @@ class QuerySet:
 
         if isinstance(k, slice):
             qs = self._chain()
+
+            # 将 slice 转换为 start 和 stop
+            # 将范围区间设定写入 qs.query .
             if k.start is not None:
                 start = int(k.start)
             else:
@@ -306,6 +309,9 @@ class QuerySet:
             else:
                 stop = None
             qs.query.set_limits(start, stop)
+
+            # 如果设定了步长, 那么就返回 list(qs)[::k,step]
+            # 如果没有设定补偿, 那么就返回 qs.
             return list(qs)[::k.step] if k.step else qs
 
         qs = self._chain()
@@ -761,11 +767,27 @@ class QuerySet:
 
     def first(self):
         """Return the first object of a query or None if no match is found."""
+        # 默认是按 pk 来正向排序; 如果自定义了排序则按自定义来排序.
+        # ss: QuerySet类型
+        # ss = self if self.ordered else self.order_by('pk')
+        # ss[:1]  ==  ss[0:1]  ==  ss[1]
+        # 既然都是一样的为什么不直接用ss[1]就完事了呢?
+        # 因为当 ss 为空时, ss[1] 会报错;
+        # 而 ss[0:1] 或 ss[:1] 则会返回一个空列表.
+        #
+        # 触发 QuerySet 的 __getitem__ 方法.
+        # ss = ss[:1]
+        #
+        # 触发 QuerySet 的 __iter__ 方法, 在该方法中执行 self._fetch_all
+        # for obj in ss:
+        #     return obj
         for obj in (self if self.ordered else self.order_by('pk'))[:1]:
             return obj
 
     def last(self):
         """Return the last object of a query or None if no match is found."""
+        # 默认是按 '-pk' 来反向排序; 如果自定义了排序则按自定义来排序.
+        # ss = self.reverse() if self.ordered else self.order_by('-pk')
         for obj in (self.reverse() if self.ordered else self.order_by('-pk'))[:1]:
             return obj
 

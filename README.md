@@ -154,14 +154,14 @@ python AdminActions/manage.py runserver
   |def count(self)| [统计总数](./docs/QuerySet.md#count) |
   |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
   |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
-  |def bulk_create(self, objs, batch_size=None, ignore_conflicts=False)| [批量插入数据](./docs/QuerySet.md#bulk_create) |
+  |def bulk_create(self, objs, batch_size=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ignore_conflicts=False)| [批量插入数据](./docs/QuerySet.md#bulk_create) |
   |def bulk_update(self, objs, fields, batch_size=None)| [批量更新数据](./docs/QuerySet.md#bulk_update) |
   |def get_or_create(self, defaults=None, **kwargs)| [获取不到数据则创建数据](./docs/QuerySet.md#get_or_create) |
   |def update_or_create(self, defaults=None, **kwargs)| [更新不到数据则创建数据](./docs/QuerySet.md#update_or_create) |
   |def earliest(self, *fields)| [按指定字段正向排序并提取最早(远)一条](./docs/QuerySet.md#earliest) |
-  |def latest(self, *fields)| [按指定字段反向排序并提取最近一条](./docs/QuerySet.md#latest) |
-  |def first(self)| |
-  |def last(self)| |
+  |def latest(self, *fields)| [按指定字段反向排序并提取最晚(近)一条](./docs/QuerySet.md#latest) |
+  |def first(self)| [获取第一条数据](./docs/QuerySet.md#first) |
+  |def last(self)| [获取最后一条数据](./docs/QuerySet.md#last) |
   |def in_bulk(self, id_list=None, *, field_name='pk')| |
   |def delete(self)| |
   |def update(self, **kwargs)| |

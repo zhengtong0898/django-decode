@@ -442,3 +442,92 @@ class SimpleTest(TestCase):
         # LIMIT 1                                               # 只提取第一条数据
         ss = product.objects.latest('production_date')
         self.assertEqual(ss.name, "aaa-9")
+
+    def test_j_first(self):
+
+        # 按 pk 字段正向排序, 然后提取第一条数据,
+        # 当数据不存在时, 返回一个None, 不报错.
+        p = product.objects.first()
+
+        # 断言-1
+        self.assertIsNone(p)
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 按 pk 字段正向排序, 然后提取第一条数据:
+        # 当数据存在时, 返回第一条数据, 类型是: product
+        #
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # ORDER BY `get__product`.`id` ASC                      # 按 pk 字段正向排序
+        # LIMIT 1                                               # 提取第一条数据
+        p = product.objects.first()
+
+        # 断言-2
+        self.assertIsInstance(p, product)
+        self.assertTrue(p.name, "aaa-0")
+
+        # 按自定义字段排序查询得出 queryset 结果集, 返回第一条数据.
+        qs = product.objects.filter(production_date__range=('1999-10-13', '1999-10-15')).order_by('production_date')
+        self.assertEqual(len(qs), 3)
+
+        # 断言-3
+        # 如果前面排序过了, 那么这里将不会再查询数据库排序;
+        # 如果前面没有排序过, 那么这里就会重新查询数据库, 按 pk 字段正向排序.
+        ps = qs.first()
+        self.assertEqual(ps.name, 'aaa-3')
+
+    def test_k_last(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 按 pk 字段反向排序, 然后提取第一条数据.
+        #
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`description`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        # ORDER BY `get__product`.`id` DESC                 # 按 pk 字段反向排序
+        # LIMIT 1                                           # 提取第一条数据
+        ps = product.objects.last()
+        self.assertEqual(ps.name, "aaa-9")
+
+        # 按自定义字段排序查询得出 queryset 结果集,
+        # 返回第一条数据.
+        qs = product.objects.filter(production_date__range=('1999-10-13', '1999-10-15'))
+        self.assertEqual(len(qs), 3)
+
+        # 断言-2
+        ps = qs.last()
+        self.assertEqual(ps.name, 'aaa-5')
