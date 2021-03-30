@@ -399,3 +399,26 @@ WHERE `get__product`.`expiration_date` = 170
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L77)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L886)
+
+
+&nbsp;  
+&nbsp;  
+### exists
+`db.models.query.QuerySet.exists(self)`  
+该方法通过检查`QuerySet._result_cache`缓存集合, 当有值时返回`True`.   
+当没有值时, `exists`会根据 `QuerySet` 中标记好的`filter`条件到数据库中去查询数据, 并返回相应的结果(`bool`类型).   
+
+对应的sql语句
+```shell
+# pp = product.objects.filter(pk=99).exists()
+
+
+SELECT (1) AS `a`
+FROM `delete__product`
+WHERE `delete__product`.`id` = 99
+LIMIT 1
+```
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L103)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L927)
+

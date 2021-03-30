@@ -924,8 +924,14 @@ class QuerySet:
     _update.queryset_only = False
 
     def exists(self):
+        # self._result_cache表示还没有查询过数据库,
+        # 这种情况下就需要去查询数据库.
         if self._result_cache is None:
             return self.query.has_results(using=self.db)
+
+        # 如果查询过数据库, 那么可能有两种情况:
+        # 1. 没有查到数据, 那么值是 [], 返回 False.
+        # 2. 查到数据, 那么值是 [<model (id-1)>, <model (id-2)>, ...], 返回 True.
         return bool(self._result_cache)
 
     def _prefetch_related_objects(self):

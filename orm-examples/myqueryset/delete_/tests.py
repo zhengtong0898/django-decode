@@ -99,3 +99,35 @@ class SimpleTest(TransactionTestCase):
         rows = product.objects.filter(expiration_date=170).update(description="bbbb")
         # 断言: 批量更新了10条数据.
         self.assertEqual(rows, 10)
+
+    def test_c_exists(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # SELECT (1) AS `a`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`id` = 99
+        # LIMIT 1
+        pp = product.objects.filter(pk=99).exists()
+        self.assertEqual(pp, False)
+
+        # SELECT (1) AS `a`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`id` = 1
+        # LIMIT 1
+        pp = product.objects.filter(pk=1).exists()
+        self.assertEqual(pp, True)
