@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'get_.apps.GetConfig',
     'bulk_create_.apps.BulkCreateConfig',
+    'delete_.apps.DeleteConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

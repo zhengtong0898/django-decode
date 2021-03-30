@@ -86,7 +86,7 @@ WHERE `get__product`.`id` IN (1007, 1008)
 
 - [使用案例](../orm-examples/myqueryset/get_/tests.py#L181)
 
-- 源码分析 TODO
+- 源码分析 TODO: 待补充
 
 
 &nbsp;  
@@ -331,3 +331,48 @@ WHERE `get__product`.`id` IN (1, 2, 3)            # pk in (1, 2, 3)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L796)
 
+
+&nbsp;  
+&nbsp;  
+### delete
+`db.models.query.QuerySet.delete(self)`   
+该方法用于删除一条或多条数据.   
+该方法只能作用在`QuerySet`对象上, 即: 那些已经写好过滤条件的`QuerySet`对象.  
+
+对应的sql语句:
+```shell
+$ 情况一:
+# Django知道 brand 这张表被引用了(referenced),
+# 所以在删除 brand 的数据之前, 需要:
+# 1. 先查询当前数据
+# 2. 拿查询出来的结果的id, 去尝试删除引用表与
+#    外键值一致的那条些(可能是一条也可能是多条)数据.
+# 3. 拿查询出来的结果的id, 去尝试删除brand的数据.
+
+# 1. 查询
+SELECT `delete__brand`.`id`,
+       `delete__brand`.`name`,
+       `delete__brand`.`description`
+FROM `delete__brand`
+WHERE `delete__brand`.`id` = 1
+
+# 2. 删除子表指定数据
+DELETE FROM `delete__product`
+WHERE `delete__product`.`brand_id_id` IN (1)
+
+# 3. 删除父表指定数据
+DELETE FROM `delete__brand`
+WHERE `delete__brand`.`id` IN (1)
+
+
+
+# 情况二:
+# Django知道product这张表没有被引用(referenced),
+# 所以不需要先查询在删除, 而是直接删除.
+DELETE FROM `delete__product`
+WHERE `delete__product`.`id` = 2'
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L8)
+
+- 源码分析 TODO: 待补充
