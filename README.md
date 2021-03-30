@@ -164,7 +164,7 @@ python AdminActions/manage.py runserver
   |def last(self)| [获取最后一条数据](./docs/QuerySet.md#last) |
   |def in_bulk(self, id_list=None, *, field_name='pk')| [批量获取一组数据](./docs/QuerySet.md#in_bulk) |
   |def delete(self)| [删除一条或多条数据](./docs/QuerySet.md#delete) |
-  |def update(self, **kwargs)| |
+  |def update(self, **kwargs)| [更新一条或多条数据](./docs/QuerySet.md#update) |
   |def exists(self)| |
   |def explain(self, *, format=None, **options)| |
   |def raw(self, raw_query, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; translations=None, using=None) | |

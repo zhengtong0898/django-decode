@@ -373,6 +373,29 @@ DELETE FROM `delete__product`
 WHERE `delete__product`.`id` = 2'
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L8)
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L9)
 
 - 源码分析 TODO: 待补充
+
+
+&nbsp;  
+&nbsp;  
+### update
+`db.models.query.QuerySet.update(self, **kwargs)`   
+该方法根据当前的`QuerySet`对象中的`filter`条件, 根据参数`kwargs`来组装成sql, 然后提交给数据库去执行更新.    
+
+对应的sql语句:
+```shell
+# filter(expiration_date=170) 不会提交数据库做查询, 而是将过滤条件写入到 QuerySet中,    
+# update(description="bbbb") 先将更新参数写入到QuerySet中, 最后执行execute_sql,
+# execute_sql 会将 QuerySet 中所有属性拼装成一个有效的sql, 提交给数据库去执行. 
+# rows = product.objects.filter(expiration_date=170).update(description="bbbb")
+
+UPDATE `get__product`
+SET `description` = 'bbbb'
+WHERE `get__product`.`expiration_date` = 170
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L77)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L886)

@@ -891,11 +891,15 @@ class QuerySet:
         assert not self.query.is_sliced, \
             "Cannot update a query once a slice has been taken."
         self._for_write = True
+        # 赋值一份 self.query 对象出来, 并标记这个新的query对象是 sql.UpdateQuery .
         query = self.query.chain(sql.UpdateQuery)
+        # 将要更新的字段, 写入到query.related_updates中
         query.add_update_values(kwargs)
         # Clear any annotations so that they won't be present in subqueries.
         query.annotations = {}
         with transaction.mark_for_rollback_on_error(using=self.db):
+            # execute_sql 根据 query 对象中的 filter 条件 和
+            # related_updates 字段 生成一条完成的更新语句, 并提交给数据库执行.
             rows = query.get_compiler(self.db).execute_sql(CURSOR)
         self._result_cache = None
         return rows

@@ -1,4 +1,5 @@
 from django.test import TestCase, TransactionTestCase
+from .models import product, brand
 
 
 # Create your tests here.
@@ -6,7 +7,6 @@ class SimpleTest(TransactionTestCase):
     reset_sequences = True
 
     def test_a_delete_relate(self):
-        from .models import product, brand
 
         b1 = brand(name="fenghuang", description="fhdc")
         b2 = brand(name="auldey", description="adsg")
@@ -17,6 +17,13 @@ class SimpleTest(TransactionTestCase):
         product(name="凤凰牌男款自行车",
                      price=100.00,
                      description="男款带横梁, 经典款",
+                     production_date="1999-10-10",
+                     expiration_date=170,
+                     brand_id=b1).save()
+
+        product(name="凤凰牌女款自行车",
+                     price=199.00,
+                     description="凤凰牌女款自行车",
                      production_date="1999-10-10",
                      expiration_date=170,
                      brand_id=b1).save()
@@ -49,17 +56,46 @@ class SimpleTest(TransactionTestCase):
         # 3. 删除父表指定数据
         # DELETE FROM `delete__brand`
         # WHERE `delete__brand`.`id` IN (1)
-        brand.objects.filter(pk=1).delete()
+        delete_success, delete_count = brand.objects.filter(pk=1).delete()
         # 断言-1: 确认product表中id=1的这条数据已经被删除了.
-        ss = product.objects.filter(pk=1)
-        self.assertEqual(len(ss), 0)
+        self.assertEqual(delete_success, 3)
+        self.assertEqual(len(delete_count), 2)
+        self.assertEqual(delete_count["delete_.brand"], 1)
+        self.assertEqual(delete_count["delete_.product"], 2)
 
         # Django知道product这张表没有被引用(referenced),
         # 所以不需要先查询在删除, 而是直接删除.
         #
         # DELETE FROM `delete__product`
         # WHERE `delete__product`.`id` = 2'
-        product.objects.filter(pk=2).delete()
+        delete_success, delete_count = product.objects.filter(pk=3).delete()
         # 断言-2
-        ss = product.objects.filter(pk=2)
-        self.assertEqual(len(ss), 0)
+        self.assertEqual(delete_success, 1)
+        self.assertEqual(len(delete_count), 1)
+        self.assertEqual(delete_count["delete_.product"], 1)
+
+    def test_b_update(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # update 只负责更新 queryset 对象中的数据.
+        # UPDATE `get__product`
+        # SET `description` = 'bbbb'
+        # WHERE `get__product`.`expiration_date` = 170
+        rows = product.objects.filter(expiration_date=170).update(description="bbbb")
+        # 断言: 批量更新了10条数据.
+        self.assertEqual(rows, 10)
