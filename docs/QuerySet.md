@@ -464,3 +464,25 @@ WHERE `delete__product`.`id` = 1
 > 注意事项:    
 > 当执行的SQL与调用的Model无关时, 它会尝试把查询到的字段拿写入到 model 模型对象中,   
 > 而那些原本 model 模型字段则为空, 当后续代码如果调用 model 模型字段属性时会抛出异常.  
+
+
+&nbsp;  
+&nbsp;  
+### dates
+`db.models.query.QuerySet.dates(self, field_name, kind, order='ASC')`  
+该方法用于获取一组数据的时间.   
+使用该方法通常关注于一个时间段, 或最近那个时间, 或最早那个时间.   
+
+对应的sql语句
+```shell
+# product.objects.dates('production_date', 'year', order='ASC')
+
+SELECT DISTINCT CAST(DATE_FORMAT(`delete__product`.`production_date`, '%Y-01-01') AS DATE) AS `datefield`
+FROM `delete__product`
+WHERE `delete__product`.`production_date` IS NOT NULL
+ORDER BY `datefield` ASC
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L242)  
+
+- 源码分析 TODO: 待补充

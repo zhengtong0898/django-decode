@@ -238,3 +238,81 @@ class SimpleTest(TransactionTestCase):
         self.assertEqual(raw_qs[1].model, "group")
         with self.assertRaises(Exception):
             description = raw_qs[0].description
+
+    def test_f_dates(self):
+
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        from datetime import date
+        # DATE_FORMAT(`delete__product`.`production_date`, '%Y-01-01')
+        # 将时间转化成 %Y-01-01 的固定格式.
+        #
+        # CAST("%Y-01-01" AS DATE) AS `datefield`
+        # 将按年 "%Y-01-01" 格式的字符串类型, 转换成 DATE 数据类型.
+        #
+        # DISTINCT `datefield`
+        # 按年时间去重
+        #
+        # SELECT DISTINCT CAST(DATE_FORMAT(`delete__product`.`production_date`, '%Y-01-01') AS DATE) AS `datefield`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`production_date` IS NOT NULL
+        # ORDER BY `datefield` ASC
+        qs = product.objects.dates('production_date', 'year', order='ASC')  # 'year'按年去重, 有效值:('year', 'month', 'week', 'day')
+        self.assertEqual(len(qs), 1)
+        self.assertIsInstance(qs[0], date)
+        self.assertEqual(qs[0], date(year=1999, month=1, day=1))
+
+        # SELECT DISTINCT DATE(`delete__product`.`production_date`) AS `datefield`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`production_date` IS NOT NULL
+        # ORDER BY `datefield` ASC
+        qs = product.objects.dates('production_date', 'day', order='ASC')   # 'day'按天去重
+        self.assertEqual(len(qs), 10)
+        self.assertIsInstance(qs[0], date)
+        self.assertEqual(qs[0], date(year=1999, month=10, day=10))
+        self.assertEqual(qs[1], date(year=1999, month=10, day=11))
+        self.assertEqual(qs[9], date(year=1999, month=10, day=19))
+
+        # SELECT DISTINCT DATE(`delete__product`.`production_date`) AS `datefield`
+        # FROM `delete__product`
+        # WHERE (`delete__product`.`production_date` BETWEEN '1999-10-13' AND '1999-10-15' AND
+        #        `delete__product`.`production_date` IS NOT NULL)
+        # ORDER BY `datefield` ASC
+        qs = (product.objects
+              .filter(production_date__range=['1999-10-13', '1999-10-15'])
+              .dates('production_date', 'day', order='ASC'))                # 'day'按天去重
+        self.assertEqual(len(qs), 3)
+        self.assertIsInstance(qs[0], date)
+        self.assertEqual(qs[0], date(year=1999, month=10, day=13))
+        self.assertEqual(qs[1], date(year=1999, month=10, day=14))
+        self.assertEqual(qs[2], date(year=1999, month=10, day=15))
+
+        # SELECT DISTINCT DATE(`delete__product`.`production_date`) AS `datefield`
+        # FROM `delete__product` WHERE (`delete__product`.`production_date` >= '1999-10-13' AND
+        #                               `delete__product`.`production_date` <= '1999-10-15' AND
+        #                               `delete__product`.`production_date` IS NOT NULL)
+        # ORDER BY `datefield` ASC
+        qs = (product.objects
+              .filter(production_date__gte='1999-10-13',
+                      production_date__lte='1999-10-15')
+              .dates('production_date', 'day', order='ASC'))                # 'day'按天去重
+        self.assertEqual(len(qs), 3)
+        self.assertIsInstance(qs[0], date)
+        self.assertEqual(qs[0], date(year=1999, month=10, day=13))
+        self.assertEqual(qs[1], date(year=1999, month=10, day=14))
+        self.assertEqual(qs[2], date(year=1999, month=10, day=15))

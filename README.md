@@ -168,9 +168,9 @@ python AdminActions/manage.py runserver
   |def exists(self)| [数据是否存在](./docs/QuerySet.md#exists) |
   |def explain(self, *, format=None, **options)| [查询执行计划](./docs/QuerySet.md#explain) |
   |def raw(self, raw_query, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; translations=None, using=None) | [执行自定义SQL语句](./docs/QuerySet.md#raw) |
-  |def values(self, *fields, **expressions) | |
-  |def values_list(self, *fields, flat=False, named=False) | |
-  |def dates(self, field_name, kind, order='ASC') | |
+  |def values(self, *fields, **expressions) | [获取基于模型字段的字典-键值](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.values) |
+  |def values_list(self, *fields, flat=False, named=False) |[获取基于模型字段的列表-仅值](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.values_list) |
+  |def dates(self, field_name, kind, order='ASC') | [获取一组数据的时间](./docs/QuerySet.md#dates) |
   |def datetimes(self, field_name, kind, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; order='ASC', tzinfo=None, is_dst=None) | |
   |def none(self) | |
   |def filter(self, *args, **kwargs) | |
