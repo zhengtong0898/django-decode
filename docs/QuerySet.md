@@ -422,3 +422,31 @@ LIMIT 1
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L927)
 
+
+&nbsp;  
+&nbsp;  
+### explain
+`db.models.query.QuerySet.exists(self, *, format=None, **options)`  
+该方法用于打印一个查询的执行计划.   
+TODO: 数据打印不全, 暂时想不到使用场景.   
+
+对应的sql语句
+```shell
+# product.objects.filter(pk=1).explain()
+
+EXPLAIN
+SELECT `delete__product`.`id`,
+       `delete__product`.`name`,
+       `delete__product`.`price`,
+       `delete__product`.`description`,
+       `delete__product`.`production_date`,
+       `delete__product`.`expiration_date`,
+       `delete__product`.`date_joined`,
+       `delete__product`.`brand_id_id`
+FROM `delete__product`
+WHERE `delete__product`.`id` = 1
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L135)  
+
+- [详细介绍](https://github.com/zhengtong0898/learn_staff/blob/main/mysql/Tips.md#执行计划explain)

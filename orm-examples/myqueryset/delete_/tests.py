@@ -131,3 +131,66 @@ class SimpleTest(TransactionTestCase):
         # LIMIT 1
         pp = product.objects.filter(pk=1).exists()
         self.assertEqual(pp, True)
+
+    def test_d_explain(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # mysql 和 mariadb 一样
+        # EXPLAIN
+        # SELECT `delete__product`.`id`,
+        #        `delete__product`.`name`,
+        #        `delete__product`.`price`,
+        #        `delete__product`.`description`,
+        #        `delete__product`.`production_date`,
+        #        `delete__product`.`expiration_date`,
+        #        `delete__product`.`date_joined`,
+        #        `delete__product`.`brand_id_id`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`id` = 1
+        ss = product.objects.filter(pk=1).explain()
+
+        # mariadb-10.5.0
+        # ANALYZE
+        # SELECT `delete__product`.`id`,
+        #        `delete__product`.`name`,
+        #        `delete__product`.`price`,
+        #        `delete__product`.`description`,
+        #        `delete__product`.`production_date`,
+        #        `delete__product`.`expiration_date`,
+        #        `delete__product`.`date_joined`,
+        #        `delete__product`.`brand_id_id`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`id` = 1
+        #
+        #
+        # mysql-8.0
+        # EXPLAIN ANALYZE
+        # SELECT `delete__product`.`id`,
+        #        `delete__product`.`name`,
+        #        `delete__product`.`price`,
+        #        `delete__product`.`description`,
+        #        `delete__product`.`production_date`,
+        #        `delete__product`.`expiration_date`,
+        #        `delete__product`.`date_joined`,
+        #        `delete__product`.`brand_id_id`
+        # FROM `delete__product`
+        # WHERE `delete__product`.`id` = 1
+        ss2 = product.objects.filter(pk=1).explain(analyze=True)
+
+        # 不需要断言
+        pass
