@@ -947,8 +947,11 @@ class QuerySet:
     ##################################################
 
     def raw(self, raw_query, params=None, translations=None, using=None):
+        # self.db == settings.py 中 DATABASES = {} 中的 'default' 数据库.
         if using is None:
             using = self.db
+        # 实例化 RawQuerySet 对象, 将query(SQL语句)作为实例化参数.
+        # 备注: qs 并不执行SQL语句, 而是交给后续代码触发__len__,__itemget__或__repr__来执行 self._fetch_all.
         qs = RawQuerySet(raw_query, model=self.model, params=params, translations=translations, using=using)
         qs._prefetch_related_lookups = self._prefetch_related_lookups[:]
         return qs

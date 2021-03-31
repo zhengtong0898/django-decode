@@ -194,3 +194,47 @@ class SimpleTest(TransactionTestCase):
 
         # 不需要断言
         pass
+
+    def test_e_raw(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 执行SQL: select * from delete__product
+        # 返回对象: RawQuerySet
+        #          RawQuerySet._result_cache 集合中包含查询结果.
+        raw_qs = product.objects.raw("select * from delete__product")
+
+        # 断言:
+        # raw_qs._result_cache = [db.Model, ...]
+        self.assertEqual(len(raw_qs), 10)
+        self.assertEqual(raw_qs[0].name, "aaa-0")
+        self.assertEqual(raw_qs[1].name, "aaa-1")
+        self.assertEqual(raw_qs[9].name, "aaa-9")
+
+        # 当执行的SQL与product(model)无关时,
+        # 它会尝试把查询到的字段拿写入到 product 模型对象中,
+        # 而那些原本 product 模型字段则为空.
+        # 当后续代码如果调用 product 模型字段属性时会抛出异常.
+        raw_qs = product.objects.raw("select * from django_content_type")
+        self.assertEqual(raw_qs[0].id, 45)
+        self.assertEqual(raw_qs[0].app_label, "admin")
+        self.assertEqual(raw_qs[0].model, "logentry")
+        self.assertEqual(raw_qs[1].id, 47)
+        self.assertEqual(raw_qs[1].app_label, "auth")
+        self.assertEqual(raw_qs[1].model, "group")
+        with self.assertRaises(Exception):
+            description = raw_qs[0].description

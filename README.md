@@ -167,7 +167,7 @@ python AdminActions/manage.py runserver
   |def update(self, **kwargs)| [更新一条或多条数据](./docs/QuerySet.md#update) |
   |def exists(self)| [数据是否存在](./docs/QuerySet.md#exists) |
   |def explain(self, *, format=None, **options)| [查询执行计划](./docs/QuerySet.md#explain) |
-  |def raw(self, raw_query, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; translations=None, using=None) | |
+  |def raw(self, raw_query, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; translations=None, using=None) | [执行自定义SQL语句](./docs/QuerySet.md#raw) |
   |def values(self, *fields, **expressions) | |
   |def values_list(self, *fields, flat=False, named=False) | |
   |def dates(self, field_name, kind, order='ASC') | |

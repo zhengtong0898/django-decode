@@ -426,9 +426,8 @@ LIMIT 1
 &nbsp;  
 &nbsp;  
 ### explain
-`db.models.query.QuerySet.exists(self, *, format=None, **options)`  
+`db.models.query.QuerySet.explain(self, *, format=None, **options)`  
 该方法用于打印一个查询的执行计划.   
-TODO: 数据打印不全, 暂时想不到使用场景.   
 
 对应的sql语句
 ```shell
@@ -450,3 +449,18 @@ WHERE `delete__product`.`id` = 1
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L135)  
 
 - [详细介绍](https://github.com/zhengtong0898/learn_staff/blob/main/mysql/Tips.md#执行计划explain)
+
+
+&nbsp;  
+&nbsp;  
+### raw
+`db.models.query.QuerySet.raw(self, raw_query, params=None, translations=None, using=None)`  
+该方法用于执行自定义SQL语句.   
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L198)  
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L949)
+
+> 注意事项:    
+> 当执行的SQL与调用的Model无关时, 它会尝试把查询到的字段拿写入到 model 模型对象中,   
+> 而那些原本 model 模型字段则为空, 当后续代码如果调用 model 模型字段属性时会抛出异常.  
