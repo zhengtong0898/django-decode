@@ -525,4 +525,66 @@ ORDER BY `datetimefield` ASC
 
 &nbsp;  
 &nbsp;  
-  
+### filter
+`db.models.query.QuerySet.filter(self, *args, **kwargs)`  
+该方法用于使用实参提供过滤条件组合.  
+
+对应的sql语句
+```shell
+# 常规匹配操作
+# product.objects.filter(name="aaa-0")
+SELECT `*
+FROM `delete__product`
+WHERE `delete__product`.`name` = 'aaa-0'
+
+
+# endswith 匹配操作
+# product.objects.filter(name__endswith="-5")
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`name` LIKE BINARY '%-5'
+
+
+# in 匹配操作
+# product.objects.filter(name__in=("aaa-0", "aaa-5", "aaa-7"))
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`name` IN ('aaa-0', 'aaa-5', 'aaa-7')
+
+
+# >= 匹配操作
+# product.objects.filter(price__gte=5)
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`price` >= 5'
+
+# between and 匹配操作
+# product.objects.filter(price__range=(5,9))
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`price` BETWEEN 5 AND 9'
+
+# quarter 按季节区间匹配操作
+# product.objects.filter(production_date__quarter=2)
+SELECT *
+FROM `delete__product`
+WHERE EXTRACT(QUARTER FROM `delete__product`.`production_date`) = 2'
+
+
+# regex 区分大小写匹配操作
+# product.objects.filter(name__regex=r"A\w+")
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`name` REGEXP BINARY 'A\\\\w+'
+
+
+# regex 不区分大小写匹配操作
+# product.objects.filter(name__iregex=r"A\w+")
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`name` REGEXP 'A\\\\w+'
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L383)  
+
+

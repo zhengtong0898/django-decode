@@ -379,3 +379,97 @@ class SimpleTest(TransactionTestCase):
         from django.db.models.query import EmptyQuerySet
         qs = product.objects.none()
         self.assertIsInstance(qs, EmptyQuerySet)
+
+    def test_k_filter(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            ss = self.create_datetime(i)
+            pp = product(name="aaa-%s" % i,
+                         price=i+1,
+                         description="aaa-%s" % ("%s".zfill(2) % (i+1)),
+                         production_date="1999-%s-10" % ("%s".zfill(2) % (i+1)),     # 这是DateField字段, 不符合测试场景.
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 精确匹配操作
+        # SELECT `*
+        # FROM `delete__product`
+        # WHERE `delete__product`.`name` = 'aaa-0'
+        qs = product.objects.filter(name="aaa-0")
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0].name, "aaa-0")
+
+        # loopup: endswith {从右开始匹配}
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE `delete__product`.`name` LIKE BINARY '%-5'
+        qs = product.objects.filter(name__endswith="-5")
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0].name, "aaa-5")
+
+        # lookup: in操作
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE `delete__product`.`name` IN ('aaa-0', 'aaa-5', 'aaa-7')
+        qs = product.objects.filter(name__in=("aaa-0", "aaa-5", "aaa-7"))
+        self.assertEqual(len(qs), 3)
+        self.assertEqual(qs[0].name, "aaa-0")
+        self.assertEqual(qs[1].name, "aaa-5")
+        self.assertEqual(qs[2].name, "aaa-7")
+
+        # loopup: gte操作 {大于或等于}
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE `delete__product`.`price` >= 5'
+        qs = product.objects.filter(price__gte=5)
+        self.assertEqual(len(qs), 6)
+        self.assertEqual(qs[0].description, "aaa-5")
+        self.assertEqual(qs[1].description, "aaa-6")
+        self.assertEqual(qs[2].description, "aaa-7")
+        self.assertEqual(qs[3].description, "aaa-8")
+        self.assertEqual(qs[4].description, "aaa-9")
+        self.assertEqual(qs[5].description, "aaa-10")
+
+        # lookup: range操作 {范围: between .. and ..}
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE `delete__product`.`price` BETWEEN 5 AND 9'
+        qs = product.objects.filter(price__range=(5,9))
+        self.assertEqual(len(qs), 5)
+        self.assertEqual(qs[0].description, "aaa-5")
+        self.assertEqual(qs[1].description, "aaa-6")
+        self.assertEqual(qs[2].description, "aaa-7")
+        self.assertEqual(qs[3].description, "aaa-8")
+        self.assertEqual(qs[4].description, "aaa-9")
+
+        # loopkup: quarter {一年按四季计算, 1表示1-3月, 2表示4-6, 3表示7-9, 4表示10-12}
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE EXTRACT(QUARTER FROM `delete__product`.`production_date`) = 2'
+        qs = product.objects.filter(production_date__quarter=2)
+        self.assertEqual(len(qs), 3)
+        self.assertEqual(qs[0].description, "aaa-4")
+        self.assertEqual(qs[1].description, "aaa-5")
+        self.assertEqual(qs[2].description, "aaa-6")
+
+        # lookup: regex {区分大小写正则匹配}
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE `delete__product`.`name` REGEXP BINARY 'A\\\\w+'
+        qs = product.objects.filter(name__regex=r"A\w+")
+        self.assertEqual(len(qs), 0)
+
+        # lookup: iregex {不区分大小写正则匹配}
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE `delete__product`.`name` REGEXP 'A\\\\w+'
+        qs = product.objects.filter(name__iregex=r"A\w+")
+        self.assertEqual(len(qs), 10)
