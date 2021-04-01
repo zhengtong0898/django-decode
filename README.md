@@ -174,7 +174,7 @@ python AdminActions/manage.py runserver
   |def datetimes(self, field_name, kind, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; order='ASC', tzinfo=None, is_dst=None) | [获取一组数据的时间(精确到秒)](./docs/QuerySet.md#datetimes) |
   |def none(self) | [获取一个空的`QuerySet`](./docs/QuerySet.md#none) |
   |def filter(self, *args, **kwargs) | [使用实参提供过滤条件组合](./docs/QuerySet.md#filter) |
-  |def exclude(self, *args, **kwargs) | |
+  |def exclude(self, *args, **kwargs) | [过滤条件组合的反向获取](./docs/QuerySet.md#exclude) |
   |def complex_filter(self, filter_obj) | |
   |def union(self, *other_qs, all=False) | |
   |def intersection(self, *other_qs) | |

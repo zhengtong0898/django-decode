@@ -588,3 +588,21 @@ WHERE `delete__product`.`name` REGEXP 'A\\\\w+'
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L383)  
 
 
+&nbsp;   
+&nbsp;   
+### exclude
+`db.models.query.QuerySet.exclude(self, *args, **kwargs)`   
+该方法用于过滤条件组合的反向获取, 关键词: 取反, 排除.   
+
+对应的sql语句
+```shell
+# product.objects.exclude(name="aaa-0")
+
+SELECT *
+FROM `delete__product`
+WHERE NOT (`delete__product`.`name` = 'aaa-0')"
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L476)
+
+  

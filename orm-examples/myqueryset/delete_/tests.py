@@ -387,7 +387,6 @@ class SimpleTest(TransactionTestCase):
         # 准备10条数据
         items = []
         for i in range(10):
-            ss = self.create_datetime(i)
             pp = product(name="aaa-%s" % i,
                          price=i+1,
                          description="aaa-%s" % ("%s".zfill(2) % (i+1)),
@@ -473,3 +472,30 @@ class SimpleTest(TransactionTestCase):
         # WHERE `delete__product`.`name` REGEXP 'A\\\\w+'
         qs = product.objects.filter(name__iregex=r"A\w+")
         self.assertEqual(len(qs), 10)
+
+    def test_l_exclude(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=i+1,
+                         description="aaa-%s" % ("%s".zfill(2) % (i+1)),
+                         production_date="1999-%s-10" % ("%s".zfill(2) % (i+1)),     # 这是DateField字段, 不符合测试场景.
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 提取那些name!='aaa-0'的数据, 即: 取反; 排除.
+        # SELECT *
+        # FROM `delete__product`
+        # WHERE NOT (`delete__product`.`name` = 'aaa-0')"
+        qs = product.objects.exclude(name="aaa-0")
+        self.assertEqual(len(qs), 9)
+        self.assertEqual(qs[0].name, "aaa-1")
+        self.assertEqual(qs[8].name, "aaa-9")
