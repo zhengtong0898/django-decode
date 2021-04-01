@@ -374,3 +374,8 @@ class SimpleTest(TransactionTestCase):
         qs = product.objects.datetimes('date_joined', 'hour', order='ASC')
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0].year, 2021)
+
+    def test_h_none(self):
+        from django.db.models.query import EmptyQuerySet
+        qs = product.objects.none()
+        self.assertIsInstance(qs, EmptyQuerySet)

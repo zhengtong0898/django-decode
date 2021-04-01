@@ -513,3 +513,16 @@ ORDER BY `datetimefield` ASC
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L345)  
 
 - 源码分析 TODO: 待补充
+
+
+&nbsp;  
+&nbsp;  
+### none
+`db.models.query.QuerySet.none(self)`
+该方法用于获取一个空的`QuerySet`对象, 空的对象即便使用`len()`触发`_fetch_all`也不会读取数据库.  
+
+
+
+&nbsp;  
+&nbsp;  
+  

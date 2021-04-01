@@ -172,7 +172,7 @@ python AdminActions/manage.py runserver
   |def values_list(self, *fields, flat=False, named=False) |[获取基于模型字段的列表-仅值](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.values_list) |
   |def dates(self, field_name, kind, order='ASC') | [获取一组数据的时间(精确到天)](./docs/QuerySet.md#dates) |
   |def datetimes(self, field_name, kind, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; order='ASC', tzinfo=None, is_dst=None) | [获取一组数据的时间(精确到秒)](./docs/QuerySet.md#datetimes) |
-  |def none(self) | |
+  |def none(self) | [获取一个空的`QuerySet`](./docs/QuerySet.md#none) |
   |def filter(self, *args, **kwargs) | |
   |def exclude(self, *args, **kwargs) | |
   |def complex_filter(self, filter_obj) | |
