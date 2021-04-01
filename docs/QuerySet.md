@@ -606,3 +606,23 @@ WHERE NOT (`delete__product`.`name` = 'aaa-0')"
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L476)
 
   
+  
+&nbsp;  
+&nbsp;  
+### union
+`db.models.query.QuerySet.exclude(self, *args, **kwargs)`   
+该方法合并多组字段数量相同的数据集.   
+
+对应的sql语句
+```shell
+# qs_1 = brand.objects.values_list('name')
+# qs_2 = product.objects.values_list('description')
+# qs_1.union(qs_2)
+
+(SELECT `delete__brand`.`name` FROM `delete__brand`)
+UNION
+(SELECT `delete__product`.`description` FROM `delete__product`)
+LIMIT 21
+
+```
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L503)

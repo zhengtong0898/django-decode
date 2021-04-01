@@ -175,8 +175,7 @@ python AdminActions/manage.py runserver
   |def none(self) | [获取一个空的`QuerySet`](./docs/QuerySet.md#none) |
   |def filter(self, *args, **kwargs) | [使用实参提供过滤条件组合](./docs/QuerySet.md#filter) |
   |def exclude(self, *args, **kwargs) | [过滤条件组合的反向获取](./docs/QuerySet.md#exclude) |
-  |def complex_filter(self, filter_obj) | |
-  |def union(self, *other_qs, all=False) | |
+  |def union(self, *other_qs, all=False) | [合并多组字段数量相同的数据集](./docs/QuerySet.md#union) |
   |def intersection(self, *other_qs) | |
   |def difference(self, *other_qs) | |
   |def select_for_update(self, nowait=False, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; skip_locked=False, of=()) | |

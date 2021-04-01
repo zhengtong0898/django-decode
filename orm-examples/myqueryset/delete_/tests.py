@@ -499,3 +499,30 @@ class SimpleTest(TransactionTestCase):
         self.assertEqual(len(qs), 9)
         self.assertEqual(qs[0].name, "aaa-1")
         self.assertEqual(qs[8].name, "aaa-9")
+
+    def test_m_union(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=i+1,
+                         description="aaa-%s" % ("%s".zfill(2) % (i+1)),
+                         production_date="1999-%s-10" % ("%s".zfill(2) % (i+1)),     # 这是DateField字段, 不符合测试场景.
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 合并两个查询集合, 要求两个集合的字段数量必须保持一致.
+        # (SELECT `delete__brand`.`name` FROM `delete__brand`)
+        # UNION
+        # (SELECT `delete__product`.`description` FROM `delete__product`)
+        # LIMIT 21
+        qs_1 = brand.objects.values_list('name')
+        qs_2 = product.objects.values_list('description')
+        qs_1.union(qs_2)
