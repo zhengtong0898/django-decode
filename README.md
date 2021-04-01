@@ -134,7 +134,7 @@ python AdminActions/manage.py runserver
   | 属性 | 描述 |
   |---| :---: |
   | self.model = model | 数据库模型对象 |
-  | self._db = using | |
+  | self._db = using | 默认值'default'(DATABASES的key) |
   | self._hints = hints or {} | |
   | self._query = query or sql.Query(self.model) | [`raw sql`语法生成器对象](./src/Django-3.0.8/django/db/models/sql/query.py#L146) |
   | self._result_cache = None | 查询结果缓存集合 |
@@ -170,8 +170,8 @@ python AdminActions/manage.py runserver
   |def raw(self, raw_query, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; translations=None, using=None) | [执行自定义SQL语句](./docs/QuerySet.md#raw) |
   |def values(self, *fields, **expressions) | [获取基于模型字段的字典-键值](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.values) |
   |def values_list(self, *fields, flat=False, named=False) |[获取基于模型字段的列表-仅值](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.values_list) |
-  |def dates(self, field_name, kind, order='ASC') | [获取一组数据的时间](./docs/QuerySet.md#dates) |
-  |def datetimes(self, field_name, kind, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; order='ASC', tzinfo=None, is_dst=None) | |
+  |def dates(self, field_name, kind, order='ASC') | [获取一组数据的时间(精确到天)](./docs/QuerySet.md#dates) |
+  |def datetimes(self, field_name, kind, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; order='ASC', tzinfo=None, is_dst=None) | [获取一组数据的时间(精确到秒)](./docs/QuerySet.md#datetimes) |
   |def none(self) | |
   |def filter(self, *args, **kwargs) | |
   |def exclude(self, *args, **kwargs) | |

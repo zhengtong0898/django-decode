@@ -316,3 +316,61 @@ class SimpleTest(TransactionTestCase):
         self.assertEqual(qs[0], date(year=1999, month=10, day=13))
         self.assertEqual(qs[1], date(year=1999, month=10, day=14))
         self.assertEqual(qs[2], date(year=1999, month=10, day=15))
+
+    def create_datetime(self, num):
+        from datetime import datetime, timedelta, tzinfo
+
+        class AsiaShanghai(tzinfo):
+            """tzinfo derived concrete class named "+0530" with offset of 19800"""
+            # can be configured here
+            _offset = timedelta(hours=8)
+            _dst = timedelta(0)
+            _name = "+0530"
+
+            def utcoffset(self, dt):
+                return self.__class__._offset
+
+            def dst(self, dt):
+                return self.__class__._dst
+
+            def tzname(self, dt):
+                return self.__class__._name
+
+        str_time = "2021-03-30 10:10:%s" % ("%s" % num).zfill(2)
+        a_time = datetime.strptime(str_time, "%Y-%m-%d %H:%M:%S")
+        t = a_time.timestamp()
+        tz = AsiaShanghai()
+        return datetime.fromtimestamp(t, tz=tz)
+
+    def test_g_datetimes(self):
+        from functools import partial
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            ss = self.create_datetime(i)
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-10",                      # 这是DateField字段, 不符合测试场景.
+                         expiration_date=170,
+                         date_changed=ss,                             # "2021-04-01 10:10:00" - "2021-04-01 10:10:10"
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # SELECT DISTINCT CAST(DATE_FORMAT(
+        #     CONVERT_TZ(`delete__product`.`date_joined`, 'UTC', 'Asia/Shanghai'),
+        #     '%Y-%m-%d %H:00:00') AS DATETIME
+        # ) AS `datetimefield`
+        #
+        # FROM `delete__product`
+        # WHERE `delete__product`.`date_joined` IS NOT NULL
+        # ORDER BY `datetimefield` ASC
+        qs = product.objects.datetimes('date_joined', 'hour', order='ASC')
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0].year, 2021)

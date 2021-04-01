@@ -119,7 +119,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# https://stackoverflow.com/questions/14454304/convert-tz-returns-null/14454465
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

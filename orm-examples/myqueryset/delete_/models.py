@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.template.defaultfilters import truncatechars
 
 
@@ -14,7 +15,8 @@ class product(models.Model):
     description = models.TextField(verbose_name="商品描述")
     production_date = models.DateField(verbose_name="生产日期")
     expiration_date = models.IntegerField(verbose_name="有效期", help_text="按天")
-    date_joined = models.DateTimeField(verbose_name="商品录入时间", auto_now=True)
+    date_joined = models.DateTimeField(verbose_name="商品录入时间", auto_now=timezone.now)
+    date_changed = models.DateTimeField(verbose_name="商品修改时间", auto_now=timezone.now, null=True)
 
     # Django 不会将
     brand_id = models.ForeignKey('brand', on_delete=models.CASCADE)

@@ -470,7 +470,7 @@ WHERE `delete__product`.`id` = 1
 &nbsp;  
 ### dates
 `db.models.query.QuerySet.dates(self, field_name, kind, order='ASC')`  
-该方法用于获取一组数据的时间.   
+该方法用于获取一组数据的时间(精确到天).   
 使用该方法通常关注于一个时间段, 或最近那个时间, 或最早那个时间.   
 
 对应的sql语句
@@ -484,5 +484,32 @@ ORDER BY `datefield` ASC
 ```
 
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L242)  
+
+- 源码分析 TODO: 待补充
+
+
+&nbsp;  
+&nbsp;  
+### datetimes
+`db.models.query.QuerySet.datetimesdatetimes(self, field_name, kind, order='ASC', tzinfo=None, is_dst=None)`  
+该方法用于获取一组数据的时间(精确到秒).   
+使用该方法通常关注于一个时间段, 或最近那个时间, 或最早那个时间.   
+
+对应的sql语句
+```shell
+# product.objects.datetimes('date_joined', 'hour', order='ASC')
+
+SELECT DISTINCT CAST(
+    DATE_FORMAT(
+        CONVERT_TZ(`delete__product`.`date_joined`, 'UTC', 'Asia/Shanghai'),
+        '%Y-%m-%d %H:00:00'
+    ) AS DATETIME
+) AS `datetimefield`
+FROM `delete__product`
+WHERE `delete__product`.`date_joined` IS NOT NULL
+ORDER BY `datetimefield` ASC
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L345)  
 
 - 源码分析 TODO: 待补充
