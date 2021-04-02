@@ -176,9 +176,7 @@ python AdminActions/manage.py runserver
   |def filter(self, *args, **kwargs) | [使用实参提供过滤条件组合](./docs/QuerySet.md#filter) |
   |def exclude(self, *args, **kwargs) | [过滤条件组合的反向获取](./docs/QuerySet.md#exclude) |
   |def union(self, *other_qs, all=False) | [合并多组字段数量相同的数据集](./docs/QuerySet.md#union) |
-  |def intersection(self, *other_qs) | |
-  |def difference(self, *other_qs) | |
-  |def select_for_update(self, nowait=False, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; skip_locked=False, of=()) | |
+  |def select_for_update(self, nowait=False, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; skip_locked=False, of=()) | [锁行或锁表来更新数据](./docs/QuerySet.md#select_for_update) |
   |def select_related(self, *fields) | |
   |def prefetch_related(self, *lookups) | |
   |def annotate(self, *args, **kwargs) | |

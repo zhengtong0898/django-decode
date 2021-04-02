@@ -320,6 +320,7 @@ class BaseDatabaseWrapper:
 
     # ##### Generic savepoint management methods #####
 
+    # mysql savepoint 参考: https://www.jianshu.com/p/c93c1730e5dc
     @async_unsafe
     def savepoint(self):
         """

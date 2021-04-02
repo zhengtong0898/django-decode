@@ -185,6 +185,7 @@ class Atomic(ContextDecorator):
             # second condition avoids creating useless savepoints and prevents
             # overwriting needs_rollback until the rollback is performed.
             if self.savepoint and not connection.needs_rollback:
+                # mysql savepoint 参考: https://www.jianshu.com/p/c93c1730e5dc
                 sid = connection.savepoint()
                 connection.savepoint_ids.append(sid)
             else:

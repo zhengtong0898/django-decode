@@ -657,7 +657,10 @@ class QuerySet:
         # 开启一个事务
         with transaction.atomic(using=self.db):
             try:
-                # self.select_for_update 用来标记查询更新状态. TODO: 这样做会让数据库有什么高效的表现吗?
+                # self.select_for_update 用来标记查询更新状态.
+                # 标记了 select_for_update 之后, 就会在查询语句后面加上 'for update' 关键字,
+                # 用于告诉 mysql 要锁行(条件命中索引或主键时锁行)或者锁表(没有命中索引或主键时锁表).
+                #
                 # .get(**kwargs) 根据 kwargs 参数来获取一条数据,
                 # 当获取大于一条数据时, 抛异常并退出程序.
                 obj = self.select_for_update().get(**kwargs)
@@ -677,6 +680,8 @@ class QuerySet:
             # get 到一条数据, 这里开始用 defaults 更新数据并调用.save接口保存数据到数据库.
             for k, v in defaults.items():
                 setattr(obj, k, v() if callable(v) else v)
+
+            # 所以这里可能是 insert 也可能是 update.
             obj.save(using=self.db)
         return obj, False
 

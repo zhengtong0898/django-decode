@@ -626,3 +626,44 @@ LIMIT 21
 
 ```
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L503)
+
+
+&nbsp;  
+&nbsp;  
+### select_for_update
+`db.models.query.QuerySet.select_for_update(self, nowait=False, skip_locked=False, of=())`   
+该方法用于[锁行或锁表](https://blog.csdn.net/zmx729618/article/details/52701972/)来更新数据.  
+
+对应的sql语句
+```shell
+# 1. 关闭自动提交功能.
+set autocommit = 0
+
+# 2. 使用 for update 来查询, 声明锁行或锁表.
+# for obj in objs: obj.name = "bbb-0"
+SELECT *
+FROM `delete__product`
+WHERE `delete__product`.`name` = 'aaa-0'
+FOR UPDATE
+
+# 3. 常规更新, django orm 中, 更新一个字段也是该条数据全部更新.
+# obj.name = "bbb-0"
+# obj.save()
+UPDATE `delete__product`
+SET `name` = 'bbb-0',
+    `price` = '1.00',
+    `description` = 'aaa-1',
+    `production_date` = '1999-01-10',
+    `expiration_date` = 170,
+    `date_joined` = '2021-04-02 15:00:41.893479',
+    `date_changed` = '2021-04-02 15:00:41.893479',
+    `brand_id_id` = 2
+WHERE `delete__product`.`id` = 1
+
+# 4. 恢复自动提交功能.
+set autocommit = 1
+```
+
+- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L531)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1141)

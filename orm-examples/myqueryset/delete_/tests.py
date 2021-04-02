@@ -518,6 +518,7 @@ class SimpleTest(TransactionTestCase):
         # 批量插入10条数据
         product.objects.bulk_create(objs=items)
 
+        # TODO: 测试环境下, union 语句并没有生成, 但是在 manage.py shell 环境下就会生成, 这可能是一个bug?
         # 合并两个查询集合, 要求两个集合的字段数量必须保持一致.
         # (SELECT `delete__brand`.`name` FROM `delete__brand`)
         # UNION
@@ -526,3 +527,59 @@ class SimpleTest(TransactionTestCase):
         qs_1 = brand.objects.values_list('name')
         qs_2 = product.objects.values_list('description')
         qs_1.union(qs_2)
+
+    def test_n_select_for_update(self):
+        b1 = brand(name="fenghuang", description="fhdc")
+        b1.save()
+        b1 = brand(name="aaa-0", description="fhdc")
+        b1.save()
+
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=i+1,
+                         description="aaa-%s" % ("%s".zfill(2) % (i+1)),
+                         production_date="1999-%s-10" % ("%s".zfill(2) % (i+1)),     # 这是DateField字段, 不符合测试场景.
+                         expiration_date=170,
+                         brand_id=b1)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        from django.db import transaction
+        # 1. 标记了 select_for_update 之后, 就会在查询语句后面加上 'for update' 关键字,
+        #    用于告诉 mysql 要锁行(条件命中索引或主键时锁行)或者锁表(没有命中索引或主键时锁表).
+        # 2. 使用了 select_for_update 之后, 必须使用 transaction.atomic() 来
+        #
+        #
+        # 这里需要唠叨两句, 一般情况下是能够正常运行, 但是当进入到debug模式一步一步调试时这里就会报错
+        # 因为编辑器需要显示objs的变量信息, 会触发__len__或__repr__从而触发了内部的_fetch_all方法,
+        # 它会在生成sql语句时抛出异常, 因为django orm 要求 select_for_update 的语句生成
+        # 和执行时必须要先开启一个事务(with transaction.atomic()).
+        objs = product.objects.select_for_update().filter(name="aaa-0")
+        with transaction.atomic():
+            # 这里触发 objs 这个 QuerySet 对象的 __len__ 方法,
+            # 所以这里会有一条sql语句:
+            #
+            # SELECT *
+            # FROM `delete__product`
+            # WHERE `delete__product`.`name` = 'aaa-0'
+            # FOR UPDATE
+            for obj in objs:
+                obj.name = "bbb-0"
+
+                # 这里也会生成一个sql语句和执行该sql语句.
+                #
+                # UPDATE `delete__product`
+                # SET `name` = 'bbb-0',
+                #     `price` = '1.00',
+                #     `description` = 'aaa-1',
+                #     `production_date` = '1999-01-10',
+                #     `expiration_date` = 170,
+                #     `date_joined` = '2021-04-02 15:00:41.893479',
+                #     `date_changed` = '2021-04-02 15:00:41.893479',
+                #     `brand_id_id` = 2
+                # WHERE `delete__product`.`id` = 1
+                obj.save()

@@ -203,6 +203,7 @@ class BaseDatabaseOperations:
         """
         Return the FOR UPDATE SQL clause to lock rows for an update operation.
         """
+        # TODO: 需要同步 mysql for update 锁行说明.
         return 'FOR UPDATE%s%s%s' % (
             ' OF %s' % ', '.join(of) if of else '',
             ' NOWAIT' if nowait else '',
