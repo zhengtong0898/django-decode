@@ -667,3 +667,34 @@ set autocommit = 1
 - [使用案例](../orm-examples/myqueryset/delete_/tests.py#L531)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1141)
+
+
+&nbsp;   
+&nbsp;   
+### select_related
+`db.models.query.QuerySet.select_for_update(self, *fields)`  
+是否要把外键字段一次性查询出来, 采用`INNER JOIN`.
+
+对应的sql语句
+```shell
+# Article.objects.select_related().get(pk=1)
+
+SELECT `simplerelate_article`.`id`,
+       `simplerelate_article`.`headline`,
+       `simplerelate_article`.`author_id`,
+       `simplerelate_article`.`tag_id`,
+       `simplerelate_author`.`id`,              # author 表
+       `simplerelate_author`.`name`,            
+       `simplerelate_tag`.`id`,                 # tag 表
+       `simplerelate_tag`.`name`
+FROM `simplerelate_article` INNER JOIN `simplerelate_author` ON (`simplerelate_article`.`author_id` = `simplerelate_author`.`id`)
+                            INNER JOIN `simplerelate_tag` ON (`simplerelate_article`.`tag_id` = `simplerelate_tag`.`id`)
+WHERE `simplerelate_article`.`id` = 1 LIMIT 21
+```
+
+- [使用案例](../orm-examples/myqueryset/simplerelate/tests.py#L10)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1160)
+
+
+

@@ -1170,7 +1170,16 @@ class QuerySet:
         if self._fields is not None:
             raise TypeError("Cannot call select_related() after .values() or .values_list()")
 
+        # 为了不影响原来的QuerySet, 这里克隆一个QuerySet
         obj = self._chain()
+
+        # 然后在新的QuerySet对象中设置 query.select_related 对象.
+        # select_related 对象有三个值: True, False, ().
+        # 当值为 False 时, 表示不需要做关联查询.
+        # 当值为 True 时, 自动关联所有外键字段的查询, 采用INNER JOIN关联.
+        # 当值为 元组 时, 按元组中指定的字段来采用INNER JOIN 关联.
+        #
+        # 这里并不做实际查询的动作, 而仅仅是做标记.
         if fields == (None,):
             obj.query.select_related = False
         elif fields:

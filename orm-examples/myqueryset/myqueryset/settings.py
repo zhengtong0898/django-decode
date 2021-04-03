@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'get_.apps.GetConfig',
     'bulk_create_.apps.BulkCreateConfig',
     'delete_.apps.DeleteConfig',
+    # 'relate_.apps.RelateConfig',
+    'simplerelate.apps.SimplerelateConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
