@@ -1199,15 +1199,20 @@ class QuerySet:
         """
         self._not_support_combined_queries('prefetch_related')
         clone = self._chain()
+
+        # 这里的作用是, 清空之前 prefetch_related 的定义.
         if lookups == (None,):
             clone._prefetch_related_lookups = ()
         else:
+            # for 循环, 检查 lookups 中每个字段是否出现冲突.
             for lookup in lookups:
                 if isinstance(lookup, Prefetch):
                     lookup = lookup.prefetch_to
                 lookup = lookup.split(LOOKUP_SEP, 1)[0]
                 if lookup in self.query._filtered_relations:
                     raise ValueError('prefetch_related() is not supported with FilteredRelation.')
+
+            # 将 lookups 添加到, _prefetch_related_lookups 集合中, 用于标记和声明 prefetch_related 功能的启用.
             clone._prefetch_related_lookups = clone._prefetch_related_lookups + lookups
         return clone
 

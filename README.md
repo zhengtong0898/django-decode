@@ -177,8 +177,8 @@ python AdminActions/manage.py runserver
   |def exclude(self, *args, **kwargs) | [过滤条件组合的反向获取](./docs/QuerySet.md#exclude) |
   |def union(self, *other_qs, all=False) | [合并多组字段数量相同的数据集](./docs/QuerySet.md#union) |
   |def select_for_update(self, nowait=False, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; skip_locked=False, of=()) | [锁行或锁表来更新数据](./docs/QuerySet.md#select_for_update) |
-  |def select_related(self, *fields) | [是否要把外键字段一次性查询出来](./docs/QuerySet.md#select_related) |
-  |def prefetch_related(self, *lookups) | |
+  |def select_related(self, *fields) | [把指定外键字段一次性查询出来](./docs/QuerySet.md#select_related) |
+  |def prefetch_related(self, *lookups) | [把指定多对多字段一次性查询出来]() |
   |def annotate(self, *args, **kwargs) | |
   |def order_by(self, *field_names) | |
   |def distinct(self, *field_names) | |
@@ -194,7 +194,7 @@ python AdminActions/manage.py runserver
 &nbsp;  
 &nbsp;   
 ### Debug困扰清单
-- \_\_str\_\_ 和 \_\_repr\_\_    
+- \_\_len\_\_ 和 \_\_str\_\_ 和 \_\_repr\_\_    
   很多时候在调试代码时, `Step Into` 明明没有执行任何代码, 
   但是`Console` 仍然是有在打印相关的内容.   
   
@@ -209,5 +209,8 @@ python AdminActions/manage.py runserver
   导致了它会对数据库执行查询操作, 因此会打印出一些查询相关的日志输出.   
   
   所以那些没有`step by step`进入到源码的执行, 就不会乱打印东西, 也不会重复执行sql.   
+  
+  所以当需要调试一个对象, 观察它的`SQL`语句的运行流程是, 千万不要`Debug`, 
+  最好的做法是通过代码块的头尾部增加日志打印出常量字符串来观察.  
   
  

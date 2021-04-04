@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'get_.apps.GetConfig',
     'bulk_create_.apps.BulkCreateConfig',
     'delete_.apps.DeleteConfig',
-    # 'relate_.apps.RelateConfig',
+    'prefetch_related_.apps.PrefetchRelatedConfig',
     'simplerelate.apps.SimplerelateConfig',
     'django.contrib.admin',
     'django.contrib.auth',

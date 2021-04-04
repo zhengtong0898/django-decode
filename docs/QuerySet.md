@@ -672,8 +672,8 @@ set autocommit = 1
 &nbsp;   
 &nbsp;   
 ### select_related
-`db.models.query.QuerySet.select_for_update(self, *fields)`  
-是否要把外键字段一次性查询出来, 采用`INNER JOIN`.
+`db.models.query.QuerySet.select_related(self, *fields)`  
+把指定外键字段一次性查询出来, 后续针对结果集中的`item`取结果时就不需要每次都访问数据库了.
 
 对应的sql语句
 ```shell
@@ -697,4 +697,32 @@ WHERE `simplerelate_article`.`id` = 1 LIMIT 21
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1160)
 
 
+&nbsp;   
+&nbsp;   
+### prefetch_related
+`db.models.query.QuerySet.prefetch_related(self, *lookups)`  
+把指定多对多字段一次性查询出来, 后续针对结果集中的`item`取结果时就不需要每次都访问数据库了.   
 
+对应的sql语句
+```shell
+# Pizza.objects.prefetch_related('toppings').all()
+
+# 第一步: 获取所有pizza数据
+SELECT `prefetch_related__pizza`.`id`,
+       `prefetch_related__pizza`.`name`
+FROM `prefetch_related__pizza`
+
+# 第二步: INNER JOIN 把 topping(配料表) 和 pizza_toppings(关联表) 的字段合并起来,  
+#        在此基础上提取那些属于 in (pizza_id_1, pizza_id_2) 的配料信息.
+SELECT (`prefetch_related__pizza_toppings`.`pizza_id`) AS `_prefetch_related_val_pizza_id`,
+       `prefetch_related__topping`.`id`,
+       `prefetch_related__topping`.`name`
+FROM   `prefetch_related__topping`
+       INNER JOIN `prefetch_related__pizza_toppings` ON
+       (`prefetch_related__topping`.`id` = `prefetch_related__pizza_toppings`.`topping_id`)
+WHERE `prefetch_related__pizza_toppings`.`pizza_id` IN (1, 2)
+```
+
+- [使用案例](../orm-examples/myqueryset/prefetch_related_/tests.py#L10)
+
+- [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1191)
