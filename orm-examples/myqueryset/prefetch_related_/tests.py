@@ -216,3 +216,13 @@ class SimpleTest(TransactionTestCase):
         self.assertEqual(len(rr), 1)
         # 使用 all 接口, 不会再去查数据库, 而是直接使用缓存.
         self.assertEqual(len(rr[0].best_pizza.toppings.all()), 2)
+
+    def test_e_annotate(self):
+        from django.db.models import Count
+        # 准备数据
+        ham = Topping.objects.create(name="ham")
+
+        ss = Count('name')
+        qs = Topping.objects.annotate(ss)
+        # qs = Topping.objects.all()
+        self.assertEqual(qs[0].name__count, 1)

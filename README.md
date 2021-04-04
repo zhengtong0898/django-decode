@@ -140,8 +140,8 @@ python AdminActions/manage.py runserver
   | self._result_cache = None | 查询结果缓存集合 |
   | self._sticky_filter = False | |
   | self._for_write = False | 是否标记为写状态 |
-  | self._prefetch_related_lookups = () | |
-  | self._prefetch_done = False | |
+  | self._prefetch_related_lookups = () | 预查询多对多字段暂存列表 |
+  | self._prefetch_done = False | 标记为缓存状态 |
   | self._known_related_objects = {}  # {rel_field: {pk: rel_obj}} | |
   | self._iterable_class = ModelIterable | |
   | self._fields = None | |
@@ -178,12 +178,12 @@ python AdminActions/manage.py runserver
   |def union(self, *other_qs, all=False) | [合并多组字段数量相同的数据集](./docs/QuerySet.md#union) |
   |def select_for_update(self, nowait=False, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; skip_locked=False, of=()) | [锁行或锁表来更新数据](./docs/QuerySet.md#select_for_update) |
   |def select_related(self, *fields) | [把指定外键字段一次性查询出来](./docs/QuerySet.md#select_related) |
-  |def prefetch_related(self, *lookups) | [把指定多对多字段一次性查询出来]() |
-  |def annotate(self, *args, **kwargs) | |
-  |def order_by(self, *field_names) | |
-  |def distinct(self, *field_names) | |
+  |def prefetch_related(self, *lookups) | [把指定多对多字段一次性查询出来](./docs/QuerySet.md#prefetch_related) |
+  |def annotate(self, *args, **kwargs) | [通过注解定义字段的聚合处理](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.annotate) |
+  |def order_by(self, *field_names) | [按指定字段排序](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.annotate) |
+  |def distinct(self, *field_names) | 按指定字段去重 |
   |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | |
-  |def reverse(self) | |
+  |def reverse(self) |  |
   |def defer(self, *fields) | |
   |def only(self, *fields) | |
   |def using(self, alias) | |
@@ -210,7 +210,7 @@ python AdminActions/manage.py runserver
   
   所以那些没有`step by step`进入到源码的执行, 就不会乱打印东西, 也不会重复执行sql.   
   
-  所以当需要调试一个对象, 观察它的`SQL`语句的运行流程是, 千万不要`Debug`, 
+  所以当需要调试一个对象, 观察它的`SQL`语句的运行流程时, 千万不要`Debug`, 
   最好的做法是通过代码块的头尾部增加日志打印出常量字符串来观察.  
   
  
