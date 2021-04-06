@@ -638,4 +638,38 @@ class SimpleTest(TransactionTestCase):
         # FROM `get__product`
         qs = product.objects.defer('description')
 
+        # 备注:
+        # 当通过qs[0].description时, 会即时的触发数据库查询, 提取该字段的值.(慎重! 慎重! 慎重!)
         self.assertEqual(len(qs), 10)
+
+    def test_o_only(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`
+        # FROM `get__product`
+        qs = product.objects.only('name', 'price')
+        self.assertEqual(len(qs), 10)
+
+        # 无sql查询
+        self.assertEqual(qs[0].name, "aaa-0")
+
+        # 触发sql查询
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`description`
+        # FROM `get__product`
+        # WHERE `get__product`.`id` = 1
+        # LIMIT 21
+        self.assertEqual(qs[0].description, "aaa-0")

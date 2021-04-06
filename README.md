@@ -184,8 +184,8 @@ python AdminActions/manage.py runserver
   |def distinct(self, *field_names) | [按指定字段去重](./docs/QuerySet.md#distinct) |
   |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | [复杂查询条件扩展支持](https://docs.djangoproject.com/en/3.2/ref/models/querysets/#django.db.models.query.QuerySet.extra) |
   |def reverse(self) |  |
-  |def defer(self, *fields) | [排除字段]() |
-  |def only(self, *fields) | |
+  |def defer(self, *fields) | [排除字段](./docs/QuerySet.md#defer) |
+  |def only(self, *fields) | [仅选字段](./docs/QuerySet.md#only) |
   |def using(self, alias) | |
   |@property <br> def ordered(self) | |
   |@property <br> def db(self) | |

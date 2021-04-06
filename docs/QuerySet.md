@@ -766,5 +766,20 @@ SELECT `get__product`.`id`,
 FROM `get__product`
 
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L581)
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L617)
 
+&nbsp;   
+&nbsp;   
+### only
+`db.models.query.QuerySet.defer(self, *field_names)`  
+仅在结果集中体现`field_names` + `id`字段.
+
+对应的sql语句
+```shell
+# qs = product.objects.only('name', 'price')
+SELECT `get__product`.`id`, 
+       `get__product`.`name`, 
+       `get__product`.`price` 
+FROM `get__product`       
+```  
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L645)
