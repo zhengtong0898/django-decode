@@ -285,6 +285,11 @@ class SimpleTest(TransactionTestCase):
         #         120,
         #         '2021-03-28 12:20:28.121343')
         # RETURNING `get__product`.`id`";
+        #
+        #
+        # 备注: 补充一个情况, 由于get_or_create占用了 defaults 参数,
+        #      因此当model里面刚好定义了defaults字段, 那么这里就会发生冲突,
+        #      为了解决字段名和参数名一致冲突问题, 可以使用defaults__exact来告诉django, 这个字段冲突了.
         obj, is_created = product.objects.get_or_create(name='aaa-15', defaults={'price': 12.00,
                                                                                  'description': 'aaa-15',
                                                                                  'production_date': '2001-10-10',
