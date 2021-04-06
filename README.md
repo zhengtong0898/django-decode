@@ -181,7 +181,7 @@ python AdminActions/manage.py runserver
   |def prefetch_related(self, *lookups) | [把指定多对多字段一次性查询出来](./docs/QuerySet.md#prefetch_related) |
   |def annotate(self, *args, **kwargs) | [通过注解定义字段的聚合处理](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.annotate) |
   |def order_by(self, *field_names) | [按指定字段排序](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.annotate) |
-  |def distinct(self, *field_names) | 按指定字段去重 |
+  |def distinct(self, *field_names) | [按指定字段去重](./docs/QuerySet.md#distinct) |
   |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | |
   |def reverse(self) |  |
   |def defer(self, *fields) | |

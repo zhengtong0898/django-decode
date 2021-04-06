@@ -726,3 +726,23 @@ WHERE `prefetch_related__pizza_toppings`.`pizza_id` IN (1, 2)
 - [使用案例](../orm-examples/myqueryset/prefetch_related_/tests.py#L10)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1191)
+
+
+&nbsp;  
+&nbsp;   
+### distinct
+`db.models.query.QuerySet.distinct(self, *field_names)`  
+`PostgreSQL` 支持按参数指定字段去重.   
+`MySQL` 不支持按参数指定字段去重, 仅仅支持配合`values`或`values_list`一起使用.   
+
+对应的sql语句
+```shell
+# qs = product.objects.values('description').distinct()
+
+SELECT DISTINCT `get__product`.`description`
+FROM `get__product`   
+```
+
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L581)
+
+

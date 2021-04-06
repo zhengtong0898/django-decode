@@ -577,3 +577,34 @@ class SimpleTest(TransactionTestCase):
         self.assertEqual(ss["aaa-3"].name, "aaa-3")
         self.assertEqual(ss["aaa-5"].name, "aaa-5")
         self.assertEqual(ss["aaa-7"].name, "aaa-7")
+
+    def test_m_distinct(self):
+        # 准备10条数据
+        items = []
+        for i in range(5):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa",
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        for i in range(5):
+            pp = product(name="bbb-%s" % i,
+                         price=10.00,
+                         description="bbb",
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # 去重
+        # SELECT DISTINCT `get__product`.`description`
+        # FROM `get__product`
+        qs = product.objects.values('description').distinct()
+        self.assertEqual(len(qs), 2)
+        self.assertIsInstance(qs[0], dict)
+        self.assertEqual(qs[0]["description"], "aaa")
+        self.assertEqual(qs[1]["description"], "bbb")
