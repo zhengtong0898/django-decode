@@ -746,3 +746,25 @@ FROM `get__product`
 - [使用案例](../orm-examples/myqueryset/get_/tests.py#L581)
 
 
+&nbsp;  
+&nbsp;  
+### defer
+`db.models.query.QuerySet.defer(self, *field_names)`  
+指定参数`field_names`, 表示哪些字段在做sql查询时, 不要显示在结果集中.   
+
+对应的sql语句
+```shell
+# defer用于排除字段
+# qs = product.objects.defer('description')、
+
+SELECT `get__product`.`id`,
+       `get__product`.`name`,
+       `get__product`.`price`,
+       `get__product`.`production_date`,
+       `get__product`.`expiration_date`,
+       `get__product`.`date_joined`
+FROM `get__product`
+
+```
+- [使用案例](../orm-examples/myqueryset/get_/tests.py#L581)
+

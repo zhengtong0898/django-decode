@@ -182,9 +182,9 @@ python AdminActions/manage.py runserver
   |def annotate(self, *args, **kwargs) | [通过注解定义字段的聚合处理](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.annotate) |
   |def order_by(self, *field_names) | [按指定字段排序](https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.annotate) |
   |def distinct(self, *field_names) | [按指定字段去重](./docs/QuerySet.md#distinct) |
-  |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | |
+  |def extra(self, select=None, where=None, params=None, <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; tables=None, order_by=None, select_params=None) | [复杂查询条件扩展支持](https://docs.djangoproject.com/en/3.2/ref/models/querysets/#django.db.models.query.QuerySet.extra) |
   |def reverse(self) |  |
-  |def defer(self, *fields) | |
+  |def defer(self, *fields) | [排除字段]() |
   |def only(self, *fields) | |
   |def using(self, alias) | |
   |@property <br> def ordered(self) | |

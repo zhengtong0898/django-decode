@@ -613,3 +613,29 @@ class SimpleTest(TransactionTestCase):
         self.assertIsInstance(qs[0], dict)
         self.assertEqual(qs[0]["description"], "aaa")
         self.assertEqual(qs[1]["description"], "bbb")
+
+    def test_n_defer(self):
+        # 准备10条数据
+        items = []
+        for i in range(10):
+            pp = product(name="aaa-%s" % i,
+                         price=10.00,
+                         description="aaa-%s" % i,
+                         production_date="1999-10-1%s" % i,
+                         expiration_date=170)
+            items.append(pp)
+
+        # 批量插入10条数据
+        product.objects.bulk_create(objs=items)
+
+        # defer用于排除字段
+        # SELECT `get__product`.`id`,
+        #        `get__product`.`name`,
+        #        `get__product`.`price`,
+        #        `get__product`.`production_date`,
+        #        `get__product`.`expiration_date`,
+        #        `get__product`.`date_joined`
+        # FROM `get__product`
+        qs = product.objects.defer('description')
+
+        self.assertEqual(len(qs), 10)
