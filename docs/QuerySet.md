@@ -1,3 +1,20 @@
+### aggregate
+`db.models.query.QuerySet.aggregate(self, *args, **kwargs)`   
+该方法用于聚合查询数据, 聚合有: `Avg`, `Count`, `Max`, `Min`, `Sum`, `StdDev`, `Variance`.
+
+对应的sql语句
+```shell
+# Avg
+SELECT AVG(`aggregate__book`.`price`) AS `price__avg`
+FROM `aggregate__book`
+
+```
+
+- [使用案例-Avg](../orm-examples/myqueryset/aggregate_/tests.py#L11)
+
+
+&nbsp;  
+&nbsp;   
 ### count
 `db.models.query.QuerySet.count`   
 该方法采用两套统计策略:   

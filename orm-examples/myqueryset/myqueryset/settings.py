@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'delete_.apps.DeleteConfig',
     'prefetch_related_.apps.PrefetchRelatedConfig',
     'simplerelate.apps.SimplerelateConfig',
+    'aggregate_.apps.AggregateConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

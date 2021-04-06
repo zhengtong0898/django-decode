@@ -148,9 +148,8 @@ python AdminActions/manage.py runserver
   | self._defer_next_filter = False | |
   | self._deferred_filter = None | |
   | | - |
-  | @property<br> def query(self)  | |
   |def iterator(self, chunk_size=2000)| |
-  |def aggregate(self, *args, **kwargs)| |
+  |def aggregate(self, *args, **kwargs)| [聚合查询](./docs/QuerySet.md#aggregate) |
   |def count(self)| [统计总数](./docs/QuerySet.md#count) |
   |def get(self, *args, **kwargs)| [获取一条数据](./docs/QuerySet.md#get) |
   |def create(self, **kwargs)| [插入一条数据](./docs/QuerySet.md#create) |
@@ -186,9 +185,7 @@ python AdminActions/manage.py runserver
   |def reverse(self) |  |
   |def defer(self, *fields) | [排除字段](./docs/QuerySet.md#defer) |
   |def only(self, *fields) | [仅选字段](./docs/QuerySet.md#only) |
-  |def using(self, alias) | |
-  |@property <br> def ordered(self) | |
-  |@property <br> def db(self) | |
+  |def using(self, alias) | [多库时, 指定某个数据库来查询](https://docs.djangoproject.com/en/3.2/ref/models/querysets/#using) |
 
 
 &nbsp;  
