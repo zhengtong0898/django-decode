@@ -3,6 +3,7 @@
 | :---: | :---: | ---: |
 |SQL1|[查找最晚入职员工的所有信息](../orm-examples/nowcoder/SQL1/tests.py#L10)| 嵌套, extra, subquery |
 |SQL2|[查找入职员工时间排名倒数第三的员工所有信息](../orm-examples/nowcoder/SQL2/tests.py#L10)| limit offset |
+|SQL3|[查找各个部门当前领导当前薪水详情以及其对应部门编号dept_no](../orm-examples/nowcoder/SQL3/tests.py#L8)| left join |
 
 
 &nbsp;  

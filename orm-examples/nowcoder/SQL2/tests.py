@@ -40,7 +40,7 @@ class SimpleTest(TransactionTestCase):
 
     def clear_data(self):
         cursor = connections['default'].cursor()
-        cursor.execute('delete from sql1_employees;')
+        cursor.execute('delete from sql2_employees;')
 
     def pre_assert(self, qs):
         # 断言-期望: 10005|1955-01-21|Kyoichi|Maliniak|M|1989-09-12

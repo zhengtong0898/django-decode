@@ -13,7 +13,7 @@ from django.db import models
 # ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 class employees(models.Model):
 
-    emp_no = models.IntegerField(verbose_name="员工", max_length=11, null=False, primary_key=True)
+    emp_no = models.IntegerField(verbose_name="员工", null=False, primary_key=True)
     birth_date = models.DateField(verbose_name="生日日期", null=False)
     first_name = models.CharField(verbose_name="姓氏", max_length=14, null=False)
     last_name = models.CharField(verbose_name="名字", max_length=16, null=False)
