@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'SQL1.apps.Sql1Config',
+    'SQL2.apps.Sql2Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
