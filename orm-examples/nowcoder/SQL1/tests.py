@@ -70,7 +70,7 @@ class SimpleTest(TransactionTestCase):
 
         # 断言
         self.pre_assert(qs)
-        
+
         # 清空
         self.clear_data()
 
@@ -78,7 +78,7 @@ class SimpleTest(TransactionTestCase):
         # 准备数据
         self.prepare_data()
 
-        # 期望SQL
+        # 查找最晚入职员工的所有信息
         # SELECT `SQL1_employees`.`emp_no`,
         #        `SQL1_employees`.`birth_date`,
         #        `SQL1_employees`.`first_name`,
@@ -97,3 +97,27 @@ class SimpleTest(TransactionTestCase):
 
         # 清空
         self.clear_data()
+
+    def test_sql_1_3(self):
+        # 准备数据
+        self.prepare_data()
+
+        # SELECT `SQL1_employees`.`emp_no`,
+        #        `SQL1_employees`.`birth_date`,
+        #        `SQL1_employees`.`first_name`,
+        #        `SQL1_employees`.`last_name`,
+        #        `SQL1_employees`.`gender`,
+        #        `SQL1_employees`.`hire_date`
+        # FROM `SQL1_employees`
+        # WHERE (hire_date=(select max(h.hire_date) from sql1_employees as h))
+        qs = employees.objects.extra(where=['hire_date=(select max(h.hire_date) from sql1_employees as h)'])
+
+        # 断言
+        self.pre_assert(qs)
+
+        # 清空
+        self.clear_data()
+
+    def test_sql_1_4(self):
+        # TODO: 使用 Q 来完成嵌套语句的代码组织.
+        pass
