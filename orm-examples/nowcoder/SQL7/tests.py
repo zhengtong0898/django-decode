@@ -165,10 +165,19 @@ class SimpleTest(TransactionTestCase):
         # 准备数据
         self.prepare_data()
 
+        # 期望SQL
         # select emp_no, count(to_date) as t
         # from salaries
         # group by emp_no
         # having t > 4;
+        #
+        # 生成SQL
+        # SELECT `SQL7_salaries`.`emp_no`,
+        #        COUNT(`SQL7_salaries`.`emp_no`) AS `t`
+        # FROM `SQL7_salaries`
+        # GROUP BY `SQL7_salaries`.`emp_no`
+        # HAVING COUNT(`SQL7_salaries`.`emp_no`) > 15
+        # ORDER BY NULL
         qs = (salaries.objects.values('emp_no')
                               .annotate(t=Count('emp_no'))
                               .filter(t__gt=15))
