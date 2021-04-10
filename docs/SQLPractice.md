@@ -12,6 +12,11 @@
 |SQL11|[获取所有员工当前的manager](../orm-examples/nowcoder/SQL11/README.md)| `left join`, `<>` |
 |SQL12|[获取所有部门中当前员工薪水最高的相关信息](../orm-examples/nowcoder/SQL12/README.md)| `left join`, `inner join`, `生成临时表` |
 |SQL15|[查找employees表所有emp_no为奇数](../orm-examples/nowcoder/SQL15/README.md)| `mod取余求奇偶` |
+|SQL16|[统计出当前各个title类型对应的员工当前薪水对应的平均工资](../orm-examples/nowcoder/SQL16/README.md)| `avg`, `group by`, `inner join` |
+|SQL17|[获取当前薪水第二多的员工的emp_no以及其对应的薪水salary](../orm-examples/nowcoder/SQL17/README.md)| `limit`, `offset` |
+|SQL18|[查找当前薪水排名第二多的员工编号emp_no](../orm-examples/nowcoder/SQL18/README.md)| `subquery`, `subquery`, `subquery` |
+|SQL19|[查找所有员工的last_name和first_name以及对应的dept_name](../orm-examples/nowcoder/SQL19/README.md)| `left join`, `left join`, `left join` |
+
 
 
 
