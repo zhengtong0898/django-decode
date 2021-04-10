@@ -9,6 +9,9 @@
 |SQL7|[查找薪水涨幅超过15次的员工号emp_no以及其对应的涨幅次数t](../orm-examples/nowcoder/SQL7/tests.py#L10)| `group by`, `having`, `count` |
 |SQL8|[找出所有员工当前具体的薪水salary情况](../orm-examples/nowcoder/SQL8/README.md)| `group by`, `order by` |
 |SQL10|[获取所有非manager的员工emp_no](../orm-examples/nowcoder/SQL10/README.md)| `left join` |
+|SQL11|[获取所有员工当前的manager](../orm-examples/nowcoder/SQL11/README.md)| `left join`, `<>` |
+|SQL12|[获取所有部门中当前员工薪水最高的相关信息](../orm-examples/nowcoder/SQL12/README.md)| `left join`, `inner join`, `生成临时表` |
+|SQL15|[查找employees表所有emp_no为奇数](../orm-examples/nowcoder/SQL15/README.md)| `mod取余求奇偶` |
 
 
 
