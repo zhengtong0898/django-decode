@@ -22,7 +22,9 @@
 |SQL24|[获取所有非manager员工当前的薪水情况](../orm-examples/nowcoder/README.md#SQL24)| `subquery`, `inner join`, `不能用left join` |
 |SQL25|[获取员工其当前的薪水比其manager当前薪水还高的相关信息](../orm-examples/nowcoder/README.md#SQL25)|  |
 |SQL26|[汇总各个部门当前员工的title类型的分配数目](../orm-examples/nowcoder/README.md#SQL26)| `group by 多字段联合分组` |
-|SQL28|[查找描述信息中包括robot的电影对应的分类名称以及电影数目](../orm-examples/nowcoder/README.md#SQL28)| `group by 多字段联合分组` |
+|SQL28|[查找描述信息中包括robot的电影对应的分类名称以及电影数目](../orm-examples/nowcoder/README.md#SQL28)| `having count` |
+|SQL29|[使用join查询方式找出没有分类的电影id以及名称](../orm-examples/nowcoder/README.md#SQL29)| `强调 left join 的必要性` |
+|SQL30|[使用子查询的方式找出属于Action分类的所有电影对应的title,description](../orm-examples/nowcoder/README.md#SQL30)| `subquery` |
 
 
 

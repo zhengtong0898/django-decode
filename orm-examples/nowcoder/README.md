@@ -86,3 +86,51 @@
         sub_fc.category_id in (SELECT category_id FROM film_category GROUP BY category_id HAVING count(film_id)>=5)
   group by c.name;
   ```
+  
+
+&nbsp;  
+&nbsp;  
+### SQL29
+
+- 题目   
+  使用join查询方式找出没有分类的电影id以及名称
+
+- [题链接](https://www.nowcoder.com/practice/a158fa6e79274ac497832697b4b83658?tpId=82&&tqId=29781&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  select f.film_id, f.title
+  from film as f
+  left join film_category as fc on f.film_id = fc.film_id
+  where fc.category_id is null;
+  ```  
+
+&nbsp;  
+&nbsp;  
+### SQL30
+
+- 题目   
+  使用子查询的方式找出属于Action分类的所有电影对应的title,description
+
+- [题链接](https://www.nowcoder.com/practice/2f2e556d335d469f96b91b212c4c203e?tpId=82&&tqId=29782&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  -- 纯子查询的方式
+  select title, description 
+  from film 
+  where film_id in (select film_id 
+                    from film_category 
+                    where category_id in (select category_id 
+                                          from category 
+                                          where name='Action'))
+  
+  -- 常规方式
+  select f.title, f.description 
+  from film_category as fc
+  inner join category as c on c.category_id = fc.category_id
+  inner join film as f on f.film_id = fc.film_id
+  where c.name = 'Action'
+  ```  
+
+
