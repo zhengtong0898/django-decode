@@ -16,6 +16,9 @@
 |SQL17|[获取当前薪水第二多的员工的emp_no以及其对应的薪水salary](../orm-examples/nowcoder/SQL17/README.md)| `limit`, `offset` |
 |SQL18|[查找当前薪水排名第二多的员工编号emp_no](../orm-examples/nowcoder/SQL18/README.md)| `subquery`, `subquery`, `subquery` |
 |SQL19|[查找所有员工的last_name和first_name以及对应的dept_name](../orm-examples/nowcoder/SQL19/README.md)| `left join`, `left join`, `left join` |
+|SQL21|[查找所有员工自入职以来的薪水涨幅情况](../orm-examples/nowcoder/SQL21/README.md)| `left join`, `left join`, `left join` |
+|SQL22|[统计各个部门的工资记录数](../orm-examples/nowcoder/SQL22/README.md)| `left join`, `left join`, `left join` |
+|SQL23|[对所有员工的当前薪水按照salary进行按照1-N的排名](../orm-examples/nowcoder/SQL23/README.md)| `left join`, `left join`, `left join` |
 
 
 
