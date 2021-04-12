@@ -134,3 +134,77 @@
   ```  
 
 
+&nbsp;  
+&nbsp;  
+### SQL32
+
+- 题目   
+  将employees表的所有员工的last_name和first_name拼接起来作为Name，中间以一个空格区分
+
+- [题链接](https://www.nowcoder.com/practice/6744b90bbdde40209f8ecaac0b0516fe?tpId=82&&tqId=29800&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  select concat(last_name, ' ', first_name) 
+  from employees
+  ```  
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL33
+
+- 题目   
+  创建一个actor表，包含如下列信息
+
+- [题链接](https://www.nowcoder.com/practice/ac233de508ef4849b0eeb4f38dcf09cf?tpId=82&&tqId=29801&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  -- 建表
+  create table `actor` (
+      actor_id smallint(5) not null primary key,
+      first_name varchar(45) not null,
+      last_name varchar(45) not null, 
+      last_update date not null
+  );
+  ```  
+  
+
+&nbsp;  
+&nbsp;  
+### SQL34
+
+- 题目   
+  批量插入数据
+
+- [题链接](https://www.nowcoder.com/practice/51c12cea6a97468da149c04b7ecf362e?tpId=82&&tqId=29802&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  insert into `actor` values (1, 'PENELOPE', 'GUINESS', '2006-02-15 12:34:33'), 
+                             (2, 'NICK', 'WAHLBERG', '2006-02-15 12:34:33');
+  ```    
+  
+
+&nbsp;  
+&nbsp;  
+### SQL35
+
+- 题目   
+  批量插入数据,如果数据已经存在，请忽略，不使用replace操作
+
+- [题链接](https://www.nowcoder.com/practice/153c8a8e7805400ba8e384e03acc6b3e?tpId=82&&tqId=29803&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  -- (select '3', 'ED', 'CHASE', '2006-02-15 12:34:33') as tmp 作为临时表
+  --
+  -- select * from tmp where not exists; 如果不存在则使用tmp中的所有数据, 如果存在则不返回任何数据.  
+  
+  insert into actor 
+      select * 
+      from (select '3', 'ED', 'CHASE', '2006-02-15 12:34:33') as tmp
+      where not exists (select * from actor where actor_id='3');
+  ```    

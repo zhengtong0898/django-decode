@@ -25,6 +25,10 @@
 |SQL28|[查找描述信息中包括robot的电影对应的分类名称以及电影数目](../orm-examples/nowcoder/README.md#SQL28)| `having count` |
 |SQL29|[使用join查询方式找出没有分类的电影id以及名称](../orm-examples/nowcoder/README.md#SQL29)| `强调 left join 的必要性` |
 |SQL30|[使用子查询的方式找出属于Action分类的所有电影对应的title,description](../orm-examples/nowcoder/README.md#SQL30)| `subquery` |
+|SQL32|[将employees表的所有员工的last_name和first_name拼接起来作为Name，中间以一个空格区分](../orm-examples/nowcoder/README.md#SQL32)| `concat字符串拼接` |
+|SQL33|[创建一个actor表，包含如下列信息](../orm-examples/nowcoder/README.md#SQL33)| `create table` |
+|SQL34|[批量插入数据](../orm-examples/nowcoder/README.md#SQL34)| `insert into` |
+|SQL35|[批量插入数据,如果数据已经存在，请忽略，不使用replace操作](../orm-examples/nowcoder/README.md#SQL35)| `insert into select` |
 
 
 
