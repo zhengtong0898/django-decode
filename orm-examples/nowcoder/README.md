@@ -208,3 +208,91 @@
       from (select '3', 'ED', 'CHASE', '2006-02-15 12:34:33') as tmp
       where not exists (select * from actor where actor_id='3');
   ```    
+  
+&nbsp;  
+&nbsp;  
+### SQL36
+
+- 题目   
+  创建一个actor_name表，将actor表中的所有first_name以及last_name导入改表
+
+- [题链接](https://www.nowcoder.com/practice/881385f388cf4fe98b2ed9f8897846df?tpId=82&&tqId=29804&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  create table `actor_name` (
+      `first_name` varchar(45) not null,
+      `last_name` varchar(45) not null
+  );
+
+  insert into `actor_name`
+      select `first_name`, `last_name` 
+      from `actor`;
+  ```      
+
+  
+&nbsp;  
+&nbsp;  
+### SQL37
+
+- 题目   
+  对first_name创建唯一索引uniq_idx_firstname，对last_name创建普通索引idx_lastname
+
+- [题链接](https://www.nowcoder.com/practice/e1824daa0c49404aa602cf0cb34bdd75?tpId=82&&tqId=29805&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  alter table `actor` add unique index `uniq_idx_firstname` (first_name);   -- 创建唯一索引
+  alter table `actor` add index `idx_lastname` (last_name);                 -- 创建普通索引
+  ```      
+
+  
+&nbsp;  
+&nbsp;  
+### SQL38
+
+- 题目   
+  针对actor表创建视图actor_name_view
+
+- [题链接](https://www.nowcoder.com/practice/b9db784b5e3d488cbd30bd78fdb2a862?tpId=82&&tqId=29806&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  create view `actor_name_view` 
+      (`first_name_v`, `last_name_v`)                       -- 视图字段名
+  as 
+      (select `first_name`, `last_name` from `actor`);
+  ```      
+
+
+  
+&nbsp;  
+&nbsp;  
+### SQL39
+
+- 题目   
+  针对上面的salaries表emp_no字段创建索引idx_emp_no，查询emp_no为10005,
+
+- [题链接](https://www.nowcoder.com/practice/f9fa9dc1a1fc4130b08e26c22c7a1e5f?tpId=82&&tqId=29807&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)   
+
+- SQL   
+  ```shell
+  select * 
+  from salaries 
+  force index (`idx_emp_no`)            -- 指定使用`idx_emp_no`索引(不需要优化器自行选择).
+  where emp_no=10005;
+  ```      
+
+&nbsp;  
+&nbsp;  
+### SQL40
+
+- 题目   
+  在last_update后面新增加一列名字为create_date
+  
+- [题链接](https://www.nowcoder.com/practice/119f04716d284cb7a19fba65dd876b03?tpId=82&&tqId=29808&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  alter table `actor` add column `create_date` datetime not null default '2020-10-01 00:00:00';
+  ```

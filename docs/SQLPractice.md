@@ -29,6 +29,11 @@
 |SQL33|[创建一个actor表，包含如下列信息](../orm-examples/nowcoder/README.md#SQL33)| `create table` |
 |SQL34|[批量插入数据](../orm-examples/nowcoder/README.md#SQL34)| `insert into` |
 |SQL35|[批量插入数据,如果数据已经存在，请忽略，不使用replace操作](../orm-examples/nowcoder/README.md#SQL35)| `insert into select` |
+|SQL36|[创建一个actor_name表，将actor表中的所有first_name以及last_name导入改表](../orm-examples/nowcoder/README.md#SQL36)|  |
+|SQL37|[对first_name创建唯一索引uniq_idx_firstname，对last_name创建普通索引idx_lastname](../orm-examples/nowcoder/README.md#SQL37)| `alter table add unique index`  |
+|SQL38|[针对actor表创建视图actor_name_view](../orm-examples/nowcoder/README.md#SQL38)| `create view` |
+|SQL39|[针对上面的salaries表emp_no字段创建索引idx_emp_no，查询emp_no为10005,](../orm-examples/nowcoder/README.md#SQL39)| `force index` |
+|SQL40|[在last_update后面新增加一列名字为create_date](../orm-examples/nowcoder/README.md#SQL40)| `alter table add column` |
 
 
 
