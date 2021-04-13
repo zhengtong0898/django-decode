@@ -39,6 +39,9 @@
 |SQL43|[将所有to_date为9999-01-01的全部更新为NULL,且](../orm-examples/nowcoder/README.md#SQL43)| `update` |
 |SQL44|[将id=5以及emp_no=10001的行数据替换成id=5以及emp_no=10005,其他数据保持不变，使用replace实现。](../orm-examples/nowcoder/README.md#SQL44)| `replace into` |
 |SQL45|[将titles_test表名修改为titles_2017](../orm-examples/nowcoder/README.md#SQL45)| `rename table` `表重命名` |
+|SQL46|[在audit表上创建外键约束，其emp_no对应employees_test表的主键id](../orm-examples/nowcoder/README.md#SQL46)| `alter table add foreign key` |
+|SQL48|[将所有获取奖金的员工当前的薪水增加10%](../orm-examples/nowcoder/README.md#SQL48)| `salary * percentage` |
+|SQL50|[将employees表中的所有员工的last_name和first_name通过(')连接起来。](../orm-examples/nowcoder/README.md#SQL50)|  |
 
 
 

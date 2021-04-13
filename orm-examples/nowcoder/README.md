@@ -910,3 +910,56 @@
   ```shell
   rename table `titles_test` to `titles_2017`;
   ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL46
+
+- 题目   
+  在audit表上创建外键约束，其emp_no对应employees_test表的主键id
+  
+- [题链接](https://www.nowcoder.com/practice/aeaa116185f24f209ca4fa40e226de48?tpId=82&&tqId=29814&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  alter table `audit` 
+  add foreign key `idx_audit_emp_no` (`emp_no`) 
+  references `employees_test` (`id`);
+  ```
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL48
+
+- 题目   
+  将所有获取奖金的员工当前的薪水增加10%
+  
+- [题链接](https://www.nowcoder.com/practice/d3b058dcc94147e09352eb76f93b3274?tpId=82&&tqId=29816&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  update `salaries` 
+  set salary = salary * 1.1 
+  where emp_no in (select emp_no from emp_bonus) and
+        to_date='9999-01-01';
+  ```
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL50
+
+- 题目   
+  将employees表中的所有员工的last_name和first_name通过(')连接起来。
+  
+- [题链接](https://www.nowcoder.com|/practice/810bf4ee3ac64949b08983aa66ec7bee?tpId=82&&tqId=29818&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select concat(`last_name`, '\'', `first_name`) as name 
+  from `employees`;
+  ```
