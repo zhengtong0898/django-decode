@@ -821,3 +821,27 @@
       insert into `audit` values (NEW.id, NEW.name);
   end
   ```
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL42
+
+- 题目   
+  删除emp_no重复的记录，只保留最小的id对应的记录。
+  
+- [题链接](https://www.nowcoder.com/practice/3d92551a6f6d4f1ebde272d20872cf05?tpId=82&&tqId=29810&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 注意事项
+  -- 直接 select 出 min_id 然后 delete 会报错: You can’t specify target table ‘xxx’ for update in FROM clause.
+  -- 这很可能是它内部用iterator的方式来处理数据, 要保证数据的完整性, 就需要再做一层子查询, 让它先把需要的数据提取出来, 然后在做删除.
+  
+  delete from `titles_test` 
+  where id not in (select min_id 
+                   from (select min(id) as min_id 
+                         from `titles_test` 
+                         group by emp_no) as a);
+  ```
