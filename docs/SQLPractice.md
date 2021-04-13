@@ -36,6 +36,9 @@
 |SQL40|[在last_update后面新增加一列名字为create_date](../orm-examples/nowcoder/README.md#SQL40)| `alter table add column` |
 |SQL41|[构造一个触发器audit_log，在向employees表中插入一条数据的时候，触发插入相关的数据到audit中](../orm-examples/nowcoder/README.md#SQL41)| `create trigger` |
 |SQL42|[删除emp_no重复的记录，只保留最小的id对应的记录。](../orm-examples/nowcoder/README.md#SQL42)| `delete from`, `回避iterator问题` |
+|SQL43|[将所有to_date为9999-01-01的全部更新为NULL,且](../orm-examples/nowcoder/README.md#SQL43)| `update` |
+|SQL44|[将id=5以及emp_no=10001的行数据替换成id=5以及emp_no=10005,其他数据保持不变，使用replace实现。](../orm-examples/nowcoder/README.md#SQL44)| `replace into` |
+|SQL45|[将titles_test表名修改为titles_2017](../orm-examples/nowcoder/README.md#SQL45)| `rename table` `表重命名` |
 
 
 

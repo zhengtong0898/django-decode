@@ -845,3 +845,68 @@
                          from `titles_test` 
                          group by emp_no) as a);
   ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL43
+
+- 题目   
+  将所有to_date为9999-01-01的全部更新为NULL,且
+  
+- [题链接](https://www.nowcoder.com/practice/859f28f43496404886a77600ea68ef59?tpId=82&&tqId=29811&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  update `titles_test` 
+  set to_date=NULL, from_date='2001-01-01' 
+  where to_date='9999-01-01';
+  ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL44
+
+- 题目   
+  将id=5以及emp_no=10001的行数据替换成id=5以及emp_no=10005,其他数据保持不变，使用replace实现。
+  
+- [题链接](https://www.nowcoder.com/practice/2bec4d94f525458ca3d0ebf3bc8cd240?tpId=82&&tqId=29812&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  # 第一种写法
+  replace into `titles_test` 
+      select `id`, 1005, `title`, `from_date`, `to_date` 
+      from `titles_test` 
+      where `id`=5;
+  
+  
+  # 第二种写法
+  replace into `titles_test` values(5, 1005, 'ss', '9999-01-01', '9999-01-01');
+  
+  
+  # 第三种写法
+  replace into `titles_test` 
+  set id=5, 
+      emp_no=10005, 
+      title='sss', 
+      from_date='9999-01-01', 
+      to_date='9999-01-01';
+  ```
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL45
+
+- 题目   
+  将titles_test表名修改为titles_2017
+  
+- [题链接](https://www.nowcoder.com/practice/5277d7f92aa746ab8aa42886e5d570d4?tpId=82&&tqId=29813&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  rename table `titles_test` to `titles_2017`;
+  ```
