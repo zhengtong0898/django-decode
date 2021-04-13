@@ -34,6 +34,7 @@
 |SQL38|[针对actor表创建视图actor_name_view](../orm-examples/nowcoder/README.md#SQL38)| `create view` |
 |SQL39|[针对上面的salaries表emp_no字段创建索引idx_emp_no，查询emp_no为10005,](../orm-examples/nowcoder/README.md#SQL39)| `force index` |
 |SQL40|[在last_update后面新增加一列名字为create_date](../orm-examples/nowcoder/README.md#SQL40)| `alter table add column` |
+|SQL41|[构造一个触发器audit_log，在向employees表中插入一条数据的时候，触发插入相关的数据到audit中](../orm-examples/nowcoder/README.md#SQL41)| `create trigger` |
 
 
 

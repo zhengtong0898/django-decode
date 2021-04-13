@@ -802,3 +802,22 @@
   ```shell
   alter table `actor` add column `create_date` datetime not null default '2020-10-01 00:00:00';
   ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL41
+
+- 题目   
+  构造一个触发器audit_log，在向employees表中插入一条数据的时候，触发插入相关的数据到audit中
+  
+- [题链接](https://www.nowcoder.com/practice/7e920bb2e1e74c4e83750f5c16033e2e?tpId=82&&tqId=29809&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  create trigger `audit_log` 
+  after insert on `employees_test` for each row 
+  begin
+      insert into `audit` values (NEW.id, NEW.name);
+  end
+  ```
