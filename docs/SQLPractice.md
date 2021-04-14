@@ -42,6 +42,14 @@
 |SQL46|[在audit表上创建外键约束，其emp_no对应employees_test表的主键id](../orm-examples/nowcoder/README.md#SQL46)| `alter table add foreign key` |
 |SQL48|[将所有获取奖金的员工当前的薪水增加10%](../orm-examples/nowcoder/README.md#SQL48)| `salary * percentage` |
 |SQL50|[将employees表中的所有员工的last_name和first_name通过(')连接起来。](../orm-examples/nowcoder/README.md#SQL50)|  |
+|SQL51|[查找字符串'10,A,B'](../orm-examples/nowcoder/README.md#SQL51)| `relace` `length` `计数` |
+|SQL52|[获取Employees中的first_name，查询按照first_name最后两个字母，按照升序进行排列](../orm-examples/nowcoder/README.md#SQL52)| `order by` `substr` |
+|SQL53|[按照dept_no进行汇总，属于同一个部门的emp_no按照逗号进行连接，结果给出dept_no以及连接出的结果employees](../orm-examples/nowcoder/README.md#SQL53)| `group by` `group_concat`|
+|SQL54|[查找排除当前最大、最小salary之后的员工的平均工资avg_salary](../orm-examples/nowcoder/README.md#SQL54)| `sum` `max` `min` `count` |
+|SQL55|[分页查询employees表，每5行一页，返回第2页的数据](../orm-examples/nowcoder/README.md#SQL55)| `limit` `offset` |
+|SQL57|[使用含有关键字exists查找未分配具体部门的员工的所有信息。](../orm-examples/nowcoder/README.md#SQL57)| `not exists` |
+|SQL59|[获取有奖金的员工相关信息。](../orm-examples/nowcoder/README.md#SQL59)| `CASE WHEN` |
+|SQL60|[统计salary的累计和running_total](../orm-examples/nowcoder/README.md#SQL60)| `set @variable` `sum over` |
 
 
 

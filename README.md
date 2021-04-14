@@ -10,6 +10,29 @@
 
 
 &nbsp;  
+&nbsp;   
+### Debug困扰清单
+- \_\_len\_\_ 和 \_\_str\_\_ 和 \_\_repr\_\_    
+  很多时候在调试代码时, `Step Into` 明明没有执行任何代码, 
+  但是`Console` 仍然是有在打印相关的内容.   
+  
+  例如: `django.db.models.query.QuerySet`对象, 
+  当调试到 `QuerySet` 赋值给某变量后;   
+  
+  由于编辑器要把该变量显示到 Debugger 控制台上, 
+  编辑器会触发它的   
+  `__len__` 和 `__repr__` 和 `__str__` 方法来拿到具体的对象信息.     
+  
+  也正由于`QuerySet`内部实现了 `__len__`, 其内部引用了 `self._fetch_all`,   
+  导致了它会对数据库执行查询操作, 因此会打印出一些查询相关的日志输出.   
+  
+  所以那些没有`step by step`进入到源码的执行, 就不会乱打印东西, 也不会重复执行sql.   
+  
+  所以当需要调试一个对象, 观察它的`SQL`语句的运行流程时, 千万不要`Debug`, 
+  最好的做法是通过代码块的头尾部增加日志打印出常量字符串来观察.  
+  
+
+&nbsp;  
 &nbsp;  
 ### 如何将orm操作的sql语句打印出来?
 - 方案一: 编辑`Django`源码
@@ -48,42 +71,20 @@
 &nbsp;  
 &nbsp;  
 ### ORM关系操作背后的SQL语句观察
-在关系型数据库的哲学中绕不开的就是关系, 而关系主要体现在对`Foreign Key`的不同应用上.   
+在关系型数据库的哲学中绕不开的就是关系, 而关系主要体现在对`Foreign Key`的不同应用上.    
 - [ManyToOneField](./orm-examples/relationship/manytoonefield/tests.py#L11)  
   `多对一`对应在数据库中关键字是`Foreign Key`, [即主表指向到另外一张表的关联字段.](./orm-examples/relationship/manytoonefield/models.py#L27)   
   `一对多`指的是`Django ORM`提供支持, [使被关联的表可以反过来查询到主表.](./orm-examples/relationship/manytoonefield/tests.py#L63)    
 
 - [ManyToManyField](./orm-examples/relationship/manytomanyfield/tests.py#L11)  
-  `多对多`对应在数据库中关键字是`附加表 + Foreign Key`, [由`附加表`来管理`Foreign Key`, 即`附加表`指向主表和关联表](./orm-examples/relationship/manytoonefield/models.py#L33).
+  `多对多`对应在数据库中关键字是`附加表 + Foreign Key`,    
+  [由`附加表`来管理`Foreign Key`, 即`附加表`指向主表和关联表](./orm-examples/relationship/manytoonefield/models.py#L33).
   
 - [OneToOneField](./orm-examples/relationship/onetoonefield/tests.py#L10)   
   `一对一`对应在数据库中关键字是`Foreign Key`, 从数据库建表定义中看它和`多对一`没有区别,   
   但是从`Django ORM`提供的功能来看, 它们的区别是, 被关联的表可以直接`select_related`查询到主表.   
-  
 
-&nbsp;  
-&nbsp;   
-### Debug困扰清单
-- \_\_len\_\_ 和 \_\_str\_\_ 和 \_\_repr\_\_    
-  很多时候在调试代码时, `Step Into` 明明没有执行任何代码, 
-  但是`Console` 仍然是有在打印相关的内容.   
-  
-  例如: `django.db.models.query.QuerySet`对象, 
-  当调试到 `QuerySet` 赋值给某变量后;   
-  
-  由于编辑器要把该变量显示到 Debugger 控制台上, 
-  编辑器会触发它的   
-  `__len__` 和 `__repr__` 和 `__str__` 方法来拿到具体的对象信息.     
-  
-  也正由于`QuerySet`内部实现了 `__len__`, 其内部引用了 `self._fetch_all`,   
-  导致了它会对数据库执行查询操作, 因此会打印出一些查询相关的日志输出.   
-  
-  所以那些没有`step by step`进入到源码的执行, 就不会乱打印东西, 也不会重复执行sql.   
-  
-  所以当需要调试一个对象, 观察它的`SQL`语句的运行流程时, 千万不要`Debug`, 
-  最好的做法是通过代码块的头尾部增加日志打印出常量字符串来观察.  
-  
- 
+
 &nbsp;  
 &nbsp;  
 ### Django Admin 操作清单
