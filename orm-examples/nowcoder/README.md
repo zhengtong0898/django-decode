@@ -1231,3 +1231,52 @@
   from passing_number 
   order by t_rank, id;
   ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL64
+
+- 题目   
+  找到每个人的任务
+  
+- [题链接](https://www.nowcoder.com/practice/9dd9182d029a4f1d8c1324b63fc719c9?tpId=82&&tqId=35081&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select p.*, t.content
+  from person as p 
+  left join task t on p.id = t.person_id
+  order by p.id;
+  ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL65
+
+- 题目   
+  异常的邮件概率
+  
+- [题链接](https://www.nowcoder.com/practice/d6dd656483b545159d3aa89b4c26004e?tpId=82&&tqId=35083&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  # 第一种写法
+  select e.date,round(sum(case e.type when "no_completed" then 1 else 0 end)/count(*),3) p
+  from email e
+  join user u1 on e.send_id = u1.id
+  join user u2 on e.receive_id = u2.id
+  where u1.is_blacklist = 0 and u2.is_blacklist = 0
+  group by e.date
+  order by date
+  
+  # 第二种写法
+  select valid_e.`date`, 
+         round(sum(IF(valid_e.`type` = 'no_completed', 1, 0)) / count(valid_e.id), 3) as p
+  from (select sub_e.*
+        from `email` as sub_e 
+        inner join (select * from `user` where `is_blacklist`=1) as black_u
+        on sub_e.`send_id`!=black_u.`id` and sub_e.`receive_id`!=black_u.`id`) as valid_e
+  group by valid_e.`date`
+  ```
