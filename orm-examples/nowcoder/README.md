@@ -1182,3 +1182,52 @@
   on e.emp_no = a.emp_no
   where a.row_num % 2 = 1;
   ```
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL62
+
+- 题目   
+  出现三次以上相同积分的情况
+  
+- [题链接](https://www.nowcoder.com/practice/c69ac94335744480aa50646864b7f24d?tpId=82&&tqId=35079&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  select number from grade
+  group by number
+  having count(id) >= 3;
+  
+  
+  -- 第二种写法
+  select number 
+  from (select number, 
+               count(number) as counted 
+        from grade group by number) as a 
+  where a.counted >= 3;
+  ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL63
+
+- 题目   
+  刷题通过的题目排名
+  
+- [题链接](https://www.nowcoder.com/practice/cd2e10a588dc4c1db0407d0bf63394f3?tpId=82&&tqId=35080&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- dense_rank () over (order by number desc) 表示: 先排序 number 字段, 然后为每个number统计数量, 得到一个count值.
+  -- order by t_rank, id                       表示: 先排序 t_rank 字段, 然后再按照t_rank相同的组内再按 id 字段来排序.
+  
+  select id, 
+         number, 
+         dense_rank() over (order by number desc) as t_rank 
+  from passing_number 
+  order by t_rank, id;
+  ```

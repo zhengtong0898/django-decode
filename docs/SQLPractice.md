@@ -51,6 +51,8 @@
 |SQL59|[获取有奖金的员工相关信息。](../orm-examples/nowcoder/README.md#SQL59)| `CASE WHEN` |
 |SQL60|[统计salary的累计和running_total](../orm-examples/nowcoder/README.md#SQL60)| `set @variable` `sum over` |
 |SQL61|[对于employees表中，给出奇数行的first_name](../orm-examples/nowcoder/README.md#SQL61)| `row_number over` `rank % 2 求奇` |
+|SQL62|[出现三次以上相同积分的情况](../orm-examples/nowcoder/README.md#SQL62)| `group by` `having` |
+|SQL63|[刷题通过的题目排名](../orm-examples/nowcoder/README.md#SQL63)| `dense_rank` `order by col_1, col_2` |
 
 
 
