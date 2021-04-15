@@ -50,6 +50,7 @@
 |SQL57|[使用含有关键字exists查找未分配具体部门的员工的所有信息。](../orm-examples/nowcoder/README.md#SQL57)| `not exists` |
 |SQL59|[获取有奖金的员工相关信息。](../orm-examples/nowcoder/README.md#SQL59)| `CASE WHEN` |
 |SQL60|[统计salary的累计和running_total](../orm-examples/nowcoder/README.md#SQL60)| `set @variable` `sum over` |
+|SQL61|[对于employees表中，给出奇数行的first_name](../orm-examples/nowcoder/README.md#SQL61)| `row_number over` `rank % 2 求奇` |
 
 
 

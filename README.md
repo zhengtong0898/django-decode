@@ -78,7 +78,7 @@
 
 - [ManyToManyField](./orm-examples/relationship/manytomanyfield/tests.py#L11)  
   `多对多`对应在数据库中关键字是`附加表 + Foreign Key`,    
-  [由`附加表`来管理`Foreign Key`, 即`附加表`指向主表和关联表](./orm-examples/relationship/manytoonefield/models.py#L33).
+  [由`附加表`来管理`Foreign Key`, 即`附加表`指向主表和关联表](./orm-examples/relationship/manytomanyfield/models.py#L33).
   
 - [OneToOneField](./orm-examples/relationship/onetoonefield/tests.py#L10)   
   `一对一`对应在数据库中关键字是`Foreign Key`, 从数据库建表定义中看它和`多对一`没有区别,   

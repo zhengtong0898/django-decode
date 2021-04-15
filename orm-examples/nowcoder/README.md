@@ -1148,3 +1148,37 @@
   from `salaries` 
   where `to_date`='9999-01-01';
   ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL61
+
+- 题目   
+  对于employees表中，给出奇数行的first_name
+  
+- [题链接](https://www.nowcoder.com/practice/e3cf1171f6cc426bac85fd4ffa786594?tpId=82&&tqId=29829&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  -- 按照 employees.emp_no 来排序
+  select a.`first_name`
+  from (select `emp_no`, 
+               `first_name`, 
+                row_number() over(order by first_name) as row_num
+        from `employees`) a
+  where `row_num` % 2 = 1
+  order by a.`emp_no`;
+  
+  
+  -- 第二种写法
+  -- 按照employees原有的顺序来显示
+  select e.first_name from employees as e 
+  left join (select emp_no, 
+                    first_name, 
+                    row_number() over(order by first_name asc) as row_num 
+             from employees) as a
+  on e.emp_no = a.emp_no
+  where a.row_num % 2 = 1;
+  ```
