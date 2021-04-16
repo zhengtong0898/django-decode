@@ -1322,3 +1322,165 @@
   inner join `client` as c on l_2.`client_id` = c.`id`
   order by u.`name`;
   ```
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL68
+
+- 题目   
+  牛客每个人最近的登录日期(三)
+  
+- [题链接](https://www.nowcoder.com/practice/16d41af206cd4066a06a3a0aa585ad3d?tpId=82&&tqId=35086&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法(高效)
+  -- 子查询:     提取user_id和最小的日期, 这样可以得出去重后所有用户(含: 有效和无效的用户)
+  -- 左联查询:   根据 user_id 和 最小的日期+1天 查询出(仅含: 有效的用户)
+  -- 计算存活率: 根据 有效用户 / 去重后的全量用户 = 存活率
+  select 
+          round(count(l2.user_id)*1.0/count(t.user_id),3) as p
+  
+  from 
+         (select l1.user_id,min(l1.date) as d1 
+          from login l1 
+          group by l1.user_id) as t
+  
+  left join login l2 
+  on t.user_id=l2.user_id and l2.date=date_add(d1, interval 1 day)
+  
+  
+  -- 第二种写法(低效)
+  -- 子查询:     提取user_id和最小的日期+1天, 得出(仅含: 有效用户)
+  -- 内联查询:   根据user_id和最小的日期+1天, 得出(有效用户数量)
+  -- 去重计数:   count(distinct user_id), 得出(去重后的所有用户)
+  -- 计算存活率: 有效用户 / 去重后的所有用户 = 存活率
+  select round(((select count(*)
+                 from `login` as l 
+                 inner join (select `user_id`, DATE_ADD(min(`date`), interval 1 day) as `date`
+                             from `login` group by `user_id`) as sub_l
+                 on l.`user_id` = sub_l.`user_id` and l.`date` = sub_l.`date`) / count(distinct user_id)), 3)
+  from `login`;
+  ```
+  
+  
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL69
+
+- 题目   
+  牛客每个人最近的登录日期(四)
+  
+- [题链接](https://www.nowcoder.com/practice/e524dc7450234395aa21c75303a42b0a?tpId=82&&tqId=35087&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  select
+          -- 5. count将多行压缩成1行显示,
+          --    当 u_c.user_id 的值存在时, 将多行压缩成1行.
+          --    当 u_c.user_id 的值为空时, 计为0. 
+          l_d.`date`, count(u_c.user_id) 
+  from 
+         -- 1. 获取去重后的日期的数据集合
+         (select `date` 
+          from `login` 
+          group by `date`) as l_d
+  
+  -- 2. 左联要求即便不匹配数据, 主表l_d的数据也要列出来. 
+  left join
+   
+         -- 3. 获取最小日期的数据, 即: 新用户数据的数据集合
+         (select `user_id`, min(`date`) as date 
+          from `login` 
+          group by `user_id`) as u_c
+  on 
+          -- 4. 两个数据集的日期相同匹配, 
+          --    当日期满足匹配的数据, 会纵向排列(成多行).
+          --    当日期不满足匹配的数据, 会仅展示主表的数据, 联结表的数据为空.
+          l_d.`date` = u_c.`date`
+  
+  group by l_d.`date`
+  order by l_d.`date`;
+  
+  
+  
+  -- 第二种写法
+  select
+          -- 6. 补充处理空统计的情况. 
+          login.date, ifnull(count,0) 
+  from login 
+  
+  -- 3. 左联要求即便不匹配数据, 主表l_d的数据也要列出来. 
+  left join
+  
+          -- 2. 统计新用户数据集合的数量: 日期, 数量
+         (select t1.d,count(user_id) count 
+          from 
+  		          -- 1. 获取最小日期的数据, 即: 新用户数据的数据集合
+  		         (select l.user_id,min(date) d 
+				  from login l 
+				  group by l.user_id) t1
+          group by t1.d) t2
+  
+  -- 4. 有数据的项与主表联结,
+  --    由于 t2 已经去重, 已经统计, 
+  --    所以这里不会出现纵向排列的情况
+  on login.date=t2.d
+  
+  -- 5. 获取去重后的日期的数据集合
+  group by login.date;
+  ```  
+
+
+
+&nbsp;  
+&nbsp;  
+### SQL70
+
+- 题目   
+  牛客每个人最近的登录日期(五)
+  
+- [题链接](https://www.nowcoder.com/practice/ea0c56cd700344b590182aad03cc61b8?tpId=82&&tqId=35088&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 3. 筛选出有效的: 日期, 新用户次日留存率
+  select 
+          l_1.`date`, round((count(l_2.`user_id`) / count(l_1.`user_id`)), 3) as p 
+  from 
+          -- 1. 新用户, 日期
+         (select `user_id`,min(`date`) as `date`
+          from `login` 
+          group by `user_id`) as l_1
+  left join 
+         `login` as l_2
+  on 
+          -- 2. 筛选出 l_2 中, 新用户的次日留存用户, 有效用户.
+          l_1.`user_id`=l_2.`user_id` and 
+          l_2.`date`=date_add(l_1.`date`, interval 1 day)
+  group by l_1.`date`
+  
+  
+  union
+  
+  
+  select 
+          date, 0.000 as p
+  from 
+         `login`
+  where 
+          -- 4. 筛选出哪些没有新用户的日期
+          -- 子查询: 得出去重后的新用户,
+          -- not in: 得出这一天没有新的用户.
+         `date` not in (select min(`date`) 
+                        from `login` 
+                        group by `user_id`)
+  order by `date`;
+
+  ```  
