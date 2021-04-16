@@ -60,6 +60,7 @@
 |SQL68|[牛客每个人最近的登录日期(三)](../orm-examples/nowcoder/README.md#SQL68)| `round` `date_add` `subquery` `left join` |
 |SQL69|[牛客每个人最近的登录日期(四)](../orm-examples/nowcoder/README.md#SQL69)| `subquery` `left join` `group by` |
 |SQL70|[牛客每个人最近的登录日期(五)](../orm-examples/nowcoder/README.md#SQL70)| `union` `subquery` `left join` `group by` |
+|SQL71|[牛客每个人最近的登录日期(六)](../orm-examples/nowcoder/README.md#SQL71)| `sum() over(partition by xx order by xx)` |
 
 
 

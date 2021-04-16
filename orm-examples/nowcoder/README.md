@@ -1484,3 +1484,25 @@
   order by `date`;
 
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL71
+
+- 题目   
+  牛客每个人最近的登录日期(六)
+  
+- [题链接](https://www.nowcoder.com/practice/572a027e52804c058e1f8b0c5e8a65b4?tpId=82&&tqId=35089&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select u.`name`, 
+         pn.`date`,
+         -- 按名字分组(类似 group by), 然后再排序递增. 
+         sum(pn.`number`) over (partition by u.`name` order by pn.`date`)
+  from `user` as u 
+  inner join `passing_number` as pn on u.`id` = pn.`user_id`
+  order by pn.`date`, u.`name`;
+
+  ```  
