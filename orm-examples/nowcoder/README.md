@@ -1280,3 +1280,45 @@
         on sub_e.`send_id`!=black_u.`id` and sub_e.`receive_id`!=black_u.`id`) as valid_e
   group by valid_e.`date`
   ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL66
+
+- 题目   
+  牛客每个人最近的登录日期(一)
+  
+- [题链接](https://www.nowcoder.com/practice/ca274ebe6eac40ab9c33ced3f2223bb2?tpId=82&&tqId=35084&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select `user_id`, max(`date`) 
+  from `login` 
+  group by `user_id` 
+  order by `user_id`;
+  ```
+
+
+&nbsp;  
+&nbsp;  
+### SQL67
+
+- 题目   
+  牛客每个人最近的登录日期(二)
+  
+- [题链接](https://www.nowcoder.com/practice/7cc3c814329546e89e71bb45c805c9ad?tpId=82&&tqId=35085&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 子查询:   提取`login`最大日期和user_id
+  -- 左联查询:  根据上面的子查询, 提取出有效的 client_id 
+  -- 内联查询:  根据有效的 user_id 和 client_id, 提取出有效的 username, clientname, date.
+  
+  select u.`name`as u_n, c.`name` as c_n, l_2.`date` 
+  from (select `user_id`, max(`date`) as `date` from `login` group by `user_id`) as l_1 
+  left join `login` as l_2 on l_1.`user_id` = l_2.`user_id` and l_1.`date`=l_2.date
+  inner join `user` as u on l_2.`user_id` = u.`id` 
+  inner join `client` as c on l_2.`client_id` = c.`id`
+  order by u.`name`;
+  ```

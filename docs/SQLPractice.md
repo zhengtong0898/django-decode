@@ -55,6 +55,8 @@
 |SQL63|[刷题通过的题目排名](../orm-examples/nowcoder/README.md#SQL63)| `dense_rank` `order by col_1, col_2` |
 |SQL64|[找到每个人的任务](../orm-examples/nowcoder/README.md#SQL64)| `left join` |
 |SQL65|[异常的邮件概率](../orm-examples/nowcoder/README.md#SQL65)| `round` `sum` `if` `case when` `count`  |
+|SQL66|[牛客每个人最近的登录日期(一)](../orm-examples/nowcoder/README.md#SQL66)| `group by` `max`  |
+|SQL67|[牛客每个人最近的登录日期(二)](../orm-examples/nowcoder/README.md#SQL67)| `group by` `max`  |
 
 
 
