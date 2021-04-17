@@ -1506,3 +1506,43 @@
   order by pn.`date`, u.`name`;
 
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL72
+
+- 题目   
+  考试分数(一)
+  
+- [题链接](https://www.nowcoder.com/practice/f41b94b4efce4b76b27dd36433abe398?tpId=82&&tqId=35492&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select `job`, 
+          round(avg(`score`), 3) as avg_score 
+  from `grade` 
+  group by `job` 
+  order by avg_score desc;
+  ```  
+
+&nbsp;  
+&nbsp;  
+### SQL73
+
+- 题目   
+  考试分数(二)
+  
+- [题链接](https://www.nowcoder.com/practice/f456dedf88a64f169aadd648491a27c1?tpId=82&&tqId=35493&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select g.`id`, g.`job`, g.`score` 
+  from `grade` as g
+  inner join 
+          (select `job`, 
+                   round(avg(`score`), 3) as avg_score 
+           from `grade` 
+           group by `job`) as avg_grade
+  on g.`job` = avg_grade.`job` and g.`score` > avg_grade.`avg_score`;
+  ```  

@@ -61,6 +61,9 @@
 |SQL69|[牛客每个人最近的登录日期(四)](../orm-examples/nowcoder/README.md#SQL69)| `subquery` `left join` `group by` |
 |SQL70|[牛客每个人最近的登录日期(五)](../orm-examples/nowcoder/README.md#SQL70)| `union` `subquery` `left join` `group by` |
 |SQL71|[牛客每个人最近的登录日期(六)](../orm-examples/nowcoder/README.md#SQL71)| `sum() over(partition by xx order by xx)` |
+|SQL72|[考试分数(一)](../orm-examples/nowcoder/README.md#SQL72)| `group by` `order by xx desc` `round` `avg` |
+|SQL73|[考试分数(二)](../orm-examples/nowcoder/README.md#SQL73)| `group by` `order by xx desc` `round` `avg` `inner join` |
+
 
 
 
