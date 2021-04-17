@@ -1546,3 +1546,145 @@
            group by `job`) as avg_grade
   on g.`job` = avg_grade.`job` and g.`score` > avg_grade.`avg_score`;
   ```  
+
+&nbsp;  
+&nbsp;  
+### SQL74
+
+- 题目   
+  考试分数(三)
+  
+- [题链接](https://www.nowcoder.com/practice/b83f8b0e7e934d95a56c24f047260d91?tpId=82&&tqId=35494&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select a.`user_id`, a.`language_name`, a.`score` from 
+          (select g.`id` as user_id,
+                  l.`id` as language_id,
+                  l.`name` as language_name,
+                  g.`score` as score,
+  			          dense_rank() over (partition by l.`name` order by g.`score` desc) as d_rank
+           from `grade` as g
+           inner join `language` as l on g.`language_id` = l.`id`) as a
+  where a.`d_rank` <= 2
+  order by a.`language_name` asc, a.`score` desc, a.`user_id`;
+  ```  
+
+&nbsp;  
+&nbsp;  
+### SQL75
+
+- 题目   
+  考试分数(四)
+  
+- [题链接](https://www.nowcoder.com/practice/502fb6e2b1ad4e56aa2e0dd90c6edf3c?tpId=82&&tqId=35495&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select 
+          `job`, 
+  
+          case (count(job) % 2)
+              when 1 then                              -- 奇数
+                  round((count(job) + 1) / 2, 0)
+              else                                     -- 偶数
+                  round(count(job) / 2, 0)
+          end as `start`,
+  			 
+          case (count(job) % 2)
+              when 1 then 
+                  round((count(job) + 1) / 2, 0)
+              else 
+                  round((count(job) / 2) + 1, 0)
+          end as `end`
+  from `grade` 
+  group by `job`
+  order by `job`;
+  ```  
+
+&nbsp;  
+&nbsp;  
+### SQL76
+
+- 题目   
+  考试分数(五)
+  
+- [题链接](https://www.nowcoder.com/practice/b626ff9e2ad04789954c2132c74c0512?tpId=82&&tqId=35496&rp=1&ru=/activity/oj&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  select 
+          id,job,score,rank_ 
+  from 
+         (select *,
+                 -- 得出分组排名数据
+                 rank()over(partition by job order by score desc)as rank_,
+                 -- 得出分组计数
+                 count(*)over(partition by job) as total 
+          from grade) as A
+  where 
+          -- 筛选符合中位数选项
+          -- c++ 数据视角, 列出数据分布
+          -- select round(abs(1-(3+1)/2)*1.0,2) == 1.00
+          -- select round(abs(2-(3+1)/2)*1.0,2) == 0.00
+          -- select round(abs(3-(3+1)/2)*1.0,2) == 1.00
+          -- select round(abs(4-(3+1)/2)*1.0,2) == 2.00
+          -- select round(abs(5-(3+1)/2)*1.0,2) == 3.00
+          -- java 数据视角, 列出数据分布
+          -- select round(abs(1-(2+1)/2)*1.0,2) == 0.50
+          -- select round(abs(2-(2+1)/2)*1.0,2) == 0.50
+          round(abs(rank_-(total+1)/2)*1.0,2)<1
+  order by 
+          id
+  
+  
+  
+  -- 第二种写法
+  select   a.`id`, 
+           a.`job`, 
+           a.`score`, 
+           a.`t_rank` 
+  from 
+          (select g_1.`id`, 
+           g_1.`job`, 
+           g_1.`score`, 
+           g_1.`t_rank`, 
+           g_2.`start`, 
+           g_2.`end`, 
+  
+           -- 3. 得出索引位置
+           row_number() over(partition by g_1.`job` order by g_1.`score`) as enum 
+           from 
+                      -- 2. 得出 所有字段 + t_rank(分组排名信息)
+                      (select *, dense_rank() over(partition by `job` order by `score` desc) as t_rank 
+                       from `grade`) as g_1
+           inner join 
+                      -- 1. 得出 job, start, end
+                      (select 
+                               `job`, 
+          
+                                case (count(job) % 2)
+                                when 1 then                              -- 奇数
+                                    round((count(job) + 1) / 2, 0)
+                                else                                     -- 偶数
+                                    round(count(job) / 2, 0)
+                                end as `start`,
+          			 
+                                case (count(job) % 2)
+                                when 1 then 
+                                    round((count(job) + 1) / 2, 0)
+                                else 
+                                    round((count(job) / 2) + 1, 0)
+                                end as `end`
+                       from `grade` 
+                       group by `job`
+                       order by `job`) as g_2 
+           on g_1.`job` = g_2.`job`) as a
+  where 
+           -- 4. 列出符合索引的数据
+           a.`enum` in (a.`start`, a.`end`)
+  order by 
+           -- 5. 按照 `id` 排序
+           a.`id`;
+  ```  
