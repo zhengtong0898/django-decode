@@ -66,8 +66,11 @@
 |SQL74|[考试分数(三)](../orm-examples/nowcoder/README.md#SQL74)| `subquery` `dense_rank over(partition by xx order by xx)` `inner join` |
 |SQL75|[考试分数(四)](../orm-examples/nowcoder/README.md#SQL75)| `case when` |
 |SQL76|[考试分数(五)](../orm-examples/nowcoder/README.md#SQL76)| `rank() over(partition by xx order by xx)` `dense_rank() over(partition by xx order by xx)` `row_number() over(partition by xx order by xx)` `subquery` `inner join` |
-|SQL77|[牛客的课程订单分析(一)](../orm-examples/nowcoder/README.md#SQL76)|  |
-|SQL78|[牛客的课程订单分析(二)](../orm-examples/nowcoder/README.md#SQL76)| `group by` `having` |
+|SQL77|[牛客的课程订单分析(一)](../orm-examples/nowcoder/README.md#SQL77)|  |
+|SQL78|[牛客的课程订单分析(二)](../orm-examples/nowcoder/README.md#SQL78)| `group by` `having` |
+|SQL79|[牛客的课程订单分析(三)](../orm-examples/nowcoder/README.md#SQL79)| `subquery` `count over` |
+|SQL80|[牛客的课程订单分析(四)](../orm-examples/nowcoder/README.md#SQL80)| `min` `count` `group by` `having` |
+|SQL81|[牛客的课程订单分析(五)](../orm-examples/nowcoder/README.md#SQL81)| `lead() over()` `subquery` `group by` `having` `order by` |
 
 
 

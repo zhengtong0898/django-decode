@@ -1720,8 +1720,7 @@
 
 - SQL  
   ```shell
-  select 
-         `user_id`
+  select `user_id`
   from  `order_info` 
   where `status`='completed' and 
          `date`>'2025-10-15' and 
@@ -1751,4 +1750,58 @@
                  product_name in ('C++','Java','Python') ) oi          
   where oi.counted >= 2                                                 -- 将可判断条件(>= 2), 移交到外部来落地.
   order by id
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL80
+
+- 题目   
+  牛客的课程订单分析(四)
+  
+- [题链接](https://www.nowcoder.com/practice/c93d2079282f4943a3771ca6fd081c23?tpId=82&&tqId=37918&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select `user_id`, 
+          min(`date`), 
+          count(`user_id`) 
+  from   `order_info` 
+  where  `status`='completed' and 
+         `date`>'2025-10-15' and 
+         `product_name` in ('C++', 'Java', 'Python') 
+  group by `user_id` 
+  having count(`user_id`) >= 2
+  order by `user_id`;
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL81
+
+- 题目   
+  牛客的课程订单分析(五)
+  
+- [题链接](https://www.nowcoder.com/practice/348afda488554ceb922efd2f3effc427?tpId=82&&tqId=37919&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select  oi.`user_id`, 
+          min(oi.`date`) as first_buy_date,
+          oi.`next_date` as second_buy_date, 
+          count(oi.`user_id`) as cnt
+  from   
+         (select  *,
+                  -- 增加一个字段: 获取当前字段行的跟随行, 1表示当前字段行的下一个行值.
+                  lead(`date`, 1) over (partition by `user_id` order by `date` ASC)as next_date
+          from   `order_info`
+          where  `product_name` in ('C++','Python','Java') and 
+                 `status` = 'completed'  and 
+                 `date` > '2025-10-15') as oi
+  group by oi.`user_id` 
+  having count(oi.`user_id`)>=2
+  order by oi.`user_id` ASC;
+
   ```  
