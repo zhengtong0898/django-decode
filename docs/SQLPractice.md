@@ -66,6 +66,8 @@
 |SQL74|[考试分数(三)](../orm-examples/nowcoder/README.md#SQL74)| `subquery` `dense_rank over(partition by xx order by xx)` `inner join` |
 |SQL75|[考试分数(四)](../orm-examples/nowcoder/README.md#SQL75)| `case when` |
 |SQL76|[考试分数(五)](../orm-examples/nowcoder/README.md#SQL76)| `rank() over(partition by xx order by xx)` `dense_rank() over(partition by xx order by xx)` `row_number() over(partition by xx order by xx)` `subquery` `inner join` |
+|SQL77|[牛客的课程订单分析(一)](../orm-examples/nowcoder/README.md#SQL76)|  |
+|SQL78|[牛客的课程订单分析(二)](../orm-examples/nowcoder/README.md#SQL76)| `group by` `having` |
 
 
 

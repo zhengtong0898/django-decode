@@ -1688,3 +1688,45 @@
            -- 5. 按照 `id` 排序
            a.`id`;
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL77
+
+- 题目   
+  牛客的课程订单分析(一)
+  
+- [题链接](https://www.nowcoder.com/practice/d3aa5df807f046bea5003dbc04965d67?tpId=82&&tqId=37915&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select * 
+  from  `order_info` 
+  where `status`='completed' and 
+         date>'2025-10-15' and 
+         product_name in ('C++', 'Java', 'Python')
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL78
+
+- 题目   
+  牛客的课程订单分析(二)
+  
+- [题链接](https://www.nowcoder.com/practice/4ca4137cb490420cad06d2147ae67456?tpId=82&&tqId=37916&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select 
+         `user_id`
+  from  `order_info` 
+  where `status`='completed' and 
+         `date`>'2025-10-15' and 
+         `product_name` in ('C++', 'Java', 'Python') 
+  group by `user_id` 
+  having count(`user_id`) >= 2
+  order by `user_id`;
+  ```  
