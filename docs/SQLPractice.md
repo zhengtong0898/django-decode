@@ -71,6 +71,8 @@
 |SQL79|[牛客的课程订单分析(三)](../orm-examples/nowcoder/README.md#SQL79)| `subquery` `count over` |
 |SQL80|[牛客的课程订单分析(四)](../orm-examples/nowcoder/README.md#SQL80)| `min` `count` `group by` `having` |
 |SQL81|[牛客的课程订单分析(五)](../orm-examples/nowcoder/README.md#SQL81)| `lead() over()` `subquery` `group by` `having` `order by` |
+|SQL82|[牛客的课程订单分析(六)](../orm-examples/nowcoder/README.md#SQL82)| `subquery` `count() over()` `left join` `order by` |
+|SQL83|[牛客的课程订单分析(七)](../orm-examples/nowcoder/README.md#SQL83)| `subquery` `count() over()` `left join` `order by` `group by` |
 
 
 

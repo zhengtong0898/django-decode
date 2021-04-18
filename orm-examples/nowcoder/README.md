@@ -1805,3 +1805,70 @@
   order by oi.`user_id` ASC;
 
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL82
+
+- 题目   
+  牛客的课程订单分析(六)
+  
+- [题链接](https://www.nowcoder.com/practice/c5736983c322483e9f269dd23bdf2f6f?tpId=82&&tqId=37920&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select  oi.`id`, oi.`is_group_buy`, c.`name`  
+  from 
+         (select  *,
+                  count(id) over(partition by user_id) as counted
+          from   `order_info`
+          where  `product_name` in ('C++','Python','Java') and 
+                 `status` = 'completed'  and 
+                 `date` > '2025-10-15') as oi 
+  left join 
+         `client` as c on oi.`client_id` = c.`id`  
+  where counted >= 2
+  order by oi.`id`;
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL83
+
+- 题目   
+  牛客的课程订单分析(七)
+  
+- [题链接](https://www.nowcoder.com/practice/d6f4a37f966145da8900ba9edcc4c068?tpId=82&&tqId=37921&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 3. 去重, 排序, 计数
+  select  oi_1.`source`, count(oi_1.`source`) as cnt
+  from 
+           -- 2. 
+           -- 以oi为主表, 联结client表, 生成一张临时表.
+           -- 临时表只含有一个字段 `source`.
+           -- source数据生成规则: 如果是拼团订单则显示GroupBuy, 否则显示客户端名字.
+           (select  case oi.`is_group_buy` 
+                        when 'No' then c.`name`
+                        when 'Yes' then 'GroupBuy'
+                    end as source
+            from 
+                   -- 1. 满足这个条件: 查询在2025-10-15以后，购买成功的C++课程或Java课程或Python课程的来源信息
+                   (select  *,
+                            count(id) over(partition by user_id) as counted
+                    from   `order_info`
+                    where  `product_name` in ('C++','Python','Java') and 
+                           `status` = 'completed'  and 
+                           `date` > '2025-10-15') as oi 
+            left join 
+                   `client` as c on oi.`client_id` = c.`id`  
+            where 
+                    oi.`counted` >= 2
+            order by 
+                    oi.`id`) as oi_1
+  group by oi_1.`source` 
+  order by oi_1.`source`;
+  ```  
