@@ -1730,3 +1730,25 @@
   having count(`user_id`) >= 2
   order by `user_id`;
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL79
+
+- 题目   
+  牛客的课程订单分析(三)
+  
+- [题链接](https://www.nowcoder.com/practice/4ae8cff2505f4d7cb68fb0ec7cf80c57?tpId=82&&tqId=37917&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select id,user_id,product_name,status,client_id,date 
+  from
+          (select *,count(id) over(partition by user_id) as counted     -- 将 `group by` 和 `having` 替换成 count over. 
+           from order_info
+           where status='completed' and date > '2025-10-15' and 
+                 product_name in ('C++','Java','Python') ) oi          
+  where oi.counted >= 2                                                 -- 将可判断条件(>= 2), 移交到外部来落地.
+  order by id
+  ```  
