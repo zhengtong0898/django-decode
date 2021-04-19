@@ -1872,3 +1872,79 @@
   group by oi_1.`source` 
   order by oi_1.`source`;
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL84
+
+- 题目   
+  实习广场投递简历分析(一)
+  
+- [题链接](https://www.nowcoder.com/practice/f5fc21a0630b4ca6a25ea3a48054ef47?tpId=82&&tqId=37922&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select   `job`, sum(`num`) as cnt
+  from     `resume_info`
+  where    `date` between '2025-01-01' and '2025-12-31'
+  group by `job`
+  order by `cnt` desc
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL85
+
+- 题目   
+  实习广场投递简历分析(二)
+  
+- [题链接](https://www.nowcoder.com/practice/d323a4c97d1945e0aabe94e4d0bbb25d?tpId=82&&tqId=37923&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select    ri.`job`, ri.`s_date`, sum(ri.`num`) as cnt
+  from 
+           -- 1. 增加一个字段: shorter_date: date_format(`date`, '%Y-%m') 仅保留年份-月份
+           (select *, date_format(`date`, '%Y-%m') as s_date 
+            from `resume_info`
+            where `date` between '2025-01-01' and '2025-12-31') as ri
+  
+  -- 2. 多字段联合分组(内部实现原理: 先将ri.`s_date`去重分组完成, 然后再用分组完成的数据来遍历ri.`job`)
+  group by  ri.`s_date`, ri.`job`
+  -- 3. 多字段联合排序
+  order by  ri.`s_date` desc, `cnt` desc
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL86
+
+- 题目   
+  实习广场投递简历分析(三)
+  
+- [题链接](https://www.nowcoder.com/practice/83f84aa5c32b4cf5a75558d02dd7743c?tpId=82&&tqId=37924&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select    ri.`job`, 
+            ri.`s_date`, 
+            sum(ri.`num`) as cnt, 
+            ri.`n_date`,
+           -- 4. 单独统计 next_year_date 这一个时间点的 num 数量. 
+           (select sum(`num`) from `resume_info` where `job`=ri.`job` and date_format(`date`, '%Y-%m') = ri.`n_date`) as n_num
+  from 
+           -- 1. 增加两个字段: shorter_date 和 next_year_date.
+           (select  *, 
+                    date_format(`date`, '%Y-%m') as s_date, 
+                    date_format(date_add(`date`, interval 1 year), '%Y-%m') as n_date
+            from   `resume_info`
+            where  `date` between '2025-01-01' and '2025-12-31') as ri
+  
+  -- 2. 多字段联合分组(内部实现原理: 先将ri.`s_date`去重分组完成, 然后再用分组完成的数据来遍历ri.`job`)
+  group by  ri.`s_date`, ri.`job`
+  -- 3. 多字段联合排序
+  order by  ri.`s_date` desc, ri.`job` desc;
+  ```  

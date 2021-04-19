@@ -73,6 +73,9 @@
 |SQL81|[牛客的课程订单分析(五)](../orm-examples/nowcoder/README.md#SQL81)| `lead() over()` `subquery` `group by` `having` `order by` |
 |SQL82|[牛客的课程订单分析(六)](../orm-examples/nowcoder/README.md#SQL82)| `subquery` `count() over()` `left join` `order by` |
 |SQL83|[牛客的课程订单分析(七)](../orm-examples/nowcoder/README.md#SQL83)| `subquery` `count() over()` `left join` `order by` `group by` |
+|SQL84|[实习广场投递简历分析(一)](../orm-examples/nowcoder/README.md#SQL84)| `like` `sum` `group by` `order by` |
+|SQL85|[实习广场投递简历分析(二)](../orm-examples/nowcoder/README.md#SQL85)| `subquery` `date_format` `group by` `order by` |
+|SQL86|[实习广场投递简历分析(三)](../orm-examples/nowcoder/README.md#SQL86)| `subquery` `date_format` `date_add` `group by` `order by` |
 
 
 
