@@ -113,3 +113,40 @@ class SimpleTest(TransactionTestCase):
         # ORDER BY `manytomanyfield_article`.`headline` ASC
         aa = pp.article_set.all()
         self.assertEqual(len(aa), 1)
+
+    def test_d_all_with_prefetch_related(self):
+        # 准备数据
+        p1 = Publication.objects.create(title='The Python Journal')
+        p2 = Publication.objects.create(title='Science News')
+        p3 = Publication.objects.create(title='Science Weekly')
+
+        # 准备数据
+        # INSERT INTO `manytomanyfield_article` (`headline`)
+        # VALUES ('Django lets you build Web apps easily') RETURNING `manytomanyfield_article`.`id`
+        a = Article.objects.create(headline='Django lets you build Web apps easily')
+        b = Article.objects.create(headline='Python lets you build program easily')
+
+        # 准备数据: 一次性插入两条数据.
+        # INSERT IGNORE INTO `manytomanyfield_article_publications` (`article_id`, `publication_id`)
+        # VALUES (1, 1), (1, 2)
+        a.publications.add(p1, p2, p3)
+        b.publications.add(p2, p3)
+
+        # 和 test_the_case 场景一样, 也是两条sql.
+        # 1. 第一条sql查询article表的所有数据, 获取到所有的id.
+        #    SELECT `manytomanyfield_article`.`id`,
+        #           `manytomanyfield_article`.`headline`
+        #    FROM `manytomanyfield_article`
+        #    ORDER BY `manytomanyfield_article`.`headline` ASC
+        #
+        # 2. 第二条sql采用 publication inner join article_publications 联结方式来查询,
+        #    最后根据 三方表的.`article_id` in (所有article_id) 的方式来完成多对多数据模型的数据查询.
+        #    SELECT (`manytomanyfield_article_publications`.`article_id`) AS `_prefetch_related_val_article_id`,
+        #            `manytomanyfield_publication`.`id`,
+        #            `manytomanyfield_publication`.`title`
+        #    FROM `manytomanyfield_publication`
+        #    INNER JOIN `manytomanyfield_article_publications`
+        #            ON (`manytomanyfield_publication`.`id` = `manytomanyfield_article_publications`.`publication_id`)
+        #    WHERE `manytomanyfield_article_publications`.`article_id` IN (1, 2)
+        #    ORDER BY `manytomanyfield_publication`.`title` ASC
+        aa = Article.objects.all().prefetch_related('publications')
