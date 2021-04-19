@@ -2026,3 +2026,71 @@
            a >= total/2 and b >=total/2
   order by grade;  
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL89
+
+- 题目   
+  获得积分最多的人(一)
+  
+- [题链接](https://www.nowcoder.com/practice/1bfe3870034e4efeb4b4aa6711316c3b?tpId=82&&tqId=38359&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select `name`, sum(grade_num) as sum_grade_num
+  from `grade_info` as gi 
+  inner join `user` as u on gi.`user_id` = u.`id` 
+  group by gi.`user_id` 
+  order by sum_grade_num desc 
+  limit 1;
+  ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL90
+
+- 题目   
+  获得积分最多的人(二)
+  
+- [题链接](https://www.nowcoder.com/practice/b6248d075d2d4213948b2e768080dc92?tpId=82&&tqId=38360&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  -- 3. 选择排名第一的数据(一条或多条)/
+  select   b.`id`, b.`name`, b.`sum_grade_num` 
+  from
+          -- 2. 给积分做排名
+          (select  *, dense_rank() over(order by a.`sum_grade_num` desc) as t_rank 
+           from 
+                  -- 1. 去重合并 user_id, 并汇总每个 user_id 的积分.
+                  (select u.`id`, 
+                          u.`name`, 
+                          sum(gi.`grade_num`) as sum_grade_num
+                   from `grade_info` as gi 
+                   inner join `user` as u on gi.`user_id` = u.`id` 
+                   group by gi.`user_id` 
+                   order by sum_grade_num desc) as a) as b
+  where    b.`t_rank` = 1;
+
+  
+  -- 第二种写法
+  -- 3. 联结 user 表提取符合要求的字段.
+  select id,name,grade_sum
+  from
+          -- 2. 按积分总分筛选第一的数据(一条或多条)
+          (select user_id,sum(grade_num) as grade_sum
+           from grade_info
+           group by user_id
+           -- 1. 去重合并 user_id, 并汇总每个 user_id 的积分, 获取最大一个积分数.
+           having grade_sum = (select sum(grade_num) as grade_sum
+                               from grade_info
+                               group by user_id
+                               order by grade_sum desc limit 1)) a
+  join user u
+  on a.user_id = u.id
+  order by id;  
+  ```  

@@ -78,6 +78,8 @@
 |SQL86|[实习广场投递简历分析(三)](../examples/nowcoder/README.md#SQL86)| `subquery` `date_format` `date_add` `group by` `order by` |
 |SQL87|[最差是第几名(一)](../examples/nowcoder/README.md#SQL87)| `sum() over()` |
 |SQL88|[最差是第几名(二)](../examples/nowcoder/README.md#SQL88)| `subquery` `lag() over()` `case when` |
+|SQL89|[获得积分最多的人(一)](../examples/nowcoder/README.md#SQL89)| `inner join` `group by` `order by` `sum` |
+|SQL90|[获得积分最多的人(二)](../examples/nowcoder/README.md#SQL90)| `inner join` `group by` `order by` `sum` `dense_rank() over()` |
 
 
 
