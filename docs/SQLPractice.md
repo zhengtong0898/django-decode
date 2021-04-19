@@ -76,6 +76,8 @@
 |SQL84|[实习广场投递简历分析(一)](../orm-examples/nowcoder/README.md#SQL84)| `like` `sum` `group by` `order by` |
 |SQL85|[实习广场投递简历分析(二)](../orm-examples/nowcoder/README.md#SQL85)| `subquery` `date_format` `group by` `order by` |
 |SQL86|[实习广场投递简历分析(三)](../orm-examples/nowcoder/README.md#SQL86)| `subquery` `date_format` `date_add` `group by` `order by` |
+|SQL87|[最差是第几名(一)](../orm-examples/nowcoder/README.md#SQL87)| `sum() over()` |
+|SQL88|[最差是第几名(二)](../orm-examples/nowcoder/README.md#SQL88)| `subquery` `lag() over()` `case when` |
 
 
 

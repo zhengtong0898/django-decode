@@ -1948,3 +1948,81 @@
   -- 3. 多字段联合排序
   order by  ri.`s_date` desc, ri.`job` desc;
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL87
+
+- 题目   
+  最差是第几名(一)
+  
+- [题链接](https://www.nowcoder.com/practice/ae5e8273e73b4413823b676081bd355c?tpId=82&&tqId=37925&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  select *, 
+         sum(`number`) over(order by `grade`) as t_rank
+  from `class_grade`
+
+  ```  
+
+&nbsp;  
+&nbsp;  
+### SQL88
+
+- 题目   
+  最差是第几名(二)
+  
+- [题链接](https://www.nowcoder.com/practice/165d88474d434597bcd2af8bf72b24f1?tpId=82&&tqId=37926&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  select  a.`grade` 
+  from 
+         -- 3. 计算出区间起始数
+         (select   cg.`grade`,
+                   case 
+                   when lag(cg.`sumnumber`, 1) over(order by cg.`grade`) >= 0 then 
+                        lag(cg.`sumnumber`, 1) over(order by cg.`grade`) + 1
+                   else 1
+                   end as previous_sumnumber, 
+                   cg.`sumnumber` 
+    
+                  -- 2. 计算出区间总数
+          from    (select  *, 
+                           sum(`number`) over(order by `grade`) as sumnumber
+                   from   `class_grade`) as cg) as a
+  inner join
+         -- 1. 计算出中位数.
+         (select   case sum(`number`) % 2 
+                   when 1 then round((sum(`number`) + 1) / 2, 0)
+                   when 0 then round((sum(`number`) / 2), 0)
+                   end as num_start,  
+                       
+                   case sum(`number`) % 2 
+                   when 1 then round((sum(`number`) + 1) / 2, 0)
+                   when 0 then round((sum(`number`) / 2) + 1, 0)
+                   end as num_stop
+          from    `class_grade`) as b
+  where 
+         -- 4. 做区间匹配
+         (b.`num_start` between a.`previous_sumnumber` and a.`sumnumber`) or 
+         (b.`num_stop` between a.`previous_sumnumber` and a.`sumnumber`); 
+  
+  
+  -- 第二种写法
+  select grade 
+  from 
+          (select  grade,
+                  (select sum(number) from class_grade) as 'total',     -- 总数
+                   sum(number) over(order by grade) a,                  -- 正序
+                   sum(number) over(order by grade desc) b              -- 逆序
+           from class_grade) t1
+        
+  where 
+           -- 中位数算法: 正序>=总数一半, 且 逆序>=总数一半.
+           a >= total/2 and b >=total/2
+  order by grade;  
+  ```  
