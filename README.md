@@ -7,6 +7,7 @@
 |:---:|:---:|
 |autoreload|[核心原理](docs/autoreload/第1部分-核心原理.md) 、 [Signal](docs/autoreload/第2部分-Signal.md) 、 [两个进程](docs/autoreload/第3部分-两个进程.md)  、[两个线程](docs/autoreload/第4部分-两个线程.md)  、[Watchman](docs/autoreload/第5部分-Watchman.md)  、[响应式开发](docs/autoreload/第6部分-响应式开发.md)|
 |migration|待补充|
+|`django.contrib.auth`|[登录模块](docs/contrib/auth.md)|
 
 
 &nbsp;  
@@ -72,15 +73,15 @@
 &nbsp;  
 ### ORM关系操作背后的SQL语句观察
 在关系型数据库的哲学中绕不开的就是关系, 而关系主要体现在对`Foreign Key`的不同应用上.    
-- [ManyToOneField](./orm-examples/relationship/manytoonefield/tests.py#L11)  
-  `多对一`对应在数据库中关键字是`Foreign Key`, [即主表指向到另外一张表的关联字段.](./orm-examples/relationship/manytoonefield/models.py#L27)   
-  `一对多`指的是`Django ORM`提供支持, [使被关联的表可以反过来查询到主表.](./orm-examples/relationship/manytoonefield/tests.py#L63)    
+- [ManyToOneField](examples/relationship/manytoonefield/tests.py#L11)  
+  `多对一`对应在数据库中关键字是`Foreign Key`, [即主表指向到另外一张表的关联字段.](examples/relationship/manytoonefield/models.py#L27)   
+  `一对多`指的是`Django ORM`提供支持, [使被关联的表可以反过来查询到主表.](examples/relationship/manytoonefield/tests.py#L63)    
 
-- [ManyToManyField](./orm-examples/relationship/manytomanyfield/tests.py#L11)  
+- [ManyToManyField](examples/relationship/manytomanyfield/tests.py#L11)  
   `多对多`对应在数据库中关键字是`附加表 + Foreign Key`,    
-  [由`附加表`来管理`Foreign Key`, 即`附加表`指向主表和关联表](./orm-examples/relationship/manytomanyfield/models.py#L33).
+  [由`附加表`来管理`Foreign Key`, 即`附加表`指向主表和关联表](examples/relationship/manytomanyfield/models.py#L33).
   
-- [OneToOneField](./orm-examples/relationship/onetoonefield/tests.py#L10)   
+- [OneToOneField](examples/relationship/onetoonefield/tests.py#L10)   
   `一对一`对应在数据库中关键字是`Foreign Key`, 从数据库建表定义中看它和`多对一`没有区别,   
   但是从`Django ORM`提供的功能来看, 它们的区别是, 被关联的表可以直接`select_related`查询到主表.   
 
