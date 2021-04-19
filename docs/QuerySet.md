@@ -10,7 +10,7 @@ FROM `aggregate__book`
 
 ```
 
-- [使用案例-Avg](../orm-examples/myqueryset/aggregate_/tests.py#L11)
+- [使用案例-Avg](../examples/myqueryset/aggregate_/tests.py#L11)
 
 
 &nbsp;  
@@ -26,7 +26,7 @@ FROM `aggregate__book`
 select COUNT(*) from TABLE;
 ```
 
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L107)     
+- [使用案例](../examples/myqueryset/get_/tests.py#L107)     
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L386)
 
@@ -43,7 +43,7 @@ select COUNT(*) from TABLE;
 select ALL_FIELDS from TABLE limit 21;
 ```
 
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L19)     
+- [使用案例](../examples/myqueryset/get_/tests.py#L19)     
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L399)
 
@@ -58,7 +58,7 @@ select ALL_FIELDS from TABLE limit 21;
 insert into TABLE (FIELDS) value (VALUES);
 ```
 
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L66)  
+- [使用案例](../examples/myqueryset/get_/tests.py#L66)  
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L451)
 
@@ -77,8 +77,8 @@ values (VALUES),
        (VALUES);   
 ```
 
-- [使用案例-1](../orm-examples/myqueryset/get_/tests.py#L147)  
-- [使用案例-2](../orm-examples/myqueryset/bulk_create_/views.py#L7)  
+- [使用案例-1](../examples/myqueryset/get_/tests.py#L147)  
+- [使用案例-2](../examples/myqueryset/bulk_create_/views.py#L7)  
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L469)
 
@@ -101,7 +101,7 @@ SET `name` =        CASE WHEN (`get__product`.`id` = 1007) THEN 'aaa-0-updated'
 WHERE `get__product`.`id` IN (1007, 1008)
 ```
 
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L181)
+- [使用案例](../examples/myqueryset/get_/tests.py#L181)
 
 - 源码分析 TODO: 待补充
 
@@ -143,7 +143,7 @@ VALUES ('aaa-15',
         '2021-03-28 12:20:28.121343') 
 RETURNING `get__product`.`id`";
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L244)
+- [使用案例](../examples/myqueryset/get_/tests.py#L244)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L617)
 
@@ -207,7 +207,7 @@ VALUES ('aaa-15',
         120,
         '2021-03-28 14:15:17.710272')
 ```  
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L296)
+- [使用案例](../examples/myqueryset/get_/tests.py#L296)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L640)
 
@@ -231,7 +231,7 @@ FROM `get__product`
 ORDER BY `get__product`.`production_date` ASC               # 按给定字段正向排序
 LIMIT 1                                                     # 只提取第一条数据
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L386)
+- [使用案例](../examples/myqueryset/get_/tests.py#L386)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L754)
 
@@ -254,7 +254,7 @@ FROM `get__product`
 ORDER BY `get__product`.`production_date` DESC        # 按给定字段反向排序
 LIMIT 1                                               # 只提取第一条数据
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L416)
+- [使用案例](../examples/myqueryset/get_/tests.py#L416)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L758)
 
@@ -280,7 +280,7 @@ FROM `get__product`
 ORDER BY `get__product`.`id` ASC                      # 按 pk 字段正向排序
 LIMIT 1                                               # 提取第一条数据
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L446)
+- [使用案例](../examples/myqueryset/get_/tests.py#L446)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L768)
 
@@ -304,7 +304,7 @@ FROM `get__product`
 ORDER BY `get__product`.`id` DESC                 # 按 pk 字段反向排序
 LIMIT 1                                           # 提取第一条数据
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L497)
+- [使用案例](../examples/myqueryset/get_/tests.py#L497)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L787)
 
@@ -344,7 +344,7 @@ SELECT `get__product`.`id`,
 FROM `get__product`
 WHERE `get__product`.`id` IN (1, 2, 3)            # pk in (1, 2, 3)
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L536)
+- [使用案例](../examples/myqueryset/get_/tests.py#L536)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L796)
 
@@ -390,7 +390,7 @@ DELETE FROM `delete__product`
 WHERE `delete__product`.`id` = 2'
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L9)
+- [使用案例](../examples/myqueryset/delete_/tests.py#L9)
 
 - 源码分析 TODO: 待补充
 
@@ -413,7 +413,7 @@ SET `description` = 'bbbb'
 WHERE `get__product`.`expiration_date` = 170
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L77)
+- [使用案例](../examples/myqueryset/delete_/tests.py#L77)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L886)
 
@@ -435,7 +435,7 @@ FROM `delete__product`
 WHERE `delete__product`.`id` = 99
 LIMIT 1
 ```
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L103)
+- [使用案例](../examples/myqueryset/delete_/tests.py#L103)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L927)
 
@@ -463,7 +463,7 @@ FROM `delete__product`
 WHERE `delete__product`.`id` = 1
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L135)  
+- [使用案例](../examples/myqueryset/delete_/tests.py#L135)  
 
 - [详细介绍](https://github.com/zhengtong0898/learn_staff/blob/main/mysql/Tips.md#执行计划explain)
 
@@ -474,7 +474,7 @@ WHERE `delete__product`.`id` = 1
 `db.models.query.QuerySet.raw(self, raw_query, params=None, translations=None, using=None)`  
 该方法用于执行自定义SQL语句.   
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L198)  
+- [使用案例](../examples/myqueryset/delete_/tests.py#L198)  
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L949)
 
@@ -500,7 +500,7 @@ WHERE `delete__product`.`production_date` IS NOT NULL
 ORDER BY `datefield` ASC
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L242)  
+- [使用案例](../examples/myqueryset/delete_/tests.py#L242)  
 
 - 源码分析 TODO: 待补充
 
@@ -527,7 +527,7 @@ WHERE `delete__product`.`date_joined` IS NOT NULL
 ORDER BY `datetimefield` ASC
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L345)  
+- [使用案例](../examples/myqueryset/delete_/tests.py#L345)  
 
 - 源码分析 TODO: 待补充
 
@@ -602,7 +602,7 @@ FROM `delete__product`
 WHERE `delete__product`.`name` REGEXP 'A\\\\w+'
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L383)  
+- [使用案例](../examples/myqueryset/delete_/tests.py#L383)  
 
 
 &nbsp;   
@@ -620,7 +620,7 @@ FROM `delete__product`
 WHERE NOT (`delete__product`.`name` = 'aaa-0')"
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L476)
+- [使用案例](../examples/myqueryset/delete_/tests.py#L476)
 
   
   
@@ -642,7 +642,7 @@ UNION
 LIMIT 21
 
 ```
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L503)
+- [使用案例](../examples/myqueryset/delete_/tests.py#L503)
 
 
 &nbsp;  
@@ -681,7 +681,7 @@ WHERE `delete__product`.`id` = 1
 set autocommit = 1
 ```
 
-- [使用案例](../orm-examples/myqueryset/delete_/tests.py#L531)
+- [使用案例](../examples/myqueryset/delete_/tests.py#L531)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1141)
 
@@ -709,7 +709,7 @@ FROM `simplerelate_article` INNER JOIN `simplerelate_author` ON (`simplerelate_a
 WHERE `simplerelate_article`.`id` = 1 LIMIT 21
 ```
 
-- [使用案例](../orm-examples/myqueryset/simplerelate/tests.py#L10)
+- [使用案例](../examples/myqueryset/simplerelate/tests.py#L10)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1160)
 
@@ -740,7 +740,7 @@ FROM   `prefetch_related__topping`
 WHERE `prefetch_related__pizza_toppings`.`pizza_id` IN (1, 2)
 ```
 
-- [使用案例](../orm-examples/myqueryset/prefetch_related_/tests.py#L10)
+- [使用案例](../examples/myqueryset/prefetch_related_/tests.py#L10)
 
 - [源码分析](../src/Django-3.0.8/django/db/models/query.py#L1191)
 
@@ -760,7 +760,7 @@ SELECT DISTINCT `get__product`.`description`
 FROM `get__product`   
 ```
 
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L581)
+- [使用案例](../examples/myqueryset/get_/tests.py#L581)
 
 
 &nbsp;  
@@ -783,7 +783,7 @@ SELECT `get__product`.`id`,
 FROM `get__product`
 
 ```
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L617)
+- [使用案例](../examples/myqueryset/get_/tests.py#L617)
 
 &nbsp;   
 &nbsp;   
@@ -799,4 +799,4 @@ SELECT `get__product`.`id`,
        `get__product`.`price` 
 FROM `get__product`       
 ```  
-- [使用案例](../orm-examples/myqueryset/get_/tests.py#L645)
+- [使用案例](../examples/myqueryset/get_/tests.py#L645)
