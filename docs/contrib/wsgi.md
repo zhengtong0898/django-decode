@@ -1,4 +1,4 @@
-&nbsp;  
+
 &nbsp;  
 ### WSGI数据流向
 `Django`是一个`Web`框架, 不是一个`Web`服务器.  

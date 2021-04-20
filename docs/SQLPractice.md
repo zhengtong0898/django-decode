@@ -80,6 +80,7 @@
 |SQL88|[最差是第几名(二)](../examples/nowcoder/README.md#SQL88)| `subquery` `lag() over()` `case when` |
 |SQL89|[获得积分最多的人(一)](../examples/nowcoder/README.md#SQL89)| `inner join` `group by` `order by` `sum` |
 |SQL90|[获得积分最多的人(二)](../examples/nowcoder/README.md#SQL90)| `inner join` `group by` `order by` `sum` `dense_rank() over()` |
+|SQL91|[获得积分最多的人(三)](../examples/nowcoder/README.md#SQL91)| `inner join` `group by` `order by` `sum` `dense_rank() over()` `with as` |
 
 
 

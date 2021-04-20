@@ -2094,3 +2094,71 @@
   on a.user_id = u.id
   order by id;  
   ```  
+
+
+&nbsp;  
+&nbsp;  
+### SQL91
+
+- 题目   
+  获得积分最多的人(三)
+  
+- [题链接](https://www.nowcoder.com/practice/b6248d075d2d4213948b2e768080dc92?tpId=82&&tqId=38360&rp=1&ru=/ta/sql&qru=/ta/sql/question-ranking)
+
+- SQL  
+  ```shell
+  -- 第一种写法
+  -- 4. 筛选排名第一个数据.
+  select   d.`user_id` as id,
+           u.`name` as name, 
+           d.`ngn` as grade_sum 
+  from 
+           -- 3. 统计排名
+          (select  *, dense_rank() over(order by c.`ngn` desc) as t_rank 
+           from  
+                   -- 2. 
+                   -- 相同 `user_id`, 表示一边是'汇总加', 另外一边是'汇总减',
+                   -- 计算有效结果:  '汇总加' - `汇总减` = 有效的总积分.		 
+                  (select 
+                           a.`user_id`, 
+                           case 
+                           when (a.`user_id` = b.`user_id`) then
+                               a.`gn` - b.`gn`
+                           else
+                               a.`gn`
+                           end as ngn
+                   from 
+                           -- 1. 所有 'add' 相加
+                          (select `user_id`, sum(`grade_num`) as gn
+                           from `grade_info`
+                           where `type` = 'add' 
+                           group by `user_id`) as a
+                   left join
+                           -- 1. 所有 'reduce' 相加
+                          (select `user_id`, sum(`grade_num`) as gn
+                           from `grade_info` 
+                           where `type`='reduce'
+                           group by `user_id`) as b
+                   on a.`user_id`=b.`user_id`) as c) as d
+  inner join `user` as u
+  on d.`user_id` = u.`id` 
+  where d.`t_rank` = 1
+  order by d.`user_id`
+
+  
+  -- 第二种写法
+  -- 从 mysql-5.6 开始支持 with as 语法, 参考: https://dev.mysql.com/doc/refman/8.0/en/with.html
+  with 
+      -- 1. 临时表t1: 将 type='reduce' 的值改为负数
+      t1 as (select  user_id, (case when type='add'then grade_num else -grade_num end)as new_grade from grade_info),
+      -- 2. 在临时表t1的基础上, group by t1.user_id, 然后 sum(t1.new_grade), 表示正负值相加, 得到有效的总积分.
+      t2 as (select t1.user_id,sum(t1.new_grade)as grade_sum from t1 group by t1.user_id)
+  
+  select t3.id,t3.name,t2.grade_sum 
+  from t2 
+  -- 3. 在临时表t2的基础上, 联结 user 表, 生成一张字段齐全的临时表
+  inner join user t3 on t2.user_id=t3.id
+  -- 4. 筛选出最大只的数据(一条或多条)
+  where t2.grade_sum=(SELECT MAX(grade_sum) FROM t2)
+  order by t3.id;
+  ```  
