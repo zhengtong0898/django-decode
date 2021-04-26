@@ -1,4 +1,4 @@
-### 牛客网
+### 牛客网SQL练习
 | 题号 | 题目 | 关键词 |
 | :---: | :---: | ---: |
 |SQL1|[查找最晚入职员工的所有信息](../examples/nowcoder/README.md#SQL1)| 嵌套, extra, subquery |
