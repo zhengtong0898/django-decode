@@ -34,10 +34,10 @@
   > 补充-2:  
   > `django.contrib.auth`模块的路由的真相.  
   > 由于 `Django Admin` 的入口被定义在[这里](../../examples/myqueryset/myqueryset/urls.py#L20), 因此`AdminSite.urls`托管了整个路由入口,    
-  > 并且 `AdminSite.get_urls` 方法中, 选择重写 `urlpatterns` 而不是根据注册的`app`去寻找它的`urls.py`, 因此 `django.contrib.auth` 的 `urls.py`    
-  > 在 `Django Admin` 中是无效的.  
+  > 并且 `AdminSite.get_urls` 方法中, 选择重写 `urlpatterns` 而不是根据注册的`app`去   
+  > 寻找它的`urls.py`, 因此 `django.contrib.auth` 的 `urls.py` 在 `Django Admin` 中是无效的.  
   > 
-  > 补充-3:
+  > 补充-3:   
   > 那 `django.contrib.auth` 的 `urls.py` 还有存在的必要吗?  
   > 站在 `Django Admin` 的角度来看, 没有存在的必要,  
   > 站在 `一个常规app` 的角度来看, 是有必要的,  
