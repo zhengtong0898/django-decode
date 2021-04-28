@@ -48,6 +48,8 @@ class View:
     @classonlymethod
     def as_view(cls, **initkwargs):
         """Main entry point for a request-response process."""
+
+        # initkwargs 不允许含有 ('get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace') 这些 key.
         for key in initkwargs:
             if key in cls.http_method_names:
                 raise TypeError("You tried to pass in the %s method name as a "
@@ -59,6 +61,7 @@ class View:
                                 "attributes of the class." % (cls.__name__, key))
 
         def view(request, *args, **kwargs):
+            """ 山路十八弯, 一句话就是: 实例化cls对象, 然后进入cls对象的dispatch方法. """
             self = cls(**initkwargs)
             if hasattr(self, 'get') and not hasattr(self, 'head'):
                 self.head = self.get
@@ -69,6 +72,8 @@ class View:
                     "setup() and forget to call super()?" % cls.__name__
                 )
             return self.dispatch(request, *args, **kwargs)
+
+        # 下面几行代码都是针对 view 临时函数做一些补丁操作, 即给 view 临时函数增加一些属性.
         view.view_class = cls
         view.view_initkwargs = initkwargs
 
@@ -78,6 +83,8 @@ class View:
         # and possible attributes set by decorators
         # like csrf_exempt from dispatch
         update_wrapper(view, cls.dispatch, assigned=())
+
+        # 返回 view 临时函数
         return view
 
     def setup(self, request, *args, **kwargs):

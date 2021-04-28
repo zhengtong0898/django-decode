@@ -52,6 +52,8 @@ class LoginView(SuccessURLAllowedHostsMixin, FormView):
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
+        # 通过多态利用 View 的公共接口, 补充满足自身业务的代码.
+        # 已登陆的用户, 跳转到指定的页面.
         if self.redirect_authenticated_user and self.request.user.is_authenticated:
             redirect_to = self.get_success_url()
             if redirect_to == self.request.path:
@@ -60,6 +62,8 @@ class LoginView(SuccessURLAllowedHostsMixin, FormView):
                     "your LOGIN_REDIRECT_URL doesn't point to a login page."
                 )
             return HttpResponseRedirect(redirect_to)
+
+        # 执行完附加代码后, 回到 View 标准的流程中来.
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
