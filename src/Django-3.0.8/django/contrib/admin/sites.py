@@ -377,6 +377,7 @@ class AdminSite:
         """
         Display the login form for the given HttpRequest.
         """
+        # Get 请求, 且已登陆状态, 跳转进入后台页面, 这个过程被称为免登录.
         if request.method == 'GET' and self.has_permission(request):
             # Already logged-in, redirect to admin index
             index_path = reverse('admin:index', current_app=self.name)
@@ -387,23 +388,32 @@ class AdminSite:
         # it cannot import models from other applications at the module level,
         # and django.contrib.admin.forms eventually imports User.
         from django.contrib.admin.forms import AdminAuthenticationForm
+
+        # 收集上下文信息.
         context = {
-            **self.each_context(request),
-            'title': _('Log in'),
-            'app_path': request.get_full_path(),
-            'username': request.user.get_username(),
+            **self.each_context(request),               # 标题, 是否具备访问权限, 网址, 等信息
+            'title': _('Log in'),                       # 标题
+            'app_path': request.get_full_path(),        # 完整的路径
+            'username': request.user.get_username(),    # 用户名
         }
+
+        # 如果请求体中未包含'?next='关键词, 那么就给他加上该关键词(对应的值是 'admin:index' 对应的 URI 路径).
         if (REDIRECT_FIELD_NAME not in request.GET and
                 REDIRECT_FIELD_NAME not in request.POST):
             context[REDIRECT_FIELD_NAME] = reverse('admin:index', current_app=self.name)
+
+        # 补充更新上下文信息
         context.update(extra_context or {})
 
+        # 为 django.contrib.auth.LoginView.as_view 方法收集参数
         defaults = {
             'extra_context': context,
             'authentication_form': self.login_form or AdminAuthenticationForm,
             'template_name': self.login_template or 'admin/login.html',
         }
         request.current_app = self.name
+
+        # 最终还是落地到 django.contrib.auth.LoginView 上.
         return LoginView.as_view(**defaults)(request)
 
     def _build_app_dict(self, request, label=None):

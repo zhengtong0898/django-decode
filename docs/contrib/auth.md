@@ -34,7 +34,7 @@
   > 补充-2:  
   > `django.contrib.auth`模块的路由的真相.  
   > 由于 `Django Admin` 的入口被定义在[这里](../../examples/myqueryset/myqueryset/urls.py#L20), 因此`AdminSite.urls`托管了整个路由入口,    
-  > 并且 `AdminSite.get_urls` 方法中, 选择重写 `urlpatterns` 而不是根据注册的`app`去   
+  > 并且 [AdminSite.get_urls](../../src/Django-3.0.8/django/contrib/admin/sites.py#L240) 方法中, 选择重写 `urlpatterns` 而不是根据注册的`app`去   
   > 寻找它的`urls.py`, 因此 `django.contrib.auth` 的 `urls.py` 在 `Django Admin` 中是无效的.  
   > 
   > 补充-3:   
@@ -42,4 +42,11 @@
   > 站在 `Django Admin` 的角度来看, 没有存在的必要,  
   > 站在 `一个常规app` 的角度来看, 是有必要的,  
   > 因为保不准谁会有单独使用 `django.contrib.auth` 的需求, 那直接用起来就行了.  
+
+- 登陆流程被拦截   
+  一、因为`Django Admin`在 [AdminSite.get_urls](../../src/Django-3.0.8/django/contrib/admin/sites.py#L240) 中重写了`urlpatterns`.  
+  二、所以输入网址 `/admin/login/` 会进入到 [`AdminSite.login`](../../src/Django-3.0.8/django/contrib/admin/sites.py#L376) 方法中.   
+  三、在`AdminSite.login`内, 首先[检查当前请求的cookie是否有效](../../src/Django-3.0.8/django/contrib/admin/sites.py#L380), 有效则直接跳转到后台页面, 登陆流程结束.   
+  四、在`AdminSite.login`内, 检查cookie无效, [则收集`request`的上下文信息](../../src/Django-3.0.8/django/contrib/admin/sites.py#L392).  
+  五、在`AdminSite.login`内, 收集完上下文信息后, 最终还是落地到 [django.contrib.auth.LoginView](../../src/Django-3.0.8/django/contrib/admin/sites.py#L416) 上.   
 
