@@ -58,6 +58,8 @@
   三、在 [View.as_view](../../src/Django-3.0.8/django/views/generic/base.py#L63) 方法中, 紧接着是定义一个`view`临时函数, 并给`view`临时函数`patch`一些属性.   
   四、在 [View.as_view.view](../../src/Django-3.0.8/django/views/generic/base.py#L65) 函数中, 会实例化`auth.LoginView`类, 并做一些冲突检查.   
   五、在 [View.as_view.view](../../src/Django-3.0.8/django/views/generic/base.py#L65) 函数中, 执行`View.dispatch`标准接口, `dispatch`是`View`流程第一个节点.      
-  六、在 [auth.LoginView.dispatch](../../src/Django-3.0.8/django/contrib/auth/views.py#L54) 中, 通过多态利用 View 的公共接口, 补充满足自身业务的代码.  
-  七、在 [auth.LoginView.dispatch](../../src/Django-3.0.8/django/contrib/auth/views.py#L54) 中, 执行完附加代码后, 再回到 `View` 标准的流程中来.  
-  八、再 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 中, 
+  六、在 [auth.LoginView.dispatch](../../src/Django-3.0.8/django/contrib/auth/views.py#L54) 方法中, 通过多态利用 `View` 的公共接口, 补充满足自身业务的代码.  
+  七、在 [auth.LoginView.dispatch](../../src/Django-3.0.8/django/contrib/auth/views.py#L54) 方法中, 执行完附加代码后, 再回到 `View` 标准的流程中来.  
+  八、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 根据 `request.method` 来提取对应的`LoginView`方法.   
+  九、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 如果 `request.method` 是 `GET`, 则运行`LoginView.get`方法.  
+  十、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 如果 `LoginView` 没有 `get` 方法, 那就从它的继承树中取找`get`方法.  

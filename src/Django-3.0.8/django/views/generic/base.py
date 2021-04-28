@@ -97,10 +97,19 @@ class View:
         # Try to dispatch to the right method; if a method doesn't exist,
         # defer to the error handler. Also defer to the error handler if the
         # request method isn't on the approved list.
+
+        # 常规检查, 如果 request.method 是 http 的标准方法,
+        # 则根据方法名触发和调用 self 对应的方法, 举例:
+        # 当 request.method 是 GET 时, handler = getattr(self, 'get').
+        # 当 self == auth.LoginView 时, 那么 handler == auth.LoginView.get 方法.
         if request.method.lower() in self.http_method_names:
             handler = getattr(self, request.method.lower(), self.http_method_not_allowed)
+
+        # 常规检查, 如果 request.method 不是 http 的标准方法, 则跳转到错误页面.
         else:
             handler = self.http_method_not_allowed
+
+        # 执行对应于 http 标准名的方法, 比如说: auth.LoginView.get
         return handler(request, *args, **kwargs)
 
     def http_method_not_allowed(self, request, *args, **kwargs):
