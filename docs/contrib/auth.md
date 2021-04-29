@@ -62,4 +62,57 @@
   七、在 [auth.LoginView.dispatch](../../src/Django-3.0.8/django/contrib/auth/views.py#L54) 方法中, 执行完附加代码后, 再回到 `View` 标准的流程中来.  
   八、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 根据 `request.method` 来提取对应的`LoginView`方法.   
   九、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 如果 `request.method` 是 `GET`, 则运行`LoginView.get`方法.  
-  十、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 如果 `LoginView` 没有 `get` 方法, 那就从它的继承树中取找`get`方法.  
+  十、在 [View.dispatch](../../src/Django-3.0.8/django/views/generic/base.py#L96) 方法中, 如果 `LoginView` 没有 `get` 方法, 那就从它的继承树中取找`get`方法.
+  ```shell
+  # auth.LoginView继承树
+  LoginView(SuccessURLAllowedHostsMixin, FormView)
+      django.views.generic.edit.FormView                                                    
+          django.views.generic.edit.BaseFormView                                       
+              django.views.generic.edit.BaseFormView
+                  django.views.generic.edit.ProcessFormView             # get 和 post 方法在这里.
+  ```
+  
+### 登陆   
+
+- 表单   
+  在`GET`时, 浏览器需要一个登陆页面, 页面中需要包含一个登陆表单.   
+  在`POST`时, 服务端需要验证表单提交信息.   
+  在`Django`中, 表单负责与`数据库(Model)`交互, 并生成满足业务场景的字段表单.
+  
+  登陆页面用哪个表单, 定义在`auth.LoginView.form_class`中, 值是`django.contrib.auth.forms.AuthenticationForm`.  
+  登陆页面用哪个模板, 定义在`auth.LoginView.template_name`中, 值是`registration/login.html`.  
+  
+  在`as_view`流程中, 不论是进入到`get`还是`post`方法, 都需要使用到表单对象,  
+  获取表单对象使用的是`LoginView.get_form`, 然而 `LoginView` 并没有定义`get_form`方法,    
+  此时就需要从 `LoginView` 对象的继承树中去寻找这样一个方法.  
+  ```shell
+  # auth.LoginView继承树
+  LoginView(SuccessURLAllowedHostsMixin, FormView)
+      django.views.generic.edit.FormView                                                    
+          django.views.generic.edit.BaseFormView                                       
+              django.views.generic.edit.BaseFormView
+                  django.views.generic.edit.FormMixin                   # get_form 方法在这里.
+  
+  ```  
+  
+  TODO: 这里待验证, 给pymysql增加日志, 然后观察日志输出, 这里是否有数据库请求.   
+  表单对象(`django.contrib.auth.forms.AuthenticationForm`)在实例化的过程中,   
+  会根据自身`class variable`中类型是`Model.Field`的字段到`UserModel`中提取对应的字段约束信息.
+  
+  当请求`Post`是时, `Form`提供了`is_valid`方法, 用于验证表单内容是否有效.
+  
+- get
+  
+  待补充
+
+- post   
+
+  当请求`Post`是时, `Form`提供了`is_valid`方法, 用于验证表单内容是否有效.   
+  当表单验证结果为True时, 表示有效, 跳转到后台.   
+  当表单验证结果为False时, 表示验证失败, 跳转到错误页面.   
+
+&nbsp;   
+> 重点备注(解耦):   
+> `auth.LoginView` 将登陆验证相关的逻辑代码全部抽离到`auth.__init__`中,    
+> 主要目的是为了让`auth.LoginView`这个`View`看起来更聚焦于继承的覆盖(多态),    
+> 同时也让业务逻辑代码和`View`的相对解耦.
