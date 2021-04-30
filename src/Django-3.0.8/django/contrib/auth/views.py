@@ -83,19 +83,27 @@ class LoginView(SuccessURLAllowedHostsMixin, FormView):
         )
         return redirect_to if url_is_safe else ''
 
+    # 这是FormMixin的标准接口, 用于获取具体的 form 杜希昂.
+    # 这里采取多态覆盖的方式, 要求优先尝试使用 self.authentication_form.
     def get_form_class(self):
         return self.authentication_form or self.form_class
 
+    # 这是FormMixin的标准接口, 用于收集符合当前场景的参数, 用来实例化 form_class .
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
 
+    # 这是FormMixin的标准接口, 用于落地 验证/render/redirect.
+    # 验证: auth_login
+    # render: 没有-当前场景没有用到, 但是其他场景会用到.
+    # redirect: HttpResponseRedirect
     def form_valid(self, form):
         """Security check complete. Log the user in."""
         auth_login(self.request, form.get_user())
         return HttpResponseRedirect(self.get_success_url())
 
+    # 这是FormMixin的标准接口, 用于给template做render时提供的变量.
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         current_site = get_current_site(self.request)
