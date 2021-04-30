@@ -94,20 +94,18 @@
                   django.views.generic.edit.FormMixin                   # get_form 方法在这里.
   
   ```  
-  
-  TODO: 这里待验证, 给pymysql增加日志, 然后观察日志输出, 这里是否有数据库请求.   
+     
   表单对象(`django.contrib.auth.forms.AuthenticationForm`)在实例化的过程中,   
-  会根据自身`class variable`中类型是`Model.Field`的字段到`UserModel`中提取对应的字段约束信息.
-  
-  当请求`Post`是时, `Form`提供了`is_valid`方法, 用于验证表单内容是否有效.
-  
+  会根据自身 [类变量](../../src/Django-3.0.8/django/contrib/auth/forms.py#L202) 中类型是 [form.Field](../../src/Django-3.0.8/django/forms/forms.py#L31) 的字段到 [UserModel._meta](../../src/Django-3.0.8/django/contrib/auth/forms.py#L202) 中提取对应的字段约束信息.   
+  备注: 这个表单实例化的过程没有任何`sql`网络请求.
+    
 - get
   
   待补充
 
 - post   
 
-  当请求`Post`是时, `Form`提供了`is_valid`方法, 用于验证表单内容是否有效.   
+  当请求`Post`时, `Form`提供了`is_valid`方法, 用于验证表单内容是否有效.   
   当表单验证结果为True时, 表示有效, 跳转到后台.   
   当表单验证结果为False时, 表示验证失败, 跳转到错误页面.   
 

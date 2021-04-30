@@ -174,6 +174,9 @@ class AuthenticationForm(forms.Form):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
+
+    # 类变量(class variables), 类型是 Field.
+    # 重点是: AuthenticationForm教会我, 字段信息可以定义在这里, 被后续的 form 使用.
     username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True}))
     password = forms.CharField(
         label=_("Password"),
@@ -199,6 +202,8 @@ class AuthenticationForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         # Set the max length and label for the "username" field.
+        # 从 UserModel._meta 对象中提取字段约束信息: max_length, verbose_name.
+        # 重点是: AuthenticationForm在教会我如何使用 Model 完成数据的提取工作.
         self.username_field = UserModel._meta.get_field(UserModel.USERNAME_FIELD)
         username_max_length = self.username_field.max_length or 254
         self.fields['username'].max_length = username_max_length
