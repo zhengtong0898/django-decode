@@ -22,5 +22,5 @@ LoginView(SuccessURLAllowedHostsMixin, FormView)
 ```  
      
 表单对象(`django.contrib.auth.forms.AuthenticationForm`)在实例化的过程中,   
-会根据自身 [类变量](../../../src/Django-3.0.8/django/contrib/auth/forms.py#L202) 中类型是 [form.Field](../../../src/Django-3.0.8/django/forms/forms.py#L31) 的字段到 [UserModel._meta](../../../src/Django-3.0.8/django/contrib/auth/forms.py#L202) 中提取对应的字段约束信息.   
+会根据自身 [类变量](../../../src/Django-3.0.8/django/contrib/auth/forms.py#L180) 中类型是 [form.Field](../../../src/Django-3.0.8/django/forms/forms.py#L31) 的字段到 [UserModel._meta](../../../src/Django-3.0.8/django/contrib/auth/forms.py#L207) 中提取对应的字段约束信息.   
 备注: 这个表单实例化的过程没有任何`sql`网络请求.
