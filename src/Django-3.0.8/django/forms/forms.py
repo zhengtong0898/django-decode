@@ -172,11 +172,14 @@ class BaseForm:
     def errors(self):
         """Return an ErrorDict for the data provided for the form."""
         if self._errors is None:
+            # 检查数据库字段名字, 非空, 账号是否存在, 密码是否一致.
             self.full_clean()
         return self._errors
 
     def is_valid(self):
         """Return True if the form has no errors, or False otherwise."""
+        # self.is_bound: data 非空则值为 True.
+        # self.errors:  检查数据库字段名字, 非空, 账号是否存在, 密码是否一致, 有报错则self.erros == True.
         return self.is_bound and not self.errors
 
     def add_prefix(self, field_name):
@@ -373,11 +376,17 @@ class BaseForm:
         if self.empty_permitted and not self.has_changed():
             return
 
+        # 基于字段的验证: 字段必填, 字段名匹配, 执行自定义validator
         self._clean_fields()
+        # 基于表单的验证: 检查用户是否存在, 并检查密码是否一致.
         self._clean_form()
+        # 验证hook.
         self._post_clean()
 
     def _clean_fields(self):
+        # form_class 实例化时, 透过继承树 DeclarativeFieldsMetaclass 对象被实例化时写入的 self.fields 集合.
+        # self.fields 集合的值, 是根据 Form 定义的 `class variable == form.Field ` 收集而来, 举例:
+        # 假设 Form 是 AuthenticationForm, 那么 `class variable` 有: [username, password]
         for name, field in self.fields.items():
             # value_from_datadict() gets the data from the data dictionaries.
             # Each widget type knows how to retrieve its own data, because some
@@ -385,17 +394,29 @@ class BaseForm:
             if field.disabled:
                 value = self.get_initial_for_field(field, name)
             else:
+                # self.data 是 post 请求提交过来的参数值, 即: 表单数据.
+                # 这里是根据 form_class 定义的 Form对象(例如: AuthenticationForm), 取对应字段的值.
+                # 例如: name='username', 那么这行代码等价于: self.data['username'].
                 value = field.widget.value_from_datadict(self.data, self.files, self.add_prefix(name))
+
             try:
                 if isinstance(field, FileField):
                     initial = self.get_initial_for_field(field, name)
                     value = field.clean(value, initial)
                 else:
+                    # 重点:
+                    # 这里负责做两个维度的验证.
+                    # 维度一: 按照数据库定义的字段是否必填, 值是否为空.
+                    # 维度二: 遍历迭代 自定义validators , 按场景化的验证.
                     value = field.clean(value)
+
+                # 这里所谓的 cleaned, 指的是经过验证的数据, 达标的数据.
                 self.cleaned_data[name] = value
+
                 if hasattr(self, 'clean_%s' % name):
                     value = getattr(self, 'clean_%s' % name)()
                     self.cleaned_data[name] = value
+
             except ValidationError as e:
                 self.add_error(name, e)
 

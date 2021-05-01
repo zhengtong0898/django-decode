@@ -212,14 +212,18 @@ class AuthenticationForm(forms.Form):
             self.fields['username'].label = capfirst(self.username_field.verbose_name)
 
     def clean(self):
+        # 从 self.cleaned_data 中提取 'username' 和 'password' 的值(类型都是: str).
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
+        # 当 username 和 password 都是非 None/False/'' 时
         if username is not None and password:
+            # 检查用户是否存在, 并检查密码是否一致.
             self.user_cache = authenticate(self.request, username=username, password=password)
             if self.user_cache is None:
                 raise self.get_invalid_login_error()
             else:
+                # 检查当前是否为已激活用户.
                 self.confirm_login_allowed(self.user_cache)
 
         return self.cleaned_data

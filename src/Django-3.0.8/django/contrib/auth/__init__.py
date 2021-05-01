@@ -22,6 +22,11 @@ def load_backend(path):
 
 def _get_backends(return_tuples=False):
     backends = []
+
+    # AUTHENTICATION_BACKENDS 定义在 django/conf/global_settings.py#L502
+    # AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
+    # 这是一个写死的配置, 并且在项目的 settings.py 中默认没有.
+    # 如果想要自定义, 则需要从 global_settings.py  中复制到在 settings.py 中然后再做追加.
     for backend_path in settings.AUTHENTICATION_BACKENDS:
         backend = load_backend(backend_path)
         backends.append((backend, backend_path) if return_tuples else backend)
@@ -68,7 +73,9 @@ def authenticate(request=None, **credentials):
         except TypeError:
             # This backend doesn't accept these credentials as arguments. Try the next one.
             continue
+
         try:
+            # 检查用户是否存在, 并检查密码是否一致.
             user = backend.authenticate(request, **credentials)
         except PermissionDenied:
             # This backend says to stop in our tracks - this user should not be allowed in at all.
