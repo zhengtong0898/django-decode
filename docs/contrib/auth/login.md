@@ -87,3 +87,16 @@ AuthenticationForm(forms.Form)           # clean 这里提供具象化的验证�
   > 将 `View` 和 `login` 拆分开, 使 `View` 聚焦参数的调度和流程的把控, 使`login`聚焦业务,    
   > `LoginView` 这个 `helperView` 除了利用参数实例化对象, 调度各个对象的方法进入不同的流程, 还需要整合外部资源对象来满足具象化的场景处理.   
 
+
+&nbsp;  
+&nbsp;  
+### Model
+
+'/admin/login/' 这个 `API` 总共涉及使用了哪些 `Model` ?
+
+|Model|描述|调用者|
+|---|---|---|
+|AnonymousUser| MockUserModel | [get_user](../../../src/Django-3.0.8/django/contrib/auth/middleware.py#L10) |
+|User(AbstractUser)| UserModel | [AdminSite.has_permission](../../../src/Django-3.0.8/django/contrib/admin/sites.py#L381) / [authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L66) / [auth_login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) |
+|SessionStore(SessionBase)| SessionModel | [auth_login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) |
+

@@ -204,10 +204,18 @@ class AppConfig:
     def import_models(self):
         # Dictionary of models for this app, primarily maintained in the
         # 'all_models' attribute of the Apps this AppConfig is attached to.
+        #
+        # 这里是一个shadow-copy,
+        # 即: self.apps.all_models 发生变化后, self.models 也会跟着发生变化.
         self.models = self.apps.all_models[self.label]
 
         if module_has_submodule(self.module, MODELS_MODULE_NAME):
             models_module_name = '%s.%s' % (self.name, MODELS_MODULE_NAME)
+
+            # 这里负责导入model,
+            # ModelBase会回调register.register_model,
+            # 将 model 写入回到 self.apps.all_modles 中,
+            # 从而更新到 self.models 中.
             self.models_module = import_module(models_module_name)
 
     def ready(self):
