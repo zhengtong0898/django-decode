@@ -6,8 +6,8 @@
   
 |路径|描述|视图|
 |:---|:---:| :--- | 
-|'login/'| 登陆功能 |[django.contrib.auth.views.LoginView.as_view()](../../../src/Django-3.0.8/django/contrib/auth/views.py#L40)|   
-|'logout/'| - | [django.contrib.auth.views.LogoutView.as_view()](#)| 
+|'login/'| [登陆功能](./login.md) |[django.contrib.auth.views.LoginView.as_view()](../../../src/Django-3.0.8/django/contrib/auth/views.py#L40)|   
+|'logout/'| [登出功能](./logout.md) | [django.contrib.auth.views.LogoutView.as_view()](../../../src/Django-3.0.8/django/contrib/auth/views.py#L119)| 
 |'password_change/'| - |[django.contrib.auth.views.PasswordChangeView.as_view()](#)|  
 |'password_change/done/'| - |[django.contrib.auth.views.PasswordChangeDoneView.as_view()](#)|  
 |'password_reset/'|  - |[django.contrib.auth.views.PasswordResetView.as_view()](#)| 

@@ -60,7 +60,34 @@ def _clean_credentials(credentials):
 def _get_user_session_key(request):
     # This value in the session is always serialized to a string, so we need
     # to convert it back to Python whenever we access it.
-    return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+
+    # 将原始代码注释掉.
+    # return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+
+    # SESSION_KEY: _auth_user_id                                        # 常量变量(const variable)
+    # request.session: SessionStore
+    # request.session[SESSION_KEY] == SessionStore['_auth_user_id']     # 触发 SessionStore.__getitem__
+    # request.session 在 SessionMiddleware.process_request 时创建,
+    #                 session_key 从 request.cookies 中提取出.
+    # 这行代码会通过 session_key 查询 `django_session` 表, 查找出user_id.
+    session_key = request.session[SESSION_KEY]
+
+    # 获取到 UserModel. (无SQL网络请求)
+    user_model = get_user_model()
+
+    # 从 UserModel 中, 提取 pk 字段的定义. (无SQL网络请求)
+    user_primary_key = user_model._meta.pk
+
+    # 由于 pk 字段是一个 IntegerField 类型,
+    # 这行代码使用 to_python 的目的是将 user_id 转成 int 类型的值.
+    ss = user_primary_key.to_python(session_key)
+
+    # 所以这里返回的是一个 int 类型的值,
+    # 该值的故事背景:
+    # 当用户是有效登陆状态时, 它的请求头中一定包含 cookie 字段,
+    # 而 cookie 字段中, 必须包含 session 内容,
+    # 当前方法, 试图通过这个 session 内容, 从 django_session 表中查找到对应的 user_id 返回给上层对象.
+    return ss
 
 
 def authenticate(request=None, **credentials):
