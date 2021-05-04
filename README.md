@@ -6,7 +6,7 @@
 |模块|源码|
 |:---:|:---:|
 |WSIG|[Django框架与WSGI接口的关系](docs/contrib/wsgi.md)|
-|`django.contrib.auth`|[路由](docs/contrib/auth/router.md)、[数据流向](docs/contrib/auth/dataflow.md)、[表单工作流](docs/contrib/auth/form.md)、[登录功能](docs/contrib/auth/login.md)|
+|`django.contrib.auth`|[路由](docs/contrib/auth/router.md)、[数据流向](docs/contrib/auth/dataflow.md)、[表单工作流](docs/contrib/auth/form.md)、[登录功能](docs/contrib/auth/login.md)、[登出功能](docs/contrib/auth/logout.md)|
 |autoreload|[核心原理](docs/autoreload/第1部分-核心原理.md) 、 [Signal](docs/autoreload/第2部分-Signal.md) 、 [两个进程](docs/autoreload/第3部分-两个进程.md)  、[两个线程](docs/autoreload/第4部分-两个线程.md)  、[Watchman](docs/autoreload/第5部分-Watchman.md)  、[响应式开发](docs/autoreload/第6部分-响应式开发.md)|
 |migration|待补充|
 

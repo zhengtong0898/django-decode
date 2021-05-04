@@ -204,6 +204,14 @@ def get_user(request):
     from .models import AnonymousUser
     user = None
     try:
+        # SQL网络请求, 目的是根据 cookies.session 的值, 查询`django_session`取到`user_id`关联值.
+        # SELECT `django_session`.`session_key`,
+        #        `django_session`.`session_data`,
+        #        `django_session`.`expire_date`
+        # FROM   `django_session`
+        # WHERE (`django_session`.`expire_date` > '%s' AND
+        #        `django_session`.`session_key` = '%s')
+        # LIMIT 21
         user_id = _get_user_session_key(request)
         backend_path = request.session[BACKEND_SESSION_KEY]
     except KeyError:
@@ -211,6 +219,21 @@ def get_user(request):
     else:
         if backend_path in settings.AUTHENTICATION_BACKENDS:
             backend = load_backend(backend_path)
+            # 使用上面查询到的 `user_id`, 查询 `auth_user` 取整行数据.
+            # SELECT `auth_user`.`id`,
+            #        `auth_user`.`password`,
+            #        `auth_user`.`last_login`,
+            #        `auth_user`.`is_superuser`,
+            #        `auth_user`.`username`,
+            #        `auth_user`.`first_name`,
+            #        `auth_user`.`last_name`,
+            #        `auth_user`.`email`,
+            #        `auth_user`.`is_staff`,
+            #        `auth_user`.`is_active`,
+            #        `auth_user`.`date_joined`
+            # FROM `auth_user`
+            # WHERE `auth_user`.`id` = %s
+            # LIMIT 21
             user = backend.get_user(user_id)
             # Verify the session
             if hasattr(user, 'get_session_auth_hash'):
