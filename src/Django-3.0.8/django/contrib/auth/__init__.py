@@ -172,11 +172,35 @@ def logout(request):
     """
     # Dispatch the signal before the user is logged out so the receivers have a
     # chance to find out *who* logged out.
+
+    # 从 request 中读取 user, 这种方式被称为内存读取.
     user = getattr(request, 'user', None)
+    # 当 user 是 AnonymousUser 时, is_authenticated 总是 False.
+    # 当 user 是 User 时, is_authenticated 总是 True, 因为它在 AuthenticationMiddleware 环节就已经验证过session, 是有效用户.
     if not getattr(user, 'is_authenticated', True):
         user = None
+
+    # user_logged_out 目前是一个占位频道, 全局项目代码中没有找到 user_logged_out.connect 的订阅代码.
     user_logged_out.send(sender=user.__class__, request=request, user=user)
+
+    # flush 是 SessionStorage 对象提供的一个删除session的公共接口方法.
+    # 用于删除基于 request.user 相关的 session_key.
+    #
+    # SQL-1: 查询 django_session, 确认 request.session.session_key 存在.
+    # SELECT `django_session`.`session_key`,
+    #        `django_session`.`session_data`,
+    #        `django_session`.`expire_date`
+    # FROM `django_session`
+    # WHERE `django_session`.`session_key` = '%s' LIMIT 21
+    #
+    #
+    # SQL-2: session_key 存在, 则删除该 session_key.
+    # DELETE FROM `django_session` WHERE `django_session`.`session_key` IN ('%s')
+    #
+    # request.session.flush() 除了到数据库中删除对应的记录, 也会清空 request.session 对象中相关的内存数据.
     request.session.flush()
+
+    # 将 request.user 重置为 AnonymousUser, 表示这是一个匿名用户.
     if hasattr(request, 'user'):
         from django.contrib.auth.models import AnonymousUser
         request.user = AnonymousUser()
@@ -196,6 +220,7 @@ def get_user_model():
         )
 
 
+# TODO: 需要更新这里的被引用行数.
 def get_user(request):
     """
     Return the user model instance associated with the given request session.
