@@ -67,8 +67,8 @@ AuthenticationForm(forms.Form)           # clean 这里提供具象化的验证�
   > 重点备注  
   > 由 `BaseForm._clean_form` 回调上层 `AuthenticationForm.clean` 延申出来的具象化场景验证.
   >  
-  > [AuthenticationForm.clean](../../../src/Django-3.0.8/django/contrib/auth/forms.py#L214) 是一个helper方法, 它内部调用了外部的 [django.contrib.auth.authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L66) 来完成具象化的场景验证.   
-  > [django.contrib.auth.authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L66) 检查用户是否存在于数据库中, 并检查密码是否与数据库中的密码一致.   
+  > [AuthenticationForm.clean](../../../src/Django-3.0.8/django/contrib/auth/forms.py#L214) 是一个helper方法, 它内部调用了外部的 [django.contrib.auth.authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) 来完成具象化的场景验证.   
+  > [django.contrib.auth.authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) 检查用户是否存在于数据库中, 并检查密码是否与数据库中的密码一致.   
   > 
   > 如果将 `django.contrib.auth.authenticate` 的代码合并到 `AuthenticationForm.clean` 中, 这叫做耦合.    
   > 将 `django.contrib.auth.authenticate` 独立出来, 在`AuthenticationForm.clean`调用, 这叫做依赖.  
@@ -82,7 +82,7 @@ AuthenticationForm(forms.Form)           # clean 这里提供具象化的验证�
   [LoginView.form_valid](../../../src/Django-3.0.8/django/contrib/auth/views.py#L101) 聚焦三个动作, 创建和保存session, 记录登录日志, 跳转到后台.   
 
   > 重点备注  
-  > [LoginView.form_valid](../../../src/Django-3.0.8/django/contrib/auth/views.py#L101) 这个 `helperView` 通过调用外部的 [django.contrib.auth.login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) 完成 创建和保存session, 记录登录日志 动作.  
+  > [LoginView.form_valid](../../../src/Django-3.0.8/django/contrib/auth/views.py#L101) 这个 `helperView` 通过调用外部的 [django.contrib.auth.login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L120) 完成 创建和保存session, 记录登录日志 动作.  
   > 
   > 将 `View` 和 `login` 拆分开, 使 `View` 聚焦参数的调度和流程的把控, 使`login`聚焦业务,    
   > `LoginView` 这个 `helperView` 除了利用参数实例化对象, 调度各个对象的方法进入不同的流程, 还需要整合外部资源对象来满足具象化的场景处理.   
@@ -97,6 +97,6 @@ AuthenticationForm(forms.Form)           # clean 这里提供具象化的验证�
 |Model|描述|调用者|
 |---|---|---|
 |AnonymousUser| MockUserModel | [get_user](../../../src/Django-3.0.8/django/contrib/auth/middleware.py#L10) |
-|User(AbstractUser)| UserModel | [AdminSite.has_permission](../../../src/Django-3.0.8/django/contrib/admin/sites.py#L381) / [authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L66) / [auth_login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) |
+|User(AbstractUser)| UserModel | [AdminSite.has_permission](../../../src/Django-3.0.8/django/contrib/admin/sites.py#L381) / [authenticate](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) / [auth_login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L120) |
 |SessionStore(SessionBase)| SessionModel | [auth_login](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L93) |
 

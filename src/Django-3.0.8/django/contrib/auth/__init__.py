@@ -220,7 +220,6 @@ def get_user_model():
         )
 
 
-# TODO: 需要更新这里的被引用行数.
 def get_user(request):
     """
     Return the user model instance associated with the given request session.
