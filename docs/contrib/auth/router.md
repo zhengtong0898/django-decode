@@ -8,7 +8,7 @@
 |:---|:---:| :--- | 
 |'login/'| [登陆](./login.md) |[django.contrib.auth.views.LoginView.as_view()](../../../src/Django-3.0.8/django/contrib/auth/views.py#L40)|   
 |'logout/'| [登出](./logout.md) | [django.contrib.auth.views.LogoutView.as_view()](../../../src/Django-3.0.8/django/contrib/auth/views.py#L119)| 
-|'password_change/'| 修改密码 |[django.contrib.auth.views.PasswordChangeView.as_view()](#)|  
+|'password_change/'| [修改(自己的)密码](./changepwd.md) |[django.contrib.auth.views.PasswordChangeView.as_view()](#)|  
 |'password_change/done/'| 密码修改成功 |[django.contrib.auth.views.PasswordChangeDoneView.as_view()](#)|  
 |'password_reset/'|  - |[django.contrib.auth.views.PasswordResetView.as_view()](#)| 
 |'password_reset/done/'| - |[django.contrib.auth.views.PasswordResetDoneView.as_view(#)]()|  
@@ -20,7 +20,7 @@
 ### 通用路由
 
 通用路由定义在 [这里](../../../src/Django-3.0.8/django/contrib/admin/options.py#L602),    
-使用了 [admin.register](../../../src/Django-3.0.8/django/) 或 [admin.site.register](../../../examples/myqueryset/simplerelate/admin.py#L25) 语法来  
+使用了 [admin.register](../../../src/Django-3.0.8/django/contrib/auth/admin.py#L25) 或 [admin.site.register](../../../examples/myqueryset/simplerelate/admin.py#L25) 语法来  
 注册到`Django Admin`后台的模块(`Model`)对象, 都会具备统一的通用路由.  
 
 
