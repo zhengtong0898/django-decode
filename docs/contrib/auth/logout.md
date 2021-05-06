@@ -34,9 +34,9 @@
 
 |Model|描述|调用者|
 |---|---|---|
-|AnonymousUser| MockUserModel | [AuthenticationMiddleware](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L274) |
-|User(AbstractUser)| UserModel | [AuthenticationMiddleware](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L262) / [auth_logout](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L168) |
-|SessionStore(SessionBase)| SessionModel | [AuthenticationMiddleware](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L240) / [auth_logout](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L201) |
+|AnonymousUser| MockUserModel | [AuthenticationMiddleware](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L273) |
+|User(AbstractUser)| UserModel | [AuthenticationMiddleware](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L261) / [auth_logout](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L168) |
+|SessionStore(SessionBase)| SessionModel | [AuthenticationMiddleware](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L239) / [auth_logout](../../../src/Django-3.0.8/django/contrib/auth/__init__.py#L201) |
 
 
 
