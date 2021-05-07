@@ -307,9 +307,11 @@ class SessionBase:
         """
         data = self._session
         key = self.session_key
+        # 创建一个新的 session_key 并写入到数据库中.
         self.create()
         self._session_cache = data
         if key:
+            # 删除原来的session_key.
             self.delete(key)
 
     # Methods that child classes must implement.

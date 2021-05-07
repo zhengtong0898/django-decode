@@ -371,9 +371,25 @@ class SetPasswordForm(forms.Form):
         return password2
 
     def save(self, commit=True):
+        # self.cleaned_data 是已经验证过的数据.
         password = self.cleaned_data["new_password1"]
+        # 在这里根据文本密码生成一个加密的字符串
+        # 存储在 self.user.password 中, 而原始文本密码存储在 self.user._password 中.
         self.user.set_password(password)
+        # 是否自动提交.
         if commit:
+            # 触发update保存, 可以看得出来, 不论是修改一个字段还是多个字段, 都是争取整行更新.
+            # UPDATE `auth_user` SET `password` = '%s',
+            #                       `last_login` = '%s,
+            #                       `is_superuser` = %s,
+            #                       `username` = '%s',
+            #                       `first_name` = '',
+            #                       `last_name` = '',
+            #                       `email` = '%s',
+            #                       `is_staff` = %s,
+            #                       `is_active` = %s,
+            #                       `date_joined` = '%s'
+            # WHERE `auth_user`.`id` = 1
             self.user.save()
         return self.user
 
