@@ -93,12 +93,10 @@ POST '/admin/password_change' 更新数据库中(自己的)密码.
 
 &nbsp;  
 &nbsp;  
-### csrf_protect
-
-
-&nbsp;  
-&nbsp;  
 ### sensitive_post_parameters
+https://www.jb51.net/article/160927.htm  
+`Django Debug 模式下, Web页面中异常信息`脱敏  
+`Django Debug 模式下, 日志文件中一场信息`脱敏  
 
 
 &nbsp;  
