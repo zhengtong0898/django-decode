@@ -3,9 +3,19 @@
 
 &nbsp;  
 ### 页面操作
-给 `zt` 用户添加 `CanViewUser` 权限
+zt 用户视角: 登录后看到的页面
+<p align="center">
+    <img src="./imgs/img-zt-no-permissions.png" alt="drawing" width="800"/>
+</p>
+
+admin 用户视角: 给 `zt` 用户添加 `CanViewUser` 权限
 <p align="center">
     <img src="./imgs/img.png" alt="drawing" width="800"/>
+</p>
+
+zt 用户视角: 增加了 `CanViewUser` 权限后, 再次查看页面
+<p align="center">
+    <img src="./imgs/img-zt-has-can-view-user-permission.png" alt="drawing" width="800"/>
 </p>
 
 
