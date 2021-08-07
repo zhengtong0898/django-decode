@@ -3,6 +3,6 @@
 
 ### 页面操作
 
-<img src="./imgs/img.png" alt="drawing" width="200"/>
+<img src="./imgs/img.png" alt="drawing" width="600"/>
 
 ### 数据库结构
