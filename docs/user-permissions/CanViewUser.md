@@ -3,8 +3,8 @@
 
 ### 页面操作
 
-<div style="text-align:center">
+<p align="center">
     <img src="./imgs/img.png" alt="drawing" width="800"/>
-</div>
+</p>
 
 ### 数据库结构
