@@ -38,6 +38,7 @@ auth_user_user_permission 多对多表, 存储用户和权限的绑定关系数�
 
 
 &nbsp;  
+&nbsp;  
 ### 源代码  
 #### 浏览器端的网络请求
 当 `zt` 用户访问 `admin` 页面时.   
@@ -46,10 +47,12 @@ URI:     /admin/
 METHOD:  GET
 TYPE:    Document
 ```
-   
+
+&nbsp;     
 #### 服务端的响应处理流程
 1. 有关 `Django` 路由的介绍，请看 [wsgi](../contrib/wsgi.md) 和 [dataflow](../contrib/auth/dataflow.md)   
-   
+
+&nbsp;     
 2. `GET /admin/` 的入口函数是: [django.contrib.admin.sites.AdminSite.index](../../src/Django-3.0.8/django/contrib/admin/sites.py#L504)  
    
    源码  
@@ -74,7 +77,30 @@ TYPE:    Document
 
            return TemplateResponse(request, self.index_template or 'admin/index.html', context)
    ```
-   该 `AdminSite.index` 入口函数, 主要的作用是: 获取 `app` 级别的 `context` 信息, 以及实例化一个 `TemplateResponse` 对象.
+   该 `AdminSite.index` 入口函数, 主要的作用是: 获取 `app_list` 和定义 `context` 信息, 以及实例化一个 `TemplateResponse` 对象.  
+   &nbsp;  
+   `app_list` 数据的生成是`Django`从数据库中读取出来的权限数据.
+   ```shell
+   # python 代码, 调用栈, 最终生成下面的 sql 语句.
+   app_list = self.get_app_list(request)                          IN AdminSite CLASS
+   app_dict = self._build_app_dict(request)                       IN AdminSite.get_app_list METHOD
+   has_module_perms = model_admin.has_module_permission(request)  IN AdminSite._build_app_dict METHOD
+   
+   # sql 语句
+   SELECT 
+              `django_content_type`.`app_label`, 
+              `auth_permission`.`codename` 
+   FROM 
+              `auth_permission` 
+   INNER JOIN 
+              `auth_user_user_permissions` ON (`auth_permission`.`id` = `auth_user_user_permissions`.`permission_id`) 
+   INNER JOIN 
+              `django_content_type` ON (`auth_permission`.`content_type_id` = `django_content_type`.`id`) 
+   WHERE 
+              `auth_user_user_permissions`.`user_id` = 2
+   ```
+   &nbsp;  
+   `Context` 数据结构
    ```python
    context = {
     'app_list': [{'app_label': 'auth',
@@ -105,8 +131,12 @@ TYPE:    Document
     'title': 'Site administration'}
  
    ```
-   结论: 入口函数从 `context` 的内容来看, `models` 里面包含了页面应该显示什么哪个模块的数据.
-   
+   结论: 入口函数从 `context` 的内容来看, `models` 里面包含了页面应该显示哪个模块的数据.
+
+&nbsp;     
 3. 展示页面的渲染  
-   TODO: 确认 `models` 里面的数据, 就是渲染的依据.
+   [django/contrib/admin/templates/admin/index.html](../../src/Django-3.0.8/django/contrib/admin/templates/admin/index.html#L13) 文件负责渲染 `context` 变量中 `app_list` 字段的内容.  
    
+   <p align="center">
+       <img src="./imgs/img-admin-render-index.png" alt="drawing" width="800"/>
+   </p>
