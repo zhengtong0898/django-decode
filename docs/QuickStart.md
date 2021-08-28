@@ -1,6 +1,6 @@
 &nbsp;  
 
-### 快速的创建一个项目
+### 如何快速的创建一个项目
 ```shell
 # 定义项目名称变量
 project_name="adminEx2"
@@ -38,7 +38,7 @@ python ${project_name}/manage.py runserver
 
 &nbsp;  
 &nbsp;  
-### 快速的创建一个应用
+### 如何快速的创建一个应用
 官方操作, 参考这里: https://docs.djangoproject.com/en/3.2/intro/tutorial01/#write-your-first-view
 ```shell
 # 定义项目名称变量

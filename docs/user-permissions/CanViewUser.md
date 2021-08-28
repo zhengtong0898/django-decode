@@ -156,7 +156,8 @@ class ModelBackend(BaseBackend):
                 perms = getattr(self, '_get_%s_permissions' % from_name)(user_obj)
    
             # 仅列出 content_type__app_label, codename 这两个字段即可.
-            # TODO: content_type 是谁的外键表? 双下划线是什么意思?
+            # 需要注意的是: Permission 定义了 content_type 是一个外键字段, 
+            # 所以 content_type__app_label 可以拿到外键表的 app_label 字段值.
             # 最终呈现的效果是(类型是 str): 'auth.view_user'
             perms = perms.values_list('content_type__app_label', 'codename').order_by()
             setattr(user_obj, perm_cache_name, {"%s.%s" % (ct, name) for ct, name in perms})
@@ -164,7 +165,6 @@ class ModelBackend(BaseBackend):
 ```   
 
 方式一: 读取用户的权限.
-TODO: 观察 auth_permission 有哪些字段, 
 ```python
 class ModelBackend(BaseBackend):
 
@@ -207,6 +207,11 @@ class ModelBackend(BaseBackend):
         # 所以 user_groups_field.related_query_name() 得到的就是 "user", 
         # 最终拼接成 "group__user" 这个关联查询的字段. 
         user_groups_query = 'group__%s' % user_groups_field.related_query_name()
+        
+        ##################### 划重点 #####################
+        # 上面两行代码, 主要是为了拼装 "group__user" 外部表字段, 含义是: group 表的 user 字段.
+        # 正常情况下: 
+        #################################################
         
         # {user_groups_query: user_obj} == {"group__user": <django.contrib.auth.models.User name='zyn' at 0x1236>}
         # Permission.objects.filter(**{"group__user": <django.contrib.auth.models.User name='zyn' at 0x1236>}) 对应的 sql 语句是:
