@@ -1,6 +1,6 @@
 在 `Django ORM` 中, 正面的关系定义有三种  
-&nbsp;  
-> 关系定义转换成代码, 主要是体现在对`Foreign Key`的不同应用.
+&nbsp;
+> 在 `Django ORM` 中, 使用 `Foreign Key` 来描述关系的定义.
 
 &nbsp;  
 - [ManyToOneField](examples/relationship/manytoonefield/tests.py#L11)  

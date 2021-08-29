@@ -40,9 +40,12 @@ auth_user_user_permission 多对多表, 存储用户和权限的绑定关系数�
 &nbsp;  
 &nbsp;  
 # 源代码  
-## 预备知识
+## ORM的预备知识
 
-- 
+- [orm有几种关系?](../orm/Relationships.md)
+- [单表查询: `User.objects.all()`](../orm/SingleTableQuery.md)
+- [多对一(InnerJoin)查询: `Permission.objects.all()`](../orm/InnerJoinQuery.md#排序声明)
+- [多对多(InnerJoin)查询: `user_obj.user_permissions.all()`](../orm/InnerJoinQuery.md#排序声明)
 
 ## 浏览器端的网络请求
 当 `zt` 用户访问 `admin` 页面时.   
