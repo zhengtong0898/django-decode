@@ -71,6 +71,13 @@ class Restaurant(models.Model):
     serves_pizza = models.BooleanField(default=False)
 ```
 
+> 注意事项  
+> 1. onetoonefield_restaurant 表, 并不自动生成 id 自增列.  
+> 2. onetoonefield_restaurant.place_id 字段, 定义为 primary key, 即: 表示不会有相同的值.  
+> 3. onetoonefield_restaurant.place_id 字段, 还被定义为 foreign key, 指向 onetoonefield_place.id.  
+> 
+>满足这三个约束的关系, 被称为 One-to-one Relationship.
+
 &nbsp;  
 views.py
 ```python3
@@ -112,18 +119,8 @@ def index(request):
     restaurant.save()
 ```
 
-
-    # 仔细观察上面的建表语句, 发现:
-    # 1. onetoonefield_restaurant 表, 并不自动生成 id 自增列.
-    # 2. 使用 CONSTRAINT FOREIGN KEY 将 onetoonefield_restaurant.place_id 和  onetoonefield_place.id 进行绑定, 一一对应.
-
-`一对一`对应在数据库中关键字是`Foreign Key`, 从数据库建表定义中看它和`多对一`没有区别,   
-但是从`Django ORM`提供的功能来看, 它们的区别是, 被关联的表可以直接`select_related`查询到主表.
-
-`一对一`关系的定义通常是由 `从表` 链向 `主表`, 即: `从表` 是对 `主表` 进行字段上的补充.  
-`一对一`呈现在数据库建表语句上的表现是:
-    <div style="padding-left:40px">1. 没有自增id列;</div> 
-    <div style="padding-left:40px">2. ;</div> 
+TODO: 从主表角度查询补充表  
+TODO: 从补充表角度查询主表
 
 
 
