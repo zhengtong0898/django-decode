@@ -1,19 +1,25 @@
 在 `Django ORM` 中, 关系的定义有三种, 它们全部都使用 `数据库` 的 `Foreign Key` 来描述和定义.  
 &nbsp;    
-# [One-to-one](examples/relationship/onetoonefield/tests.py#L10)   
+# [One-to-one](https://docs.djangoproject.com/en/3.2/topics/db/examples/one_to_one/) 
 
-    # 仔细观察上面的建表语句, 发现:
-    # 1. onetoonefield_restaurant 表, 并不自动生成 id 自增列.
-    # 2. 使用 CONSTRAINT FOREIGN KEY 将 onetoonefield_restaurant.place_id 和  onetoonefield_place.id 进行绑定, 一一对应.
+### 对象描述
+`Place` 场所名称  
+`Restaurant` 餐厅服务  
 
-`一对一`对应在数据库中关键字是`Foreign Key`, 从数据库建表定义中看它和`多对一`没有区别,   
-但是从`Django ORM`提供的功能来看, 它们的区别是, 被关联的表可以直接`select_related`查询到主表.
+并不是所有的 `Place` 都是餐厅，但是被 `Restaurant` 关联上的 `Place` 一定都是餐厅.  
+从上面的模型定义来看, `Restaurant` 仅标记是否提供 `热狗` 和 `披萨` 菜品.  
 
-`一对一`关系的定义通常是由 `从表` 链向 `主表`, 即: `从表` 是对 `主表` 进行字段上的补充.  
-`一对一`呈现在数据库建表语句上的表现是:
-    <div style="padding-left:40px">1. 没有自增id列;</div> 
-    <div style="padding-left:40px">2. ;</div> 
+### 对象关系
+从 `数据库` 的角度来看, `Place`是主表, `Restaurant`是补充表.  
+从 `ORM` 的角度来看, `Restaurant` 使用 `models.OneToOneField` 来绑定与 `Place` 是一对一的关系.  
 
+### 对象约束
+`One-to-one` 是 `ORM` 的概念, 它必须传递一个 `主表对象` 作为参数来约束补充表的创建和更新的操作.  
+传统模式的纯`SQL`开发模式并没有这种约束限制，定义了外键后，你就是可以插入多条数据并同时只想到一个主表.  
+
+
+&nbsp;  
+model.py
 ```python3
 from django.db import models
 
@@ -64,6 +70,61 @@ class Restaurant(models.Model):
     serves_hot_dogs = models.BooleanField(default=False)
     serves_pizza = models.BooleanField(default=False)
 ```
+
+&nbsp;  
+views.py
+```python3
+from django.shortcuts import HttpResponse
+from .models import Place, Restaurant
+
+
+def index(request):
+    
+    # INSERT INTO `onetoonefield_place` (`name`, `address`)
+    # VALUES ("全家便利店", "毕升路191号")
+    # RETURNING `onetoonefield_place`.`id`
+    family = Place(name="全家便利店", address="毕升路191号")
+    family.save()
+
+
+    # Question: 为什么一个 save 会触发 update 和 insert 这两个 sql ?
+    #           当提交的 value 所对应的字段是一个 foreign key,
+    #           Django 将会先执行 update 然后在根据返回值决定是否要执行 insert.
+    #
+    #           先执行 update,
+    #           如果执行失败, 那么将会执行 insert.
+    #           如果执行成功, 则不会去执行 insert.
+    #
+    # Question: 如何判定 update 是否成功?
+    #           update 会返回 effect_rows, 表明成功更新了多少条数据.
+    #           当 effect_rows 大于 0 时, 表明更新成功.
+    #           当 effect_rows 等于 0 时, 表明没有更新成功.
+    #
+    #
+    # UPDATE `onetoonefield_restaurant`
+    # SET    `serves_hot_dogs` = 1,
+    #        `serves_pizza` = 0
+    # WHERE  `onetoonefield_restaurant`.`place_id` = 1;
+    #
+    # INSERT INTO `onetoonefield_restaurant` (`place_id`, `serves_hot_dogs`, `serves_pizza`)
+    # VALUES (1, 1, 0);
+    restaurant = Restaurant(place=family, serves_hot_dogs=True, serves_pizza=False)
+    restaurant.save()
+```
+
+
+    # 仔细观察上面的建表语句, 发现:
+    # 1. onetoonefield_restaurant 表, 并不自动生成 id 自增列.
+    # 2. 使用 CONSTRAINT FOREIGN KEY 将 onetoonefield_restaurant.place_id 和  onetoonefield_place.id 进行绑定, 一一对应.
+
+`一对一`对应在数据库中关键字是`Foreign Key`, 从数据库建表定义中看它和`多对一`没有区别,   
+但是从`Django ORM`提供的功能来看, 它们的区别是, 被关联的表可以直接`select_related`查询到主表.
+
+`一对一`关系的定义通常是由 `从表` 链向 `主表`, 即: `从表` 是对 `主表` 进行字段上的补充.  
+`一对一`呈现在数据库建表语句上的表现是:
+    <div style="padding-left:40px">1. 没有自增id列;</div> 
+    <div style="padding-left:40px">2. ;</div> 
+
 
 
 

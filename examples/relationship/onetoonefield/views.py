@@ -9,8 +9,8 @@ def multi_create(request):
     # INSERT INTO `onetoonefield_place` (`name`, `address`)
     # VALUES ("全家便利店", "毕升路191号")
     # RETURNING `onetoonefield_place`.`id`
-    sha_xian = Place(name="全家便利店", address="毕升路191号")
-    sha_xian.save()
+    family = Place(name="全家便利店", address="毕升路191号")
+    family.save()
 
     # Question: 为什么一个 save 会触发 update 和 insert 这两个 sql ?
     #           当提交的 value 所对应的字段是一个 foreign key,
@@ -33,10 +33,7 @@ def multi_create(request):
     #
     # INSERT INTO `onetoonefield_restaurant` (`place_id`, `serves_hot_dogs`, `serves_pizza`)
     # VALUES (1, 1, 0);
-    restaurant = Restaurant(place=sha_xian, serves_hot_dogs=True, serves_pizza=False)
-    restaurant.save()
-
-    restaurant = Restaurant(place=sha_xian, serves_hot_dogs=True, serves_pizza=True)
+    restaurant = Restaurant(place=family, serves_hot_dogs=True, serves_pizza=False)
     restaurant.save()
 
     # TODO: 为什么会触发一条 update 和 一条 insert ?
