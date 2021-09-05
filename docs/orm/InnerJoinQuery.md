@@ -1,7 +1,7 @@
 # 概述
 由于个人水平不足，无法量化触发 `InnerJoin` 的所有场景, 所以当前文档主要的目的是记录在学习和使用过程中触发 `InnerJoin` 的声明.  
 
-# 排序声明
+# 排序声明(Model.Meta.ordering)
 `Django ORM` 的 `Meta` 元数据选项中, 支持 `ordering` 选项,  
 `Model.Meta.ordering` 选项用于更改 `Model` 的默认表现.  
 
@@ -61,3 +61,6 @@ from django.contrib.auth.models import Permission
 perms = Permission.objects.all()
 list(perms)                                    # 触发 sql
 ```
+
+&nbsp;  
+# 筛选过滤(Model.objects.filter)
