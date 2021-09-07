@@ -11,11 +11,19 @@
 
 ### 对象关系
 从 `数据库` 的角度来看, `Place`是主表, `Restaurant`是补充表.  
+从 `业务` 的角度来看, `Place`是主表, `Restaurant`是补充表.  
 从 `ORM` 的角度来看, `Restaurant` 使用 `models.OneToOneField` 来绑定与 `Place` 是一对一的关系.  
 
 ### 对象约束
 `One-to-one` 是 `ORM` 的概念, 它必须传递一个 `主表对象` 作为参数来约束补充表的创建和更新的操作.  
 传统模式的纯`SQL`开发模式并没有这种约束限制，定义了外键后，你就是可以插入多条数据并同时只想到一个主表.  
+
+> 注意事项  
+> 1. onetoonefield_restaurant 表, 并不自动生成 id 自增列.  
+> 2. onetoonefield_restaurant.place_id 字段, 定义为 primary key, 即: 表示不会有相同的值.  
+> 3. onetoonefield_restaurant.place_id 字段, 还被定义为 foreign key, 指向 onetoonefield_place.id.  
+> 
+>满足这三个约束的关系, 被称为 One-to-one Relationship.
 
 
 &nbsp;  
@@ -24,14 +32,14 @@ models.py
 from django.db import models
 
 
-# CREATE TABLE `onetoonefield_place` (                                                              # Django-建表语句
+# CREATE TABLE `onetoonefield_place` (                                                                 -- Django-建表语句
 #   `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 #   `name` varchar(50) NOT NULL,
 #   `address` varchar(80) NOT NULL
 # );
 #
 #
-# CREATE TABLE `onetoonefield_place` (                                                   # 数据库连接工具查看DDL-建表语句
+# CREATE TABLE `onetoonefield_place` (                                                     -- 数据库连接工具查看DDL-建表语句
 #   `id` int(11) NOT NULL AUTO_INCREMENT,
 #   `name` varchar(50) NOT NULL,
 #   `address` varchar(80) NOT NULL,
@@ -42,7 +50,7 @@ class Place(models.Model):
     address = models.CharField(max_length=80)
 
 
-# CREATE TABLE `onetoonefield_restaurant` (                                                         # Django-创建语句
+# CREATE TABLE `onetoonefield_restaurant` (                                                            -- Django-创建语句
 #   `place_id` integer NOT NULL PRIMARY KEY,
 #   `serves_hot_dogs` bool NOT NULL,
 #   `serves_pizza` bool NOT NULL
@@ -52,13 +60,13 @@ class Place(models.Model):
 # REFERENCES `onetoonefield_place` (`id`);
 #
 #
-# CREATE TABLE `onetoonefield_restaurant` (                                             # 数据库连接工具查看DDL-建表语句
+# CREATE TABLE `onetoonefield_restaurant` (                                                -- 数据库连接工具查看DDL-建表语句
 #   `place_id` int(11) NOT NULL,
 #   `serves_hot_dogs` tinyint(1) NOT NULL,
 #   `serves_pizza` tinyint(1) NOT NULL,
-#   PRIMARY KEY (`place_id`),
+#   PRIMARY KEY (`place_id`),                                                                            -- 主键(聚集索引)
 #   CONSTRAINT `onetoonefield_restau_place_id_0b11dabf_fk_onetoonef` FOREIGN KEY (`place_id`) \
-#   REFERENCES `onetoonefield_place` (`id`)
+#   REFERENCES `onetoonefield_place` (`id`)                                                                      -- 外键
 # ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 class Restaurant(models.Model):
 
@@ -70,13 +78,6 @@ class Restaurant(models.Model):
     serves_hot_dogs = models.BooleanField(default=False)
     serves_pizza = models.BooleanField(default=False)
 ```
-
-> 注意事项  
-> 1. onetoonefield_restaurant 表, 并不自动生成 id 自增列.  
-> 2. onetoonefield_restaurant.place_id 字段, 定义为 primary key, 即: 表示不会有相同的值.  
-> 3. onetoonefield_restaurant.place_id 字段, 还被定义为 foreign key, 指向 onetoonefield_place.id.  
-> 
->满足这三个约束的关系, 被称为 One-to-one Relationship.
 
 &nbsp;  
 views.py
@@ -168,8 +169,34 @@ def view_query(request):
 
 &nbsp;  
 # [Many-to-one](examples/relationship/manytoonefield/tests.py#L11)  
-  `多对一`对应在数据库中关键字是`Foreign Key`, [即主表指向到另外一张表的关联字段.](examples/relationship/manytoonefield/models.py#L17)   
-  `一对多`指的是`Django ORM`提供支持, [使被关联的表可以反过来查询到主表.](examples/relationship/manytoonefield/tests.py#L63)  
+
+### 对象描述
+`Reporter` 作者信息表   
+`Article` 文章表  
+
+### 对象关系
+从 `数据库` 的角度来看, `Reporter`是主表, `Article`是外键表.  
+从 `业务` 的角度来看, `Reporter`是维度表, `Article`是主表(事实表).  
+从 `ORM` 的角度来看, `Article` 使用 `models.ForeignKey` 来绑定与 `Reporter` 是多对一的关系.
+
+> 多对一(正向)  
+> 指的是多篇 `Article` 可以被一个 `Reporter` 撰写(指向).  
+> 以 `Article` 为主线去执行 写/更新 操作.
+> 
+> 一对多(反向)  
+> 指的是一个 `Reporter` 可以撰写(指向)多篇 `Article`.  
+> 以 `Reporter` 为主线去执行 `写/更新` 操作.
+
+
+### 对象约束
+`Many-to-one` 是 `ORM` 和 `纯SQL编程` 都有且相同的概念.  
+从数据模型的约束上来看, 主表通过 `Foreign Key` 指向`维度表`, 完成对一个对象的多维度描述.    
+这里的约束指的是, 主表的`Foreign Key` 字段的值必须是 `维度表` 的 `主键`.  
+
+> 注意事项  
+> 1. manytoonefield_article 表(主表), 自动生成一个自增ID, 同时也是主键ID.    
+> 2. manytoonefield_article.reporter 字段(外键), 指向 `维度表` 的 `主键`.    
+> 3. manytoonefield_article.reporter 字段(索引), 该字段不与`维度表`的`主键`保持同步, 而是自己维护自己的`二叉平衡树`.  
 
 models.py
 ```python3
@@ -184,8 +211,8 @@ from django.db import models
 # );
 #
 #
-# CREATE TABLE `manytoonefield_reporter` (
-#   `id` int(11) NOT NULL AUTO_INCREMENT,                                                   -- django自动补充该字段, 自增ID
+# CREATE TABLE `manytoonefield_reporter` (                                                 -- 数据库连接工具查看DDL-建表语句
+#   `id` int(11) NOT NULL AUTO_INCREMENT,                                                   
 #   `first_name` varchar(30) NOT NULL,
 #   `last_name` varchar(30) NOT NULL,
 #   `email` varchar(254) NOT NULL,
@@ -206,7 +233,7 @@ class Reporter(models.Model):
 #
 # ALTER TABLE `manytoonefield_article`
 # ADD CONSTRAINT `manytoonefield_artic_reporter_id_01692140_fk_manytoone` FOREIGN KEY (`reporter_id`)
-# REFERENCES `manytoonefield_reporter` (`id`)                                                       -- Django 添加外键语句
+# REFERENCES `manytoonefield_reporter` (`id`)                                                       
 #
 #
 # Question: 辅助索引与外键有什么区别?
@@ -214,22 +241,22 @@ class Reporter(models.Model):
 #           辅助索引的内部是一个b+树的数据结构, 对于随机查询起到加速的作用.
 #           外键仅仅是对只想其他表的主键.
 # CREATE TABLE `manytoonefield_article` (
-#   `id` int(11) NOT NULL AUTO_INCREMENT,                                                   -- django自动补充该字段, 自增ID
+#   `id` int(11) NOT NULL AUTO_INCREMENT,                                                  -- 数据库连接工具查看DDL-建表语句
 #   `headline` varchar(100) NOT NULL,
 #   `pub_date` date NOT NULL,
 #   `reporter_id` int(11) NOT NULL,
 #   PRIMARY KEY (`id`),                                                                                  -- 主键(聚集索引)
 #   KEY `manytoonefield_artic_reporter_id_01692140_fk_manytoone` (`reporter_id`),                             -- 辅助索引
 #   CONSTRAINT `manytoonefield_artic_reporter_id_01692140_fk_manytoone` FOREIGN KEY (`reporter_id`) \
-#   REFERENCES `manytoonefield_reporter` (`id`)                                                               -- 外键索引
+#   REFERENCES `manytoonefield_reporter` (`id`)                                                                  -- 外键
 # ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 class Article(models.Model):
     headline = models.CharField(max_length=100)
     pub_date = models.DateField()
-    reporter = models.ForeignKey(Reporter, on_delete=models.CASCADE)                                    # Many-to-one
-
+    reporter = models.ForeignKey(Reporter, on_delete=models.CASCADE)                                      # Many-to-one
 ```
-  
+
+
 &nbsp;  
 # [Many-to-many](examples/relationship/manytomanyfield/tests.py#L11)  
   `多对多`对应在数据库中关键字是`附加表 + Foreign Key`,    

@@ -7,7 +7,11 @@
 &nbsp;  
 [四、如何获取插入一条数据后的自增ID?](./docs/orm/IncrementalID.md)  
 &nbsp;  
-[五、orm有几种关系?](docs/orm/Relationships.md)    
+[五、orm有几种关系?](./docs/orm/Relationships.md)    
+1. One-to-one
+2. Many-to-one
+3. Many-to-many
+
 &nbsp;  
 [六、给一个用户添加 `CanViewUser` 权限时, 在`Django`里面发生了什么?](./docs/user-permissions/CanViewUser.md)
 
