@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('one_to_one/', include("onetoonefield.urls")),
+    path('many_to_one/', include("manytoonefield.urls")),
     path('admin/', admin.site.urls),
 ]

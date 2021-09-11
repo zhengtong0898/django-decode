@@ -82,8 +82,8 @@ DATABASES = {
         'NAME': 'relationship',
         'USER': 'root',
         'PASSWORD': '123456',
-        # 'HOST': '192.168.101.78',
-        'HOST': '10.3.1.206',
+        'HOST': '192.168.101.78',
+        # 'HOST': '10.3.1.206',
         'PORT': '3306'
     }
 }

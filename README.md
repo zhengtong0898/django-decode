@@ -8,8 +8,8 @@
 [四、如何获取插入一条数据后的自增ID?](./docs/orm/IncrementalID.md)  
 &nbsp;  
 [五、orm有几种关系?](./docs/orm/Relationships.md)    
-1. One-to-one
-2. Many-to-one
+1. [One-to-one](./docs/orm/Relationships.md#one-to-one)
+2. [Many-to-one](./docs/orm/Relationships.md#many-to-one)
 3. Many-to-many
 
 &nbsp;  
