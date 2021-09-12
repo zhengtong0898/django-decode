@@ -1,3 +1,33 @@
+# Many-to-many
+
+### 对象描述
+`Publication` 出版社  
+`Article` 文章  
+
+### 对象关系
+从 `数据库` 的角度来看, `Publication`是独立表, `Article`也是独立表, `附加表`是双向外键表.  
+从 `业务` 的角度来看, `Publication`是维度表, `Article`是主表(事实表), `附加表`是透明的.   
+从 `ORM` 的角度来看, `Article` 使用 `models.ManyToManyField` 来绑定于 `Publication` 是多对多的关系.  
+
+> 多对多(正向)  
+> `Article` 为主线去执行 写/更新 操作, 都被时为 `正向多对多` 操作.  
+>
+> 多对多(反向)  
+> `Publication` 为主线去执行 写/更新 操作, 都被时为 `反向多对多` 操作.
+
+
+### 对象约束
+`ORM` 通过利用 `附加表` 的 `多字段唯一索引约束` 和 `外键` 组成 `Many-to-many` 的概念.  
+
+> 注意事项  
+> 1. `manytomanyfield_publication` 也是独立表.  
+> 2. `manytomanyfield_article` 是独立表.  
+> 3. `manytomanyfield_article_publications` 是 `Django ORM` 为多对多概念额外创建的`附加表`,  
+>    1. 
+
+
+models.py
+```python3
 from django.db import models
 
 
@@ -66,3 +96,5 @@ class Article(models.Model):
 #   CONSTRAINT `manytomanyfield_arti_publication_id_d42f24f8_fk_manytoman` \
 #   FOREIGN KEY (`publication_id`) REFERENCES `manytomanyfield_publication` (`id`)
 # ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+```

@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'onetoonefield.apps.OnetoonefieldConfig',
     'manytoonefield.apps.ManytoonefieldConfig',
+    'manytomanyfield.apps.ManytomanyfieldConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,7 +83,7 @@ DATABASES = {
         'NAME': 'relationship',
         'USER': 'root',
         'PASSWORD': '123456',
-        'HOST': '192.168.101.78',
+        'HOST': '192.168.1.5',
         # 'HOST': '10.3.1.206',
         'PORT': '3306'
     }
