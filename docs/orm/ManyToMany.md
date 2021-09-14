@@ -20,10 +20,12 @@
 `ORM` 通过利用 `附加表` 的 `多字段唯一索引约束` 和 `外键` 组成 `Many-to-many` 的概念.  
 
 > 注意事项  
-> 1. `manytomanyfield_publication` 也是独立表.  
-> 2. `manytomanyfield_article` 是独立表.  
-> 3. `manytomanyfield_article_publications` 是 `Django ORM` 为多对多概念额外创建的`附加表`,  
->    1. 
+> 1. `manytomanyfield_publication` 是独立表.  
+> 2. `manytomanyfield_article` 也是独立表.  
+> 3. `manytomanyfield_article_publications` 是 `Django ORM` 的多对多概念.  
+>    1). 创建 `附加表`, 包含 `publication_id` 和 `article_id` 两个字段.    
+>    2). 给这两个字段创建一个唯一联合约束.  
+>    3). 给这两个字段建立外键, 分别指向 `article` 和 `publication` 表的主键.  
 
 
 models.py
