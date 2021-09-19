@@ -7,12 +7,6 @@
 &nbsp;  
 [四、如何获取插入一条数据后的自增ID?](./docs/orm/IncrementalID.md)  
 &nbsp;  
-[五、orm有几种关系?](https://docs.djangoproject.com/en/3.2/topics/db/examples/)    
-&nbsp;&nbsp;&nbsp;&nbsp;1. [One-to-one](./docs/orm/OneToOne.md)  
-&nbsp;&nbsp;&nbsp;&nbsp;2. [Many-to-one](./docs/orm/ManyToOne.md)   
-&nbsp;&nbsp;&nbsp;&nbsp;3. [Many-to-many](./docs/orm/ManyToMany.md)   
+[五、orm有几种关系?](./docs/orm/Relationships.md)    
 &nbsp;  
 [六、给一个用户添加 `CanViewUser` 权限时, 在`Django`里面发生了什么?](./docs/user-permissions/CanViewUser.md)   
-&nbsp;&nbsp;&nbsp;&nbsp;1. [单表查询: `User.objects.all()`](./docs/orm/SingleTableQuery.md)  
-&nbsp;&nbsp;&nbsp;&nbsp;2. [多对一(InnerJoin)查询: `Permission.objects.all()`](./docs/orm/InnerJoinQuery.md#排序声明)  
-&nbsp;&nbsp;&nbsp;&nbsp;3. [多对多(InnerJoin)查询: `user_obj.user_permissions.all()`](./docs/orm/InnerJoinQuery.md#多对多查询)  
