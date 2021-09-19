@@ -1,7 +1,5 @@
-# 问题描述
-给一个用户添加 `CanViewUser` 权限时, 在`Django`里面发生了什么?
+# 功能
 
-&nbsp;  
 ### 赋权之前
 普通用户(zt): 登录后看到的页面
 <p align="center">
@@ -21,6 +19,11 @@
 <p align="center">
     <img src="./imgs/img-zt-has-can-view-user-permission.png" alt="drawing" width="800"/>
 </p>
+
+&nbsp;  
+&nbsp;  
+# 问题
+给一个用户添加 `CanViewUser` 权限时, 在`Django`里面发生了什么?  
 
 
 &nbsp;  
