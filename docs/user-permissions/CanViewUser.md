@@ -110,5 +110,5 @@ class AdminSite:
 
 &nbsp;  
 ### 延申阅读
-[`Django` 是如何获取到用户、组和菜单的权限(self.get_app_list)的呢?](./HowDjangoGetUserPermission.md)
+[`Django` 是如何获取到用户、组和菜单的权限的呢?](./HowDjangoGetUserPermission.md)
  
