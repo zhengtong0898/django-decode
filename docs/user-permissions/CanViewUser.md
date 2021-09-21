@@ -53,6 +53,9 @@ TYPE:    Document
 4. 将 context 接口数据传递给 TemplateResponse 对象进行 html 文件渲染.  
    备注: 这里其实也能将 context 当作一个 json 作为 restful 接口值返回.
 ```python
+# django.contrib.admin.sites.AdminSite.index
+
+
 class AdminSite:
     @never_cache
     def index(self, request, extra_context=None):
