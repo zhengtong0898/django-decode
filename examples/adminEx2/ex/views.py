@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
 from .models import Book
 
 
@@ -81,6 +82,6 @@ def index_view(request):
 
 
 def index_view_2(request):
-    perm = Permission.objects.get(pk=1)
-    print(dir(perm))
+    content_type = ContentType.objects.get(pk=1)
+    permissions = content_type.permission_set.all()
     return HttpResponse(b"hello world!")
