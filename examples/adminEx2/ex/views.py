@@ -78,3 +78,9 @@ def index_view(request):
     # list(books)
 
     return HttpResponse(b"hello world!")
+
+
+def index_view_2(request):
+    perm = Permission.objects.get(pk=1)
+    print(dir(perm))
+    return HttpResponse(b"hello world!")

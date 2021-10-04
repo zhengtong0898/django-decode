@@ -1,6 +1,7 @@
-1. [One-to-one](./docs/orm/OneToOne.md)  
-2. [Many-to-one](./docs/orm/ManyToOne.md)   
-3. [Many-to-many](./docs/orm/ManyToMany.md)   
+1. [One-to-one](./OneToOne.md)  
+2. [Many-to-one](./ManyToOne.md)   
+3. [Many-to-many](./ManyToMany.md)   
+
 
 &nbsp;  
 ### 补充
