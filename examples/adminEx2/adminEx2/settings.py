@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'ex',
     'simulate_auth',
+    'reverse_filter_query',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
