@@ -145,3 +145,18 @@ def index(request):
     return HttpResponse("hello world!")
 
 ```
+
+还有一种特殊情况, 就是如果不希望Django创建一个反向关系，可以将 `related_name` 设置为 '+' 或以 '+' 结束.    
+```shell
+user = models.ForeignKey(
+    User,
+    on_delete=models.CASCADE,
+    related_name='+',
+)
+```
+
+
+&nbsp;  
+### 参考资料
+1. [ForeignKey.related_name](https://docs.djangoproject.com/zh-hans/3.2/ref/models/fields/#django.db.models.ForeignKey.related_name)   
+2. [abstract-related_name](https://docs.djangoproject.com/zh-hans/3.2/topics/db/models/#abstract-related-name)  
