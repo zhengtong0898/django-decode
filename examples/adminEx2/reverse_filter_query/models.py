@@ -13,6 +13,7 @@ class SimulatePermission(models.Model):
         SimulateContentType,
         models.CASCADE,
         verbose_name=_('content type'),
-        related_name="sp_set"
+        related_name="sp_set",
+        related_query_name="sp"
     )
     codename = models.CharField(_('codename'), max_length=100)
