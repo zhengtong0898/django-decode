@@ -141,3 +141,4 @@ def index(request):
 &nbsp;  
 问题-4:  
 如何理解 `Permission.objects.filter(**{user_groups_query: user_obj})` 这行代码的含义?   
+这是利用 `ORM` 的反向查找过滤器机制, 能通过一个已实例化的模型对象, 反向查询出模型之间关联的数据, 更详细的原理分析请看[这里](../orm/RelatedQueryName.md).  
