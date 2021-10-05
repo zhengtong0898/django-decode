@@ -40,6 +40,23 @@ class ModelBackend(BaseBackend):
     # 由于 django.contrib.auth.models.User 定义了 user_permissions 多对一字段, 
     # 因此 user_obj.user_permissions.all() 的意思是, 获取 zyn 用户的所有权限数据.
     def _get_user_permissions(self, user_obj):
+        # SELECT 
+        #            `auth_permission`.`id`, 
+        #            `auth_permission`.`name`, 
+        #            `auth_permission`.`content_type_id`, 
+        #            `auth_permission`.`codename` 
+        # FROM 
+        #            `auth_permission` 
+        # INNER JOIN 
+        #            `auth_user_user_permissions` ON (`auth_permission`.`id` = `auth_user_user_permissions`.`permission_id`) 
+        # INNER JOIN 
+        #            `django_content_type` ON (`auth_permission`.`content_type_id` = `django_content_type`.`id`) 
+        # WHERE 
+        #            `auth_user_user_permissions`.`user_id` = 2 
+        # ORDER BY 
+        #            `django_content_type`.`app_label` ASC, 
+        #            `django_content_type`.`model` ASC, 
+        #            `auth_permission`.`codename` ASC
         return user_obj.user_permissions.all()
 ```
 
@@ -66,6 +83,27 @@ class ModelBackend(BaseBackend):
         user_groups_field = get_user_model()._meta.get_field('groups')
         # user_groups_query: str 'group__user'
         user_groups_query = 'group__%s' % user_groups_field.related_query_name()
+        # SELECT     
+        #            `auth_permission`.`id`, 
+        #            `auth_permission`.`name`, 
+        #            `auth_permission`.`content_type_id`, 
+        #            `auth_permission`.`codename` 
+        # FROM       
+        #            `auth_permission` 
+        # INNER JOIN 
+        #            `auth_group_permissions` ON (`auth_permission`.`id` = `auth_group_permissions`.`permission_id`) 
+        # INNER JOIN 
+        #            `auth_group` ON (`auth_group_permissions`.`group_id` = `auth_group`.`id`) 
+        # INNER JOIN 
+        #            `auth_user_groups` ON (`auth_group`.`id` = `auth_user_groups`.`group_id`) 
+        # INNER JOIN 
+        #            `django_content_type` ON (`auth_permission`.`content_type_id` = `django_content_type`.`id`) 
+        # WHERE      
+        #            `auth_user_groups`.`user_id` = 2 
+        # ORDER BY   
+        #            `django_content_type`.`app_label` ASC, 
+        #            `django_content_type`.`model` ASC, 
+        #            `auth_permission`.`codename` ASC;
         # Permission.objects.filter(**{'group__user': <django.contrib.auth.models.User zyn>})
         return Permission.objects.filter(**{user_groups_query: user_obj})
 ```
@@ -142,3 +180,15 @@ def index(request):
 问题-4:  
 如何理解 `Permission.objects.filter(**{user_groups_query: user_obj})` 这行代码的含义?   
 这是利用 `ORM` 的反向查找过滤器机制, 能通过一个已实例化的模型对象, 反向查询出模型之间关联的数据, 更详细的原理分析请看[这里](../orm/RelatedQueryName.md).  
+
+&nbsp;  
+问题-5:  
+为什么 `user_obj.user_permissions.all()` 会触发两个 `INNER JOIN` ?  
+这是因为 `user_obj` 是一个 `User` 模型类, 它内部定义了 `user_permissions` 多对多的关联字段, 因此 `user_obj.user_permissions` 是一个合理合法也很容易被理解的操作,  
+然而在 `Permission` 模型中有定义 `content_type` 多对一的关联字段, 并且 `Meta.ordering` 中指定了 `content_type__app_label`, 因此就出现了两个 `INNER JOIN` 的关联查询.
+
+&nbsp;  
+问题-6:  
+为什么 `django.contrib.auth.backends.ModelBackend._get_user_permissions` 触发的 `SQL` 语句查询的是所有字段,  
+而 `django.contrib.auth.backends.BaseBackend.get_all_permissions` 触发的 `SQL` 语句查询的  
+仅是 `django_content_type.app_label` 和 `auth_permission.codename` 这两个字段 ?   
