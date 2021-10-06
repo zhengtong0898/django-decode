@@ -192,3 +192,41 @@ def index(request):
 为什么 `django.contrib.auth.backends.ModelBackend._get_user_permissions` 触发的 `SQL` 语句查询的是所有字段,  
 而 `django.contrib.auth.backends.BaseBackend.get_all_permissions` 触发的 `SQL` 语句查询的  
 仅是 `django_content_type.app_label` 和 `auth_permission.codename` 这两个字段 ?   
+```python3
+# 调用栈
+django.contrib.auth.backends.BaseBackend.get_all_permissions
+django.contrib.auth.backends.ModelBackend.get_user_permissions
+django.contrib.auth.backends.ModelBackend._get_permissions                # 关键点在这里
+django.contrib.auth.backends.ModelBackend._get_user_permissions        
+
+
+# 展开说明, 第二个子问题
+# django.contrib.auth.backends.BaseBackend.get_all_permissions 之所以触发的 SQL 语句查询的仅是 
+# django_content_type.app_label 和 auth_permission.codename, 是因为下面的代码指定了仅仅提取这两个字段:
+# perms.values_list('content_type__app_label', 'codename').
+class ModelBackend(BaseBackend):
+
+    def _get_permissions(self, user_obj, obj, from_name):
+        
+        if not user_obj.is_active or user_obj.is_anonymous or obj is not None:
+            return set()
+
+        perm_cache_name = '_%s_perm_cache' % from_name
+        if not hasattr(user_obj, perm_cache_name):
+            if user_obj.is_superuser:
+                perms = Permission.objects.all()
+            else:
+                perms = getattr(self, '_get_%s_permissions' % from_name)(user_obj)
+            perms = perms.values_list('content_type__app_label', 'codename').order_by()
+            setattr(user_obj, perm_cache_name, {"%s.%s" % (ct, name) for ct, name in perms})
+        return getattr(user_obj, perm_cache_name)
+
+
+# 展开说明, 第一个子问题
+# django.contrib.auth.backends.ModelBackend._get_user_permissions 之所以触发的 SQL 语句查询的是所有字段, 
+# 是因为代码并没有增加额外的过滤操作, 所以默认是提取所有字段.
+class ModelBackend(BaseBackend):
+    
+    def _get_user_permissions(self, user_obj):
+        return user_obj.user_permissions.all()
+```
