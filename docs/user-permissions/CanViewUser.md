@@ -1,5 +1,5 @@
 # 问题
-给一个用户添加 `CanViewUser` 权限时, 在`Django`里面发生了什么?  
+给一个用户添加 `CanViewUser` 权限时, 在`DjangoAdmin`里面发生了什么?  
 
 &nbsp;  
 &nbsp;  

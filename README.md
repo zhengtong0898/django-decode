@@ -13,6 +13,8 @@
 &nbsp;   
 [007. 什么是`ORM`的反向过滤器?](./docs/orm/RelatedQueryName.md)    
 &nbsp;  
-[008. 给一个用户添加 `CanViewUser` 权限时, 在`Django`里面发生了什么?](./docs/user-permissions/CanViewUser.md)   
+[008. 给一个用户添加 `CanViewUser` 权限时, 在`DjangoAdmin`里面发生了什么?](./docs/user-permissions/CanViewUser.md)   
 &nbsp;  
-[009. `Django` 是如何获取到用户、组和菜单的权限的呢?](./docs/user-permissions/HowDjangoGetUserPermission.md)  
+[009. `DjangoAdmin` 是如何获取到用户、组和菜单的权限的呢?](./docs/user-permissions/HowDjangoGetUserPermission.md)  
+&nbsp;  
+[010. `DjangoAdmin` 是如何为模型动态生成新增、修改、删除的URL的呢?](./docs/urls/ModelUrlForCURD.md)  
